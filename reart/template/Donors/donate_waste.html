@@ -1,0 +1,536 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Responsive Admin Dashboard | ReArt Vault</title>
+  <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+  <!-- Boxicons CDN Link -->
+  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    .profile-details .dropdown-menu {
+      display: none;
+    }
+  
+    .profile-details .dropdown-menu.show {
+      display: block;
+    }
+  
+  
+    .profile-details {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  
+    .profile-details img {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+    }
+  
+    .profile-details .admin_name {
+      margin-left: 10px;
+      font-size: 16px;
+      color: #333;
+    }
+  
+    .profile-details .bx-chevron-down {
+      margin-left: 10px;
+      cursor: pointer;
+    }
+  
+    .profile-details .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+  
+    .profile-details .dropdown-menu li {
+      list-style: none;
+    }
+  
+    .profile-details .dropdown-menu li a {
+      display: block;
+      padding: 10px 20px;
+      text-decoration: none;
+      color: #333;
+      border-bottom: 1px solid #f0f0f0;
+    }
+  
+    .profile-details .dropdown-menu li a:hover {
+      background-color: #f0f0f0;
+    }
+  
+    .profile-details:hover .dropdown-menu {
+      display: block;
+    }
+  
+    .sales-details {
+      display: flex;
+      justify-content: space-around;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      
+    }
+  
+    .details {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      /* Added gap between items */
+    }
+  
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      /* Gap between image and text */
+    }
+  
+    .item-pic {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+  
+    .item-pic:hover {
+      transform: scale(1.1);
+    }
+  
+    .detail-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      /* Adjust the spacing between list items if needed */
+    }
+  
+    .item-pic {
+      width: 150px;
+      /* Adjust size as needed */
+      height: auto;
+      margin-right: 20px;
+      /* Adjust spacing between image and text */
+    }
+  
+    .item-text {
+      font-weight: bold;
+      font-size: 1.2em;
+      /* Adjust the size as needed */
+      margin-bottom: 5px;
+      /* Space between heading and description */
+    }
+   
+    .form-container {
+      /* background-color: #c9eaee; */
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  
+    .form-container label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+    }
+  
+    .form-container input[type="text"],
+    .form-container textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+      color: #333;
+      transition: border-color 0.3s;
+    }
+  
+    .form-container input[type="text"]:focus,
+    .form-container textarea:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+  
+    .form-container button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+  
+    .form-container button:hover {
+      background-color: #0056b3;
+    }
+    .form-group {
+  margin-bottom: 15px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+.error-message {
+            display: none; /* Hide error message by default */
+            color: red;
+            font-size: 0.875em;
+}
+
+.sales-boxes {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    width: 80%; /* Adjust the width as needed */
+    max-width: 1200px; /* Optional: limit the maximum width */
+    margin: 0 auto; /* Center the container if width is less than 100% */
+}
+
+        .recent-sales {
+            background-color: rgb(205, 231, 240);
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .sales-boxes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .recent-sales.box {
+    width: 100%;
+    max-width: 1000px;
+  }
+  .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+/* .btn-block {
+            width: 100%;
+        } */
+  
+  </style>
+  
+</head>
+
+<body>
+  <div class="sidebar">
+    <div class="logo-details">
+      <span class="logo_name" style="font-size: 30px; text-align: center; font-weight: 700; color: #b5c8c1;">ReArt Vault</span>
+    </div>
+    <ul class="nav-links">
+      <li>
+        <a href="{% url 'donor_dashboard' %}" class="active">
+          <i class='bx bx-grid-alt'></i>
+          <span class="links_name">Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'donate_waste' %}">
+          <i class='bx bx-box'></i>
+          <span class="links_name">Add Donations</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'view_donations' %}">
+          <i class='bx bx-list-ul'></i>
+          <span class="links_name">Manage Donations</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-pie-chart-alt-2'></i>
+          <span class="links_name">Track Details</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-coin-stack'></i>
+          <span class="links_name">Analytics</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-book-alt'></i>
+          <span class="links_name">Total Items</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-message'></i>
+          <span class="links_name">Messages</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-message'></i>
+          <span class="links_name">Contact</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-heart'></i>
+          <span class="links_name">Favorites</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-cog'></i>
+          <span class="links_name">Setting</span>
+        </a>
+      </li>
+      <li class="log_out">
+        <a href="{% url 'userlogout' %}">
+          <i class='bx bx-log-out'></i>
+          <span class="links_name">Log out</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <section class="home-section">
+    <nav>
+      <div class="sidebar-button">
+        <i class='bx bx-menu sidebarBtn'></i>
+        <span class="dashboard">Dashboard</span>
+      </div>
+      <div class="search-box">
+        <input type="text" placeholder="Search...">
+        <i class='bx bx-search'></i>
+      </div>
+      <div class="profile-details">
+        <img src="{{donor.profile_pic.url}}" alt="">
+        <span class="admin_name" style="font-size: 25px; font-weight: 900; color: #010302;">Hi {{user.username}}</span>
+        <i class='bx bx-chevron-down'></i>
+        <ul class="dropdown-menu">
+          <li><a href="{% url 'userprofile' %}">View Profile</a></li>
+          <li><a href="{% url 'donor_update' %}">Edit Profile</a></li>
+          <li><a href="#">Settings</a></li>
+          <li><a href="{% url 'userlogout' %}">Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+    <body>
+      <div class="home-content">
+          <div class="overview-boxes">
+            <div class="box" style="background-color:rgb(243, 212, 200);">
+              <div class="right-side">
+                <div class="box-topic">Total Items</div>
+                <div class="number">40,876</div>
+                <div class="indicator">
+                  <!-- <i class='bx bx-up-arrow-alt'></i> -->
+                  <!-- <span class="text">Up from yesterday</span> -->
+                </div>
+              </div>
+              <i class='bx bx-cart-alt cart'></i>
+            </div>
+            <div class="box" style="background-color:rgb(188, 233, 188);">
+              <div class="right-side">
+                <div class="box-topic">Total Donations</div>
+                <div class="number">38,876</div>
+                <div class="indicator">
+                  <!-- <i class='bx bx-up-arrow-alt'></i> -->
+                  <!-- <span class="text">Up from yesterday</span> -->
+                </div>
+              </div>
+              <i class='bx bxs-cart-add cart two'></i>
+            </div>
+            <div class="box" style="background-color:rgb(240, 240, 205);">
+              <div class="right-side">
+                <div class="box-topic">Updated Donations</div>
+                <div class="number"> 12,876</div>
+                <div class="indicator">
+                  <!-- <i class='bx bx-up-arrow-alt'></i> -->
+                  <!-- <span class="text">Up from yesterday</span> -->
+                </div>
+              </div>
+              <i class='bx bx-cart cart three'></i>
+            </div>
+            <div class="box" style="background-color:rgb(240, 205, 228);">
+              <div class="right-side">
+                <div class="box-topic">Total Collections</div>
+                <div class="number">11,086</div>
+                <div class="indicator">
+                  <!-- <i class='bx bx-down-arrow-alt down'></i> -->
+                  <!-- <span class="text">Down From Today</span> -->
+                </div>
+              </div>
+              <i class='bx bxs-cart-download cart four'></i>
+            </div>
+          </div>
+    
+          <div class="sales-boxes">
+            <div class="recent-sales box" style="background-color: rgb(205, 231, 240); padding: 20px; border-radius: 10px; width:1000px;">
+                <div class="title" style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">Donate Waste</div>
+              <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                  <label for="medium_of_waste">Medium of Waste:</label>
+                  <select id="medium_of_waste" name="medium_of_waste" class="form-control" required>
+                    {% for medium in mediums %}
+                    <option value="{{ medium.id }}">{{ medium.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="quantity">Quantity:</label>
+                  <input type="number" id="quantity" name="quantity" class="form-control" step="0.01" required>
+                  
+                </div>
+                <div class="form-group">
+                  <label for="location">Location:</label>
+                  <input type="text" id="location" name="location" class="form-control" oninput="validateName()" required>
+                  <span class="error-message" id="location-error">Invalid Location</span>
+                </div>
+                <div class="form-group">
+                  <label for="image">Image of Donation:</label>
+                  <input type="file" id="image" name="image"  accept="image/*"  class="form-control"  required>
+                  <span id="error-message" style="color: red;"></span>
+                  <!-- <span class="error-message" id="location-error">Invalid Location</span> -->
+                </div>
+                <button type="submit" id="submit-btn" class="btn btn-primary " disabled >Donate</button>
+              </form>
+            </div>
+          </div>
+          
+                
+      <!-- </section> -->
+      <script>
+       const image = document.getElementById("image");
+const errorMessage = document.getElementById("error-message");
+
+image.addEventListener("change", function(event) {
+    const file = event.target.files[0];
+    const fileType = file.type.toLowerCase();
+    if (!fileType.startsWith("image/")) {
+        errorMessage.textContent = "Please upload an image file.";
+        image.value = "";
+    } else {
+        errorMessage.textContent = "";
+    }
+});
+        function validateName() {
+            var location = document.getElementById("location").value;
+            var locationError = document.getElementById("location-error");
+            var submitBtn = document.getElementById("submit-btn");
+            const pattern =  /^(?! )[A-Za-z0-9\s,.'-]+$/;
+            var res = pattern.test(location);
+            if (res) {
+                locationError.style.display = "none";
+                submitBtn.disabled = false;
+            } else {
+                locationError.style.display = "block";
+                submitBtn.disabled = true;
+            }
+        }
+        </script>
+      <script>
+        let sidebar = document.querySelector(".sidebar");
+        let sidebarBtn = document.querySelector(".sidebarBtn");
+        sidebarBtn.onclick = function () {
+          sidebar.classList.toggle("active");
+          if (sidebar.classList.contains("active")) {
+            sidebarBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+          } else {
+            sidebarBtn.classList.replace("bx-menu-alt-right", "bx-menu");
+          }
+        }
+      </script>
+      <script>
+         document.addEventListener("DOMContentLoaded", function () {
+          {% for message in messages %}
+              Swal.fire({
+                  icon: '{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}', 
+                  title: '{{ message }}',
+                  showConfirmButton: false,
+                  timer: 3000
+              });
+          {% endfor %}
+      });
+          </script>
+    </body>
+    
+    </html>
+     
+     
+  </body>
+  </html>
+  
+      
+ 
+  
+    <!-- <h2>Donate Waste</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="medium_of_waste">Medium of Waste:</label><br>
+        <select id="medium_of_waste" name="medium_of_waste" required>
+            {% for medium in mediums %}
+                <option value="{{ medium.id }}">{{ medium.name }}</option>
+            {% endfor %}
+        </select><br><br>
+        
+        <label for="quantity">Quantity:</label><br>
+        <input type="number" id="quantity" name="quantity" step="0.01" required><br><br>
+
+        <label for="location">Location:</label><br>
+        <input type="text" id="location" name="location" required><br><br>
+
+        <button type="submit">Donate</button>
+    </form> -->
+    <!-- {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %} -->
+</body>
+</html>

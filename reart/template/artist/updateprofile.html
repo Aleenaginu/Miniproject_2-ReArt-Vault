@@ -1,0 +1,278 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ user.username }}'s Profile</title>
+    <link rel="stylesheet" href="{% static 'assets/css/profile.css' %}">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: url("{% static 'profile.webp' %}") no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .container {
+            display: flex;
+            max-width: 800px;
+            width: 90%;
+            height: auto;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.5); /* Semi-transparent background */
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="file"] {
+            width: 90%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="file"]:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+        .profile-pic {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+        .profile-pic img {
+            border-radius: 10px;
+            width: 250px;
+            height: 350px;
+            object-fit: cover;
+            position: relative;
+            z-index: 1; /* Ensure the profile picture is above the background */
+        }
+        .profile-pic::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("{% static '.jpg' %}") no-repeat center center;
+            background-size: cover;
+            opacity: 0.9; /* Semi-transparent background image */
+            z-index: 0; /* Behind the profile picture */
+            border-radius: 10px;
+        }
+        .profile-details {
+            flex: 2;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.5); /* Semi-transparent background */
+            border-radius: 0 10px 10px 0;
+        }
+        .profile-details h2 {
+            font-family: 'Times New Roman', serif;
+            font-size: 36px;
+            font-weight: bold;
+            color: #120952;
+            margin: 0;
+            margin-bottom: 10px;
+        }
+        .profile-details p {
+            font-family: 'Times New Roman', serif;
+            font-size: 18px;
+            color: #120952;
+            margin: 0;
+            margin-bottom: 10px;
+        }
+        .profile-details h1 {
+            font-family: 'Times New Roman', serif;
+            font-size: 30px;
+            color: #120952;
+            margin: 0;
+            margin-bottom: 10px;
+        }
+        .profile-details form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Increased gap for better spacing */
+        }
+        /* .profile-details input[type="text"],
+        .profile-details input[type="email"],
+        .profile-details input[type="password"],
+        .profile-details input[type="file"],
+        .profile-details textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        } */
+        .profile-details button {
+            align-self: flex-start;
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+        }
+        .profile-details button:hover {
+            background-color: #0056b3;
+        }
+        .btn-back {
+            align-self: flex-start;
+            display: inline-block;
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .btn-back:hover {
+            background-color: #0056b3;
+        }
+        .form-error {
+            color: #ff0000; /* Red color for error messages */
+        }
+        .error-message {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile-pic">
+            <img src="{{ artist.profile_pic.url }}" alt="{{ user.username }}">
+        </div>
+        <div class="profile-details">
+          
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h2>Welcome to Reart Vault!</h2>
+    <p>Every contribution helps make a difference—thank you for being a vital part of our community!</p>
+    <h1>Edit Profile</h1>
+    
+    <!-- <div>
+        <label for="id_username">Username:</label>
+        <input type="text" id="id_username" name="username" oninput="validateName()" value="{{ user_form.username.value }}">
+        {% if user_form.username.errors %}
+            <span class="form-error">{{ user_form.username.errors }}</span>
+        {% endif %}
+        <span class="error-message" id="username-error">Invalid Username</span>
+    </div> -->
+    <div>
+        <label for="id_email">Email:</label>
+        <input type="email" id="id_email" name="email" oninput="validateEmail()" value="{{ user_form_artist.email.value }}">
+        {% if user_form_artist.email.errors %}
+            <span class="form-error">{{ user_form_artist.email.errors }}</span>
+        {% endif %}
+        <span class="error-message" id="email-error">Invalid Email</span>
+    </div>
+    <div>
+        <label for="id_phone">Phone:</label>
+        <input type="tel" id="id_phone" name="phone" oninput="validatePhoneNumber()"  value="{{ profile_form_artist.phone.value }}">
+        {% if profile_form_artist.phone.errors %}
+            <span class="form-error">{{ profile_form_artist.phone.errors }}</span>
+        {% endif %}
+        <span class="error-message" id="phone-error">Invalid Phone Number</span>
+    </div>
+    <div>
+        <label for="id_profile_pic">Profile Picture:</label>
+        <input type="file" id="id_profile_pic" accept="image/*" name="profile_pic">
+        {% if profile_form_artist.profile_pic.errors %}
+            <span class="form-error">{{ profile_form_artist.profile_pic.errors }}</span>
+        {% endif %}
+        <span id="error-message" style="color: red;"></span>
+    </div>
+    
+    <button type="submit" id="submit-btn">Save Changes</button>
+</form>
+
+
+        </div>
+    </div>
+    <script>
+        const id_profile_pic = document.getElementById("id_profile_pic");
+const errorMessage = document.getElementById("error-message");
+
+id_profile_pic.addEventListener("change", function(event) {
+    const file = event.target.files[0];
+    const fileType = file.type.toLowerCase();
+    if (!fileType.startsWith("image/")) {
+        errorMessage.textContent = "Please upload an image file.";
+        image.value = "";
+    } else {
+        errorMessage.textContent = "";
+    }
+});
+
+        function validateName() {
+            var id_username = document.getElementById("id_username").value;
+            var usernameError = document.getElementById("username-error");
+            var submitBtn = document.getElementById("submit-btn");
+            const pattern =  /^[^\s][a-zA-Z0-9\s!@#$&*_\[\]"'<>,.?/-]*$/
+            var res = pattern.test(id_username);
+            if (res) {
+                usernameError.style.display = "none";
+                submitBtn.disabled = false;
+            } else {
+                usernameError.style.display = "block";
+                submitBtn.disabled = true;
+            }
+        }
+        
+        function validateEmail() {
+            var id_email = document.getElementById("id_email").value;
+            var emailError = document.getElementById("email-error");
+            var submitBtn = document.getElementById("submit-btn");
+            const pattern = /[a-z0-9._%+-]+@[a-z0-9.-]+\.(com|in)$/;
+            var res = pattern.test(id_email);
+            if (res) {
+                emailError.style.display = "none";
+                submitBtn.disabled = false;
+            } else {
+                emailError.style.display = "block";
+                submitBtn.disabled = true;
+            }
+        }
+        function validatePhoneNumber() {
+            var id_phone = document.getElementById("id_phone").value;
+            var phoneError = document.getElementById("phone-error");
+            var submitBtn = document.getElementById("submit-btn");
+            const pattern = /^[6789][0-9]{9}$/;
+            var res = pattern.test(id_phone);
+            if (res) {
+                phoneError.style.display = "none";
+                submitBtn.disabled = false;
+            } else {
+                phoneError.style.display = "block";
+                submitBtn.disabled = true;
+            }
+        }
+
+
+    </script>
+</body>
+</html>

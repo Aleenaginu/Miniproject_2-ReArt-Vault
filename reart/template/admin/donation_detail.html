@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>Donation Detail</title>
+    <style>
+       body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: url("{% static 'profile.webp' %}")no-repeat center center fixed; /* Replace 'your-image-url.jpg' with the path to your image */
+    background-size: cover;
+}
+        .popup {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 500px;
+            max-width: 90%;
+            position: relative;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+        }
+        .form-group button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .back-button {
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="popup" id="donationDetailPopup">
+        <button class="back-button" onclick="window.history.back()">Back</button>
+        <h2>Donation Detail</h2>
+        <p><strong>Username:</strong> {{ donation.donor.user.username }}</p>
+        <p><strong>Quantity:</strong> {{ donation.quantity }}</p>
+        <p><strong>Medium:</strong> {{ donation.medium_of_waste.name }}</p>
+        <p><strong>Profile Picture:</strong></p>
+        {% if donation.donor.profile_pic %}
+            <img src="{{ donation.image.url }}" alt="Profile Picture" width="100" height="100">
+        {% else %}
+            No picture
+        {% endif %}
+        <p><strong>Location:</strong> {{ donation.location }}</p>
+        <p><strong>Date Donated:</strong> {{ donation.date_donated }}</p>
+        <p><strong>Status:</strong> {{ donation.get_status_display }}</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="status">Update Status</label>
+                <select id="status" name="status">
+                    {% for key, value in donation.STATUS_CHOICES %}
+                        <option value="{{ key }}" {% if donation.status == key %}selected{% endif %}>{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit">Update</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function closePopup() {
+            document.getElementById('donationDetailPopup').style.display = 'none';
+            // Add logic to show the previous page or content
+        }
+
+        function openPopup() {
+            document.getElementById('donationDetailPopup').style.display = 'block';
+        }
+        
+        // Example function to open the popup when a button is clicked
+        document.getElementById('viewDetailsButton').addEventListener('click', function() {
+            openPopup();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ user.username }}'s Profile</title>
+    <link rel="stylesheet" href="{% static 'assets/css/profile.css' %}">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: url("{% static 'profile.webp' %}") no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .container {
+            display: flex;
+            max-width: 800px;
+            width: 90%;
+            height: auto;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.5); /* Semi-transparent background */
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .profile-pic {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+        .profile-pic img {
+            border-radius: 10px;
+            width: 250px;
+            height: 350px;
+            object-fit: cover;
+            position: relative;
+            z-index: 1;
+        }
+        .profile-details {
+            flex: 2;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.5); /* Semi-transparent background */
+            border-radius: 0 10px 10px 0;
+        }
+        .profile-details h2 {
+            font-family: 'Times New Roman', serif;
+            font-size: 36px;
+            font-weight: bold;
+            color: #120952;
+            margin: 0;
+            margin-bottom: 10px;
+        }
+        .profile-details p {
+            font-family: 'Times New Roman', serif;
+            font-size: 18px;
+            color: #120952;
+            margin: 0;
+            margin-bottom: 10px;
+        }
+        .profile-details h1 {
+            font-family: 'Times New Roman', serif;
+            font-size: 30px;
+            color: #120952;
+            margin: 0;
+            margin-bottom: 10px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #82b4eb;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            width: 150px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile-pic">
+            <img src="{{ artist.profile_pic.url }}" alt="{{ user.username }}">
+        </div>
+        <div class="profile-details">
+            <h2>Welcome to Reart Vault!</h2>
+            <p>Every contribution helps make a difference—thank you for being a vital part of our community!</p>
+            <h1>Hi {{ user.username }}</h1>
+            <p>Email: {{ user.email }}</p>
+            <p>Phone: {{ artist.phone }}</p>
+            <a href="{% url 'artist_dashboard' %}" class="btn">Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>
