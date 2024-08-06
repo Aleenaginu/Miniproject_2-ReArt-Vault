@@ -85,6 +85,7 @@ def add_medium_of_waste(request):
         
         name = request.POST.get('name')
         description = request.POST.get('description')
+        rate = request.POST.get('rate')
         
         
         if MediumOfWaste.objects.filter(name=name).exists():
@@ -92,7 +93,7 @@ def add_medium_of_waste(request):
             return render(request, 'admin/add_medium_of_waste.html')
 
         
-        MediumOfWaste.objects.create(name=name, description=description)
+        MediumOfWaste.objects.create(name=name, description=description, rate=rate)
         messages.success(request,"Medium of waste added successfully")
         return redirect('admin_dashboard')  
 
