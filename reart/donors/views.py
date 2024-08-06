@@ -86,6 +86,16 @@ def view_donations(request):
          'donor':donor
      }
      return render(request, 'Donors/manage_donation.html',context )
+
+def view_rates(request):
+  
+     donor=request.user.donors
+     mediums=MediumOfWaste.objects.all()
+     context={
+         'mediums': mediums , 
+         'donor':donor
+     }
+     return render(request, 'Donors/view_rates.html',context )
   
     # donations = Donation.objects.select_related('donor', 'medium_of_waste').all()
     # return render(request, 'Donors/manage_donation.html', {'donations': donations})

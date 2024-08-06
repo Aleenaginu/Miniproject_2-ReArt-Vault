@@ -64,6 +64,15 @@ def reject_artist(request, artist_id):
 
     return redirect('approve_artists')
 
+def artist_details(request, artist_id):
+    adminclick= request.user.adminclick
+    artist=get_object_or_404(Artist, id=artist_id)
+    context={
+        'artist': artist,
+        'adminclick': adminclick
+    }
+    return render(request, 'admin/artist_details.html', context)
+
 
 @login_required
 def add_medium_of_waste(request):
@@ -88,6 +97,27 @@ def add_medium_of_waste(request):
         return redirect('admin_dashboard')  
 
     return render(request, 'admin/add_medium_of_waste.html', context)
+
+def set_rates(request):
+    adminclick=request.user.adminclick
+    if request.method=='POST':
+        for medium_id, rate in request.POST.items():
+            if medium_id.startswith('rate_'):
+                try:
+                    medium_id=int(medium_id.split('_')[1])
+                    medium=MediumOfWaste.objects.get(id=medium_id)
+                    medium.rate=float(rate)
+                    medium.save()
+                except (ValueError, MediumOfWaste.DoesNotExist):
+                    continue
+        messages.success(request,'Rates set successfully')
+        return redirect('set_rates')
+    mediums=MediumOfWaste.objects.all()
+    context={
+        'mediums': mediums,
+        'adminclick': adminclick
+    }
+    return render(request,'admin/set_rates.html',context)
 
 def donation_listview(request):
     adminclick= request.user.adminclick

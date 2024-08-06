@@ -243,7 +243,15 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       
     }
-
+.sales-details {
+      display: flex;
+      justify-content: space-around;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      
+    }
   
         .table {
             width: 100%;
@@ -274,14 +282,11 @@
         }
 
         .sales-boxes {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    width: 80%; /* Adjust the width as needed */
-    max-width: 1200px; /* Optional: limit the maximum width */
-    margin: 0 auto; /* Center the container if width is less than 100% */
-}
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
         .recent-sales {
             background-color: rgb(205, 231, 240);
@@ -316,7 +321,26 @@
         .table tr {
     background-color: #e0dcdc; /* Light grey color for default state */
 }
+
 .sales-boxes {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    width: 80%; /* Adjust the width as needed */
+    max-width: 1200px; /* Optional: limit the maximum width */
+    margin: 0 auto; /* Center the container if width is less than 100% */
+}
+
+        .recent-sales {
+            background-color: rgb(205, 231, 240);
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .sales-boxes {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -325,52 +349,53 @@
     width: 100%;
     max-width: 1000px;
   }
-  .table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-    font-family: Arial, sans-serif;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  .table th, .table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  .btn-view {
-    display: inline-block;
-    padding: 5px 10px;
-    background-color: #3498db;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    white-space: nowrap;
-  }
-  .btn-view:hover {
-    background-color: #2980b9;
-  }
-  .donation-form {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  .donation-form form {
-    display: flex;
-    flex-direction: column;
-  }
-  .donation-form form button {
-    align-self: flex-end;
-    padding: 10px 20px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  .donation-form form button:hover {
-    background-color: #2980b9;
-  }
+  .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+        .table-container {
+            width: 80%;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1em;
+            text-align: left;
+        }
+        .table thead {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .table th, .table td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+        }
+        .table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        .table th {
+            background-color: #696d6f;
+            color: white;
+            text-align: center;
+        }
+        .table td {
+            text-align: center;
+        }
+        .table td:first-child {
+            text-align: left;
+        }
   
   
   </style>
@@ -384,33 +409,33 @@
     </div>
     <ul class="nav-links">
       <li>
-        <a href="{% url 'admin_dashboard' %}" class="active">
+        <a href="{% url 'donor_dashboard' %}" class="active">
           <i class='bx bx-grid-alt'></i>
           <span class="links_name">Dashboard</span>
         </a>
       </li>
       <li>
-        <a href="{% url 'add_medium_of_waste' %}">
+        <a href="{% url 'donate_waste' %}">
           <i class='bx bx-box'></i>
-          <span class="links_name">Add Medium of Donations</span>
+          <span class="links_name">Add Donations</span>
         </a>
       </li>
       <li>
-        <a href="{% url 'approve_artists' %}">
+        <a href="#">
           <i class='bx bx-list-ul'></i>
-          <span class="links_name">Manage Artists</span>
-        </a>
-      </li>
-      <li>
-        <a href="{% url 'donation_listview' %}">
-          <i class='bx bx-pie-chart-alt-2'></i>
           <span class="links_name">Manage Donations</span>
         </a>
       </li>
       <li>
-        <a href="{% url 'set_rates' %}">
-          <i class='bx bx-message'></i>
-          <span class="links_name">Set Pricing</span>
+        <a href="{% url 'view_rates' %}">
+            <i class='bx bx-pie-chart-alt-2'></i>
+            <span class="links_name">Price Listings</span>
+          </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-coin-stack'></i>
+          <span class="links_name">Analytics</span>
         </a>
       </li>
       <li>
@@ -462,13 +487,13 @@
         <i class='bx bx-search'></i>
       </div>
       <div class="profile-details">
-        <img src="{{adminclick.profile_pic.url}}" alt="">
+        <img src="{{donor.profile_pic.url}}" alt="">
         <span class="admin_name" style="font-size: 25px; font-weight: 900; color: #010302;">Hi {{user.username}}</span>
         <i class='bx bx-chevron-down'></i>
         <ul class="dropdown-menu">
-          <!-- <li><a href="{% url 'userprofile' %}">View Profile</a></li>
+          <li><a href="{% url 'userprofile' %}">View Profile</a></li>
           <li><a href="{% url 'donor_update' %}">Edit Profile</a></li>
-          <li><a href="#">Settings</a></li> -->
+          <li><a href="#">Settings</a></li>
           <li><a href="{% url 'userlogout' %}">Logout</a></li>
         </ul>
       </div>
@@ -522,82 +547,28 @@
             </div>
           </div>
     
-          <div class="sales-boxes">
-            <div class="recent-sales box" style="background-color: rgb(205, 231, 240); padding: 20px; border-radius: 10px; width:1000px;">
-                <div class="title" style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">Manage Donations</div>
-                
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Donor Name</th>
-                           
-                            <th>Medium of Waste</th>
-                            <th>Quantity</th>
-                            <th>Image</th>
-                            <th>Location</th>
-                            <th>Date Donated</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      {% for donation in donations %}
-                      <tr>
-                          <td>{{ donation.donor.user.username }}</td>
-                          
-                          <td>{{ donation.medium_of_waste.name }}</td>
-                          <td>{{ donation.quantity }}</td>
-                          <td>
-                              {% if donation.image %}
-                                  <img src="{{ donation.image.url }}" alt="Profile Picture" width="50" height="50">
-                              {% else %}
-                                  No picture
-                              {% endif %}
-                          </td>
-                          <td>{{ donation.location }}</td>
-                          <td>{{ donation.date_donated }}</td>
-                          <td>
-                              <a href="{% url 'donation_detail' donation.pk %}" class="btn-view">View Details</a>
-                          </td>
-                      </tr>
-                  {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-          
-        </div>
-          
-          
-                
-      <!-- </section> -->
-    
-      <script>
-        let sidebar = document.querySelector(".sidebar");
-        let sidebarBtn = document.querySelector(".sidebarBtn");
-        sidebarBtn.onclick = function () {
-          sidebar.classList.toggle("active");
-          if (sidebar.classList.contains("active")) {
-            sidebarBtn.classList.replace("bx-menu", "bx-menu-alt-right");
-          } else {
-            sidebarBtn.classList.replace("bx-menu-alt-right", "bx-menu");
-          }
-        }
-      </script>
-      <script>
-         document.addEventListener("DOMContentLoaded", function () {
-          {% for message in messages %}
-              Swal.fire({
-                  icon: '{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}', 
-                  title: '{{ message }}',
-                  showConfirmButton: false,
-                  timer: 3000
-              });
-          {% endfor %}
-      });
-          </script>
-    </body>
-    
-    </html>
-     
-  
-      
-
+<div class="sales-boxes">
+    <div class="recent-sales box" style="background-color: rgb(205, 231, 240); padding: 20px; border-radius: 10px; width:1000px;">
+        <div class="title" style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">View Price Listings</div>
+        <table class="table">
+            <thead>
+                <tr>
+    <thead>
+        <tr>
+            <th>Medium</th>
+            <th>Description</th>
+            <th>Rate</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for medium in mediums %}
+        <tr>
+            <td>{{ medium.name }}</td>
+            <td>{{ medium.description }}</td>
+            <td>₹{{ medium.rate }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+</div>

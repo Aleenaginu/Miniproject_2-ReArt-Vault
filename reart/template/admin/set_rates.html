@@ -143,89 +143,98 @@
     /* Space between heading and description */
   }
  
-
-  .artist-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    font-family: Arial, sans-serif;
-    background-color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  .form-container {
+    /* background-color: #c9eaee; */
+    padding: 20px;
     border-radius: 10px;
-    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .artist-table th, .artist-table td {
-    border: none;
-    padding: 15px 20px;
-    text-align: left;
-  }
-
-  .artist-table th {
-    background-color: #f7f9fa;
-    color: #333;
+  .form-container label {
+    display: block;
     font-weight: bold;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+    color: #333;
   }
 
-  .artist-table tbody tr {
+  .form-container input[type="text"],
+  .form-container textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    transition: border-color 0.3s;
+  }
+
+  .form-container input[type="text"]:focus,
+  .form-container input:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+
+  .form-container input[type="number"],
+  .form-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    transition: border-color 0.3s;
+  }
+
+  .form-container input[type="number"]:focus,
+  .form-container textarea:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+
+  .form-container button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
     transition: background-color 0.3s;
   }
 
-  .artist-table tbody tr:nth-child(even) {
-    background-color: #f7f9fa;
+  .form-container button:hover {
+    background-color: #0056b3;
   }
+  .error-message {
+            display: none; /* Hide error message by default */
+            color: red;
+            font-size: 0.875em;
+}
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+}
 
-  .artist-table tbody tr:hover {
-    background-color: #e9eff4;
-  }
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
 
-  .artist-table img {
-    border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
+.btn-primary:hover {
+  background-color: #0056b3;
+}
 
-  .btn-approve, .btn-reject, .btn-primary{
-    padding: 8px 12px;
-    border-radius: 20px;
-    text-decoration: none;
-    color: #fff;
-    font-weight: bold;
-    transition: background-color 0.3s, transform 0.2s;
-    display: inline-block;
-    margin: 5px;
-    text-align: center;
-  }
 
-  .btn-approve {
-    background-color: #28a745;
-  }
-
-  .btn-approve:hover {
-    background-color: #218838;
-    transform: scale(1.05);
-  }
-  .btn-primary {
-    background-color: #2ab1c0;
-  }
-
-  .btn-primary:hover {
-    background-color: #215488;
-    transform: scale(1.05);
-  }
-
-  .btn-reject {
-    background-color: #dc3545;
-  }
-
-  .btn-reject:hover {
-    background-color: #c82333;
-    transform: scale(1.05);
-  }
-
-  .sales-boxes {
+.sales-boxes {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -259,12 +268,7 @@
             text-align: center;
             color: #333;
         }
-
 </style>
-
-
-
-
 
 <body>
   <div class="sidebar">
@@ -400,133 +404,64 @@
             <i class='bx bxs-cart-download cart four'></i>
           </div>
         </div>
-  
-        
-          <div class="sales-boxes">
-            <div class="recent-sales box" style="background-color: rgb(205, 231, 240); padding: 20px; border-radius: 10px; width:1000px;">
-                <div class="title" style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">Manage Artists</div>
-                <table class="artist-table">
-                  <thead>
-                    <tr>
-                      <th>Profile Picture</th>
-                      <th>Username</th>
-                      <th>Phone</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for artist in pending_artists %}
-                    <tr>
-                      <td><img src="{{ artist.profile_pic.url }}" alt="{{ artist.user.username }}" width="50"></td>
-                      <td>{{ artist.user.username }}</td>
-                      <td>{{ artist.phone }}</td>
-                      <td>
-                        <a href="{% url 'approve_artist' artist.id %}" class="btn-approve">Approve</a>
-                        <a href="{% url 'reject_artist' artist.id %}" class="btn-reject">Reject</a>
-                        <a href="{% url 'artist_details' artist.id %}" class="btn-primary">Details</a>
-                      </td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-              
-              <!DOCTYPE html>
-<html>
-<head>
-    <title>Artist List</title>
-</head>
-<body>
-  <div class="sales-boxes">
-    <div class="recent-sales box" style="background-color: rgb(205, 231, 240); padding: 20px; border-radius: 10px; width:1000px;">
-        <div class="title" style="font-size: 24px; font-weight: bold; margin-bottom: 20px;"> Artists List</div>
-        <table class="artist-table">
-          <thead>
-            <tr>
-              
-              <th>Username</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Medium</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-        <tbody>
-            {% for artist in artists %}
-            <tr>
-                <td>{{ artist.user.username }}</td>
-                <td>{{ artist.user.email }}</td>
-                <td>{{ artist.phone }}</td>
-               
-                <td>
-
-                        {{ artist.medium.name }}
-                </td>
-                <td>
-                    {% if artist.is_approved %}
-                        Approved
-                    {% elif artist.is_approved is False %}
-                        Rejected
-                    {% else %}
-                        Pending
-                    {% endif %}
-                </td>
-            </tr>
+        <div class="sales-boxes">
+          <div class="recent-sales box" style="background-color: rgb(205, 231, 240); padding: 20px; border-radius: 10px; width:1000px;">
+              <div class="title" style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">Set Rates for Mediums of Waste</div>
+    <!-- <h2>Set Rates for Mediums of Waste</h2> -->
+    <div class="form-container">
+    <form method="post">
+        {% csrf_token %}
+        {% for medium in mediums %}
+            <div class="form-group">
+                <label for="rate_{{ medium.id }}">{{ medium.name }}</label>
+                <input type="number" step="0.01" id="rate_{{ medium.id }}" name="rate_{{ medium.id }}" class="form-control" value="{{ medium.rate }}" oninput="validateRate({{ medium.id }})" required>
+                <span class="error-message" id="rate-error-{{ medium.id }}">Invalid Rate</span>
+            </div>
+            <br>
         {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
-
-    <!-- </section> -->
-  
+        <button type="submit" id="submit-btn" class="btn btn-primary">Update Rates</button>
+    </form>
+    </div>
     <script>
-      let sidebar = document.querySelector(".sidebar");
-      let sidebarBtn = document.querySelector(".sidebarBtn");
-      sidebarBtn.onclick = function () {
-        sidebar.classList.toggle("active");
-        if (sidebar.classList.contains("active")) {
-          sidebarBtn.classList.replace("bx-menu", "bx-menu-alt-right");
-        } else {
-          sidebarBtn.classList.replace("bx-menu-alt-right", "bx-menu");
-        }
+     
+        function validateRate() {
+      const rateInput = document.getElementById('rate');
+      const rateError = document.getElementById('rate-error');
+      const submitBtn = document.getElementById('submit-btn');
+  
+      if (rateInput.value <= 0 || isNaN(rateInput.value)) {
+          rateError.style.display = 'block';
+          submitBtn.disabled = true;
+      } else {
+          rateError.style.display = 'none';
+          submitBtn.disabled = false;
       }
-    </script>
-    <script>
-       document.addEventListener("DOMContentLoaded", function () {
-        {% for message in messages %}
-            Swal.fire({
-                icon: '{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}', 
-                title: '{{ message }}',
-                showConfirmButton: false,
-                timer: 3000
-            });
-        {% endfor %}
-    });
+  }
         </script>
-  </body>
+      <script>
+        let sidebar = document.querySelector(".sidebar");
+        let sidebarBtn = document.querySelector(".sidebarBtn");
+        sidebarBtn.onclick = function () {
+          sidebar.classList.toggle("active");
+          if (sidebar.classList.contains("active")) {
+            sidebarBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+          } else {
+            sidebarBtn.classList.replace("bx-menu-alt-right", "bx-menu");
+          }
+        }
+      </script>
+      <script>
+         document.addEventListener("DOMContentLoaded", function () {
+          {% for message in messages %}
+              Swal.fire({
+                  icon: '{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}', 
+                  title: '{{ message }}',
+                  showConfirmButton: false,
+                  timer: 3000
+              });
+          {% endfor %}
+      });
+          </script>
   
-  </html>
-    <!-- {% for message in messages %}
-    <script>
-        alert('{{message}}')
-   </script>
-   {% endfor %} -->
-   
-</body>
-</html>
-
-    <!-- <h2>Pending Artist Approvals</h2> -->
-    <!-- <ul>
-        {% for artist in pending_artists %}
-            <li>
-                <img src="{{ artist.profile_pic.url }}" alt="{{ artist.user.username }}" width="50">
-                {{ artist.user.username }} - {{ artist.phone }} 
-                <a href="{% url 'approve_artist' artist.id %}">Approve</a>
-                <a href="{% url 'reject_artist' artist.id %}">Reject</a>
-            </li>
-        {% endfor %}
-    </ul> -->
-</body>
-</html>
+  </body>
+  </html>

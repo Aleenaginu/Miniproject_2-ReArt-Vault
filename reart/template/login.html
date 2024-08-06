@@ -201,6 +201,35 @@
         });
     {% endfor %}
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+
+{% for message in messages %}
+    if (message.tags == 'error' && message == 'Your account is pending approval.') {
+        Swal.fire({
+            icon: 'info',
+            title: 'Pending Approval',
+            html: `
+                <p>{{ message }}</p>
+                <p>Please <a href="{% url 'upload_certificate' %}">upload your certificate</a> for approval.</p>
+            `,
+            showConfirmButton: false,
+            timer: 3000
+        });
+    } else {
+        Swal.fire({
+            icon: '{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}',
+            title: '{{ message }}',
+            showConfirmButton: false,
+            timer: 3000
+        });
+    }
+{% endfor %}
+});
+
+
+
+
     </script>
 </body>
 </html>

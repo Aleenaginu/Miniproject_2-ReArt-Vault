@@ -285,9 +285,9 @@
       </li>
   
       <li>
-        <a href="#">
+        <a href="{% url 'set_rates' %}">
           <i class='bx bx-message'></i>
-          <span class="links_name">Messages</span>
+          <span class="links_name">Set Pricing</span>
         </a>
       </li>
       <li>
@@ -403,6 +403,11 @@
                   <textarea id="description" name="description" class="form-control" oninput="validateDName()" required ></textarea>
                   <span class="error-message" id="description-error">Invalid Description</span>
                 </div>
+                <div class="form-group">
+                  <label for="rate">Rate:</label>
+                  <input type="text" step="0.01" id="rate" name="rate" class="form-control" oninput="validateRate()" required>
+                  <span class="error-message" id="rate-error">Invalid Rate</span>
+              </div>
                 <br>
                   <button type="submit" id="submit-btn" class="btn btn-primary " disabled >Add Medium</button>
                 </form>
@@ -441,6 +446,19 @@
               submitBtn.disabled = true;
           }
       }
+      function validateRate() {
+    const rateInput = document.getElementById('rate');
+    const rateError = document.getElementById('rate-error');
+    const submitBtn = document.getElementById('submit-btn');
+
+    if (rateInput.value <= 0 || isNaN(rateInput.value)) {
+        rateError.style.display = 'block';
+        submitBtn.disabled = true;
+    } else {
+        rateError.style.display = 'none';
+        submitBtn.disabled = false;
+    }
+}
       </script>
     <script>
       let sidebar = document.querySelector(".sidebar");

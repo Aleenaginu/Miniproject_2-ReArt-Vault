@@ -15,7 +15,7 @@
     });
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+
 <style>
   .profile-details .dropdown-menu {
     display: none;
@@ -187,7 +187,7 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
 
-  .btn-approve, .btn-reject, .btn-primary{
+  .btn-approve, .btn-reject ,.btn-primary {
     padding: 8px 12px;
     border-radius: 20px;
     text-decoration: none;
@@ -202,17 +202,12 @@
   .btn-approve {
     background-color: #28a745;
   }
+  .btn-primary{
+    background-color: #3581f4;
+  }
 
   .btn-approve:hover {
     background-color: #218838;
-    transform: scale(1.05);
-  }
-  .btn-primary {
-    background-color: #2ab1c0;
-  }
-
-  .btn-primary:hover {
-    background-color: #215488;
     transform: scale(1.05);
   }
 
@@ -262,10 +257,7 @@
 
 </style>
 
-
-
-
-
+</head>
 <body>
   <div class="sidebar">
     <div class="logo-details">
@@ -401,132 +393,76 @@
           </div>
         </div>
   
-        
-          <div class="sales-boxes">
-            <div class="recent-sales box" style="background-color: rgb(205, 231, 240); padding: 20px; border-radius: 10px; width:1000px;">
-                <div class="title" style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">Manage Artists</div>
-                <table class="artist-table">
-                  <thead>
-                    <tr>
-                      <th>Profile Picture</th>
-                      <th>Username</th>
-                      <th>Phone</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for artist in pending_artists %}
-                    <tr>
-                      <td><img src="{{ artist.profile_pic.url }}" alt="{{ artist.user.username }}" width="50"></td>
-                      <td>{{ artist.user.username }}</td>
-                      <td>{{ artist.phone }}</td>
-                      <td>
-                        <a href="{% url 'approve_artist' artist.id %}" class="btn-approve">Approve</a>
-                        <a href="{% url 'reject_artist' artist.id %}" class="btn-reject">Reject</a>
-                        <a href="{% url 'artist_details' artist.id %}" class="btn-primary">Details</a>
-                      </td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-              
-              <!DOCTYPE html>
-<html>
-<head>
-    <title>Artist List</title>
-</head>
-<body>
-  <div class="sales-boxes">
-    <div class="recent-sales box" style="background-color: rgb(205, 231, 240); padding: 20px; border-radius: 10px; width:1000px;">
-        <div class="title" style="font-size: 24px; font-weight: bold; margin-bottom: 20px;"> Artists List</div>
-        <table class="artist-table">
-          <thead>
-            <tr>
-              
-              <th>Username</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Medium</th>
-              <th>Status</th>
-            </tr>
-          </thead>
+
+    <div class="sales-boxes">
+      <div class="recent-sales box" style="background-color: rgb(205, 231, 240); padding: 20px; border-radius: 10px; width:1000px;">
+          <div class="title" style="font-size: 24px; font-weight: bold; margin-bottom: 20px;"> <h1>Artist Details</h1></div>
+          <table class="artist-table">
+            <thead>
+              <tr>
+                
+                <th>Username</th>
+                <th>Phone</th>
+                <th>Medium</th>
+                <th>Profile Picture</th>
+                <th>Certificate</th>
+              </tr>
+            </thead>
+            <tbody>
           <tbody>
-        <tbody>
-            {% for artist in artists %}
-            <tr>
-                <td>{{ artist.user.username }}</td>
-                <td>{{ artist.user.email }}</td>
-                <td>{{ artist.phone }}</td>
-               
-                <td>
-
-                        {{ artist.medium.name }}
-                </td>
-                <td>
-                    {% if artist.is_approved %}
-                        Approved
-                    {% elif artist.is_approved is False %}
-                        Rejected
-                    {% else %}
-                        Pending
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
-
-    <!-- </section> -->
+          
+              <tr>
+                  <td>{{ artist.user.username }}</td>
+                  <td>{{ artist.phone }}</td>
+                  <td>
   
-    <script>
-      let sidebar = document.querySelector(".sidebar");
-      let sidebarBtn = document.querySelector(".sidebarBtn");
-      sidebarBtn.onclick = function () {
-        sidebar.classList.toggle("active");
-        if (sidebar.classList.contains("active")) {
-          sidebarBtn.classList.replace("bx-menu", "bx-menu-alt-right");
-        } else {
-          sidebarBtn.classList.replace("bx-menu-alt-right", "bx-menu");
-        }
-      }
-    </script>
-    <script>
-       document.addEventListener("DOMContentLoaded", function () {
-        {% for message in messages %}
-            Swal.fire({
-                icon: '{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}', 
-                title: '{{ message }}',
-                showConfirmButton: false,
-                timer: 3000
-            });
-        {% endfor %}
-    });
-        </script>
-  </body>
-  
-  </html>
-    <!-- {% for message in messages %}
-    <script>
-        alert('{{message}}')
-   </script>
-   {% endfor %} -->
+                          {{ artist.medium.name }}
+                  </td>
+                  <td>
+                    <img src="{{ artist.profile_pic.url }}" alt="{{ artist.user.username }}" width="150">
+      
+                  </td>
+                  <td>
+                    {% if artist.certificate %}
+                    <a href="{{ artist.certificate.url }}" target="_blank" class="btn btn-primary">View Certificate</a>
+                {% else %}
+                    No certificate uploaded
+                {% endif %}
+                  </td>
+              </tr>
+        
+          </tbody>
+      </table>
+      <a href="{% url 'approve_artists' %}" class="btn btn-primary">Back to List</a>
    
-</body>
-</html>
 
-    <!-- <h2>Pending Artist Approvals</h2> -->
-    <!-- <ul>
-        {% for artist in pending_artists %}
-            <li>
-                <img src="{{ artist.profile_pic.url }}" alt="{{ artist.user.username }}" width="50">
-                {{ artist.user.username }} - {{ artist.phone }} 
-                <a href="{% url 'approve_artist' artist.id %}">Approve</a>
-                <a href="{% url 'reject_artist' artist.id %}">Reject</a>
-            </li>
-        {% endfor %}
-    </ul> -->
-</body>
-</html>
+      <!-- </section> -->
+    
+      <script>
+        let sidebar = document.querySelector(".sidebar");
+        let sidebarBtn = document.querySelector(".sidebarBtn");
+        sidebarBtn.onclick = function () {
+          sidebar.classList.toggle("active");
+          if (sidebar.classList.contains("active")) {
+            sidebarBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+          } else {
+            sidebarBtn.classList.replace("bx-menu-alt-right", "bx-menu");
+          }
+        }
+      </script>
+      <script>
+         document.addEventListener("DOMContentLoaded", function () {
+          {% for message in messages %}
+              Swal.fire({
+                  icon: '{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}', 
+                  title: '{{ message }}',
+                  showConfirmButton: false,
+                  timer: 3000
+              });
+          {% endfor %}
+      });
+          </script>
+   
+
+  </body>
+  </html>

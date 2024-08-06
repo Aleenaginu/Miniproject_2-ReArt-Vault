@@ -86,6 +86,7 @@ def UserLogin(request):
                 return redirect('artist_dashboard')
             else:
                 messages.error(request, 'Your account is pending approval.')
+                return redirect('pending_approval')
         else:
             messages.error(request, 'Invalid credentials')
         return render(request, 'login.html')

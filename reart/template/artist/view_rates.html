@@ -88,6 +88,7 @@
     background-color: #f9f9f9;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    
   }
 
   .details {
@@ -141,16 +142,269 @@
     margin-bottom: 5px;
     /* Space between heading and description */
   }
-  .badge {
-    background-color: red;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 50%;
-    font-size: 12px;
-    position: absolute;
-    top: 10px;
-    right: 10px;
+
+ 
+  .form-container {
+    /* background-color: #c9eaee; */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-container label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+  }
+
+  .form-container input[type="text"],
+  .form-container textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    transition: border-color 0.3s;
+  }
+
+  .form-container input[type="text"]:focus,
+  .form-container textarea:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+
+  .form-container button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+  }
+
+  .form-container button:hover {
+    background-color: #0056b3;
+  }
+  .form-group {
+margin-bottom: 15px;
 }
+
+.form-control {
+width: 100%;
+padding: 10px;
+border: 1px solid #ccc;
+border-radius: 5px;
+}
+
+.btn {
+display: inline-block;
+padding: 10px 20px;
+font-size: 16px;
+font-weight: bold;
+text-align: center;
+text-decoration: none;
+border-radius: 5px;
+}
+
+.btn-primary {
+background-color: #007bff;
+color: white;
+border: none;
+cursor: pointer;
+}
+
+.btn-primary:hover {
+background-color: #0056b3;
+}
+.table {
+width: 100%;
+border-collapse: collapse;
+margin-bottom: 20px;
+}
+
+.table th, .table td {
+padding: 10px;
+text-align: left;
+border-bottom: 1px solid #ddd;
+}
+
+.table th {
+background-color: #f2f2f2;
+font-weight: bold;
+}
+
+.table tr:hover {
+background-color: #f1f1f1;
+}
+.sales-details {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    
+  }
+.sales-details {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    
+  }
+
+      .table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 20px;
+          font-family: Arial, sans-serif;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      }
+
+      .table th, .table td {
+          padding: 12px 15px;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+      }
+
+      .table th {
+          background-color: #f8f8f8;
+          font-weight: bold;
+      }
+
+
+      .table tr {
+          transition: background-color 0.3s;
+      }
+
+      .table tr:hover {
+          background-color: #f1f1f1;
+      }
+
+      .sales-boxes {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 20px;
+      }
+
+      .recent-sales {
+          background-color: rgb(205, 231, 240);
+          padding: 20px;
+          border-radius: 10px;
+          width: 100%;
+          max-width: 1000px;
+      }
+
+      .title {
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 20px;
+          text-align: center;
+          color: #333;
+      }
+
+      .table th {
+          color: #333;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+      }
+
+      .table td {
+          color: #666;
+      }
+
+      .table tr:nth-child(even) {
+       
+        background-color: #f9f9f9;
+      }
+      .table tr {
+  background-color: #e0dcdc; /* Light grey color for default state */
+}
+
+.sales-boxes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  width: 80%; /* Adjust the width as needed */
+  max-width: 1200px; /* Optional: limit the maximum width */
+  margin: 0 auto; /* Center the container if width is less than 100% */
+}
+
+      .recent-sales {
+          background-color: rgb(205, 231, 240);
+          padding: 20px;
+          border-radius: 10px;
+          width: 100%;
+          max-width: 1000px;
+      }
+
+      .sales-boxes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.recent-sales.box {
+  width: 100%;
+  max-width: 1000px;
+}
+.title {
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 20px;
+          text-align: center;
+          color: #333;
+      }
+      .table-container {
+          width: 80%;
+          margin: auto;
+          background-color: #fff;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 20px 0;
+          font-size: 1em;
+          text-align: left;
+      }
+      .table thead {
+          background-color: #007bff;
+          color: #fff;
+      }
+      .table th, .table td {
+          padding: 12px 15px;
+          border: 1px solid #ddd;
+      }
+      .table tbody tr:nth-child(even) {
+          background-color: #f9f9f9;
+      }
+      .table tbody tr:hover {
+          background-color: #f1f1f1;
+      }
+      .table th {
+          background-color: #696d6f;
+          color: white;
+          text-align: center;
+      }
+      .table td {
+          text-align: center;
+      }
+      .table td:first-child {
+          text-align: left;
+      }
+
+
 </style>
 
 <body>
@@ -177,9 +431,9 @@
       </li>
       <li>
         <a href="{% url 'view_ratesartist' %}">
-          <i class='bx bx-pie-chart-alt-2'></i>
-          <span class="links_name">Price Listings</span>
-        </a>
+            <i class='bx bx-pie-chart-alt-2'></i>
+            <span class="links_name">Price Listings</span>
+          </a>
       </li>
       <li>
         <a href="#">
@@ -292,156 +546,28 @@
           <i class='bx bxs-cart-download cart four'></i>
         </div>
       </div>
-
-      <div class="sales-boxes" >
-        <div class="recent-sales box" style="background-color:rgb(205, 231, 240);">
-          <div class="title">More About ReArt Vault </div>
-          <div class="sales-details">
-            <ul class="details">
-              <li class="detail-item" style="display: flex; align-items: center;">
-                <img src="{% static 'col.jpg' %}" alt="Waste materials" class="item-pic"
-                  style="width: 150px; height: auto; margin-right: 20px;">
-                <div>
-                  <span class="item-text"
-                    style="display: block; font-weight: bold; font-size: 1.2em; margin-bottom: 5px;">Transforming Trash:
-                    Your Waste, Our Treasure.</span>
-                  <p style="margin: 0;">We gather discarded materials, giving them a second chance to shine.</p>
-                </div>
-              </li>
-              <li class="detail-item" style="display: flex; align-items: center;">
-                <img src="{% static 'donorlog.jpg' %}" alt="Waste materials" class="item-pic"
-                  style="width: 150px; height: auto; margin-right: 20px;">
-                <div>
-                  <span class="item-text"
-                    style="display: block; font-weight: bold; font-size: 1.2em; margin-bottom: 5px;">Passing the Baton: Waste to Wonder in Artistic Hands.</span>
-                  <p style="margin: 0;">Our talented artists receive the collected materials, ready to work their magic.</p>
-                </div>
-              </li>
-             
-              
-              <li class="detail-item" style="display: flex; align-items: center;">
-                <img src="{% static 'seg.jpg' %}" alt="Waste materials" class="item-pic"
-                  style="width: 150px; height: auto; margin-right: 20px;">
-                <div>
-                  <span class="item-text"
-                    style="display: block; font-weight: bold; font-size: 1.2em; margin-bottom: 5px;">Sorting the Gems: Separating to Innovate. </span>
-                  <p style="margin: 0;">Materials are carefully sorted to maximize their creative potential.</p>
-                </div>
-              </li>
-              <li class="detail-item" style="display: flex; align-items: center;">
-                <img src="{% static 'mak.jpg' %}" alt="Waste materials" class="item-pic"
-                  style="width: 150px; height: auto; margin-right: 20px;">
-                <div>
-                  <span class="item-text"
-                    style="display: block; font-weight: bold; font-size: 1.2em; margin-bottom: 5px;">Crafting Magic: Turning Scraps into Masterpieces.</span>
-                  <p style="margin: 0;">Artists skillfully transform the sorted materials into unique and beautiful products.</p>
-                </div>
-              </li>
-              <li class="detail-item" style="display: flex; align-items: center;">
-                <img src="{% static 'fin.jpg' %}" alt="Waste materials" class="item-pic"
-                  style="width: 150px; height: auto; margin-right: 20px;">
-                <div>
-                  <span class="item-text"
-                    style="display: block; font-weight: bold; font-size: 1.2em; margin-bottom: 5px;">Discover and Delight: Unique Upcycled Art Awaits!</span>
-                  <p style="margin: 0;">The finished masterpieces are displayed for purchase, ready to find a new home.</p>
-                </div>
-              </li>
-            </ul>
-          </div>
-
-          <div class="button">
-            <a href="#">See All</a>
-          </div>
-        </div>
-        <div class="top-sales box"  style="background-color:rgb(205, 231, 240);">
-          <div class="title">Donate and make Wonders</div>
-          <ul class="top-sales-details">
-            <li>
-              <a href="#">
-                <img src="{% static 'i1.jpg' %}" alt="">
-                <span class="product">Vuitton Sunglasses</span>
-              </a>
-              <span class="price">$1107</span>
-            </li>
-            <li>
-              <a href="#">
-                <img src="{% static 'i2.jpg' %}" alt="">
-                <span class="product">Hourglass Jeans</span>
-              </a>
-              <span class="price">$1567</span>
-            </li>
-            <li>
-              <a href="#">
-                <img src="{% static 'i3.jpg' %}" alt="">
-                <span class="product">Nike Sport Shoe</span>
-              </a>
-              <span class="price">$1234</span>
-            </li>
-            <li>
-              <a href="#">
-                <img src="{% static 'i4.jpg' %}" alt="">
-                <span class="product">Hermes Silk Scarves.</span>
-              </a>
-              <span class="price">$2312</span>
-            </li>
-            <li>
-              <a href="#">
-                <img src="{% static 'i5.jpg' %}" alt="">
-                <span class="product">Succi Ladies Bag</span>
-              </a>
-              <span class="price">$1456</span>
-            </li>
-            <li>
-              <a href="#">
-                <img src="{% static 'i6.jpg' %}" alt="">
-                <span class="product">Gucci Women's Bags</span>
-              </a>
-              <span class="price">$2345</span>
-            </li>
-            <li>
-              <a href="#">
-                <img src="{% static 'i7.jpg' %}" alt="">
-                <span class="product">Adidas Running Shoe</span>
-              </a>
-              <span class="price">$2345</span>
-            </li>
-            <li>
-              <a href="#">
-                <img src="{% static 'i8.jpg' %}" alt="">
-                <span class="product">Bilack Wear's Shirt</span>
-              </a>
-              <span class="price">$1245</span>
-            </li>
-          </ul>
-        </div>
-      </div>
+      <div class="sales-boxes">
+        <div class="recent-sales box" style="background-color: rgb(205, 231, 240); padding: 20px; border-radius: 10px; width:1000px;">
+            <div class="title" style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">View Price Listings</div>
+            <table class="table">
+                <thead>
+                    <tr>
+        <thead>
+            <tr>
+                <th>Medium</th>
+                <th>Description</th>
+                <th>Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for medium in mediums %}
+            <tr>
+                <td>{{ medium.name }}</td>
+                <td>{{ medium.description }}</td>
+                <td>₹{{ medium.rate }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     </div>
-  </section>
-
-  <script>
-    let sidebar = document.querySelector(".sidebar");
-    let sidebarBtn = document.querySelector(".sidebarBtn");
-    sidebarBtn.onclick = function () {
-      sidebar.classList.toggle("active");
-      if (sidebar.classList.contains("active")) {
-        sidebarBtn.classList.replace("bx-menu", "bx-menu-alt-right");
-      } else {
-        sidebarBtn.classList.replace("bx-menu-alt-right", "bx-menu");
-      }
-    }
-  </script>
-  <script>
-     document.addEventListener("DOMContentLoaded", function () {
-      {% for message in messages %}
-          Swal.fire({
-              icon: '{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}', 
-              title: '{{ message }}',
-              showConfirmButton: false,
-              timer: 3000
-          });
-      {% endfor %}
-  });
-      </script>
-</body>
-
-</html>
+    </div>

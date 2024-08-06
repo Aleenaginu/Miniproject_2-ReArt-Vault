@@ -16,6 +16,7 @@ class Artist(models.Model):
     profile_pic = models.ImageField(upload_to= 'picture/artist', null=True,default='picture/artist/hi.jpg')
     is_approved = models.BooleanField(default=False)
     medium = models.ForeignKey(MediumOfWaste, on_delete=models.SET_NULL, null=True, blank=True) 
+    certificate=models.FileField(upload_to='certificates/',null= True, blank=True)
 
     def __str__(self):
         return self.user.username
