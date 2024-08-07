@@ -17,7 +17,7 @@
             height: 100vh;
         }
         .container {
-            background-color: #dbcccc;
+            background-color: #faefef;
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -81,13 +81,12 @@
             <button type="submit">Upload</button>
         </form>
     </div>
-
     <script>
         document.getElementById('upload-certificate-form').addEventListener('submit', function(event) {
             event.preventDefault();
-
+    
             var formData = new FormData(this);
-
+    
             fetch('{% url "upload_certificate" %}', {
                 method: 'POST',
                 body: formData,
@@ -98,7 +97,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    Swal.fire('Success', 'Certificate uploaded successfully', 'success')
+                    Swal.fire('Success', data.message, 'success')
                         .then(() => {
                             window.location.href = '{% url "userlogin" %}';
                         });

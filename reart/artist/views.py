@@ -41,30 +41,32 @@ def pending_approval(request):
 
 def upload_certificate(request):
     if request.method == 'POST':
-        username=request.POST.get('username')
-        certificate=request.FILES.get('certificate')
+        username = request.POST.get('username')
+        certificate = request.FILES.get('certificate')
 
-        print(f"Received username:{username} ")
-        print(f"Received certificate:{certificate} ")
+        print(f"Received username: {username}")
+        print(f"Received certificate: {certificate}")
 
         if not username:
-            return JsonResponse({'success': False, 'error':'Username not provided'})
+            return JsonResponse({'success': False, 'error': 'Username not provided'})
+        
         try:
-            artist = Artist.objects.get(user_username=username)
+            artist = Artist.objects.get(user__username=username)
         except Artist.DoesNotExist:
             print(f"Artist with username {username} not found.")
-            return JsonResponse({'success': False, 'error':'Artist not found'})
+            return JsonResponse({'success': False, 'error': 'Artist not found'})
         
         if not artist.is_approved:
             if certificate:
                 artist.certificate = certificate
                 artist.save()
-                return redirect('login')
+                return JsonResponse({'success': True, 'message': 'Certificate uploaded successfully'})
             else:
-                return JsonResponse({'success': False, 'error':'No file uploaded'})
+                return JsonResponse({'success': False, 'error': 'No file uploaded'})
         else:
-            return JsonResponse({'success':False, 'error':'Account is already approved'})
-    return JsonResponse({'success':False, 'error': 'Invalid request method'})
+            return JsonResponse({'success': False, 'error': 'Account is already approved'})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 def notifications(request):
     notifications = Notification.objects.filter(user=request.user)
