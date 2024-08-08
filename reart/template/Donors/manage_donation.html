@@ -394,9 +394,12 @@
         </a>
       </li>
       <li>
-        <a href="#">
-          <i class='bx bx-coin-stack'></i>
-          <span class="links_name">Analytics</span>
+        <a href="{% url 'donor_notifications' %}">
+          <i class='bx bx-messages'></i>
+          <span class="links_name">Notifications</span>
+          {% if unread_count > 0 %}
+          <span class="badge">{{unread_count}}</span>
+          {% endif %}
         </a>
       </li>
       <li>

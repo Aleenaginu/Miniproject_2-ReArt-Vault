@@ -1,53 +1,54 @@
-from django.shortcuts import render,redirect
-from . forms import *
-
-from adminclick.models import *
+from django.shortcuts import render, redirect, get_object_or_404
+from django.core.mail import send_mail
 from django.http import HttpResponseForbidden
 from django.contrib import messages
-from .models import *
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
+from .forms import UserUpdateForm, ProfileUpdateForm
+from .models import Donation, Donors, DonorNotification
+from artist.models import MediumOfWaste, InterestRequest
 
-from .models import Donation
-
-# Create your views here.
 @login_required
+@never_cache
 def donor_dashboard(request):
-       if request.user.is_authenticated and request.user.donors:
-         donor= request.user.donors
-         return render(request,'Donors/dashboard.html',{'donor':donor})
-       
+    if request.user.is_authenticated and request.user.donors:
+        donor = request.user.donors
+        return render(request, 'Donors/dashboard.html', {'donor': donor})
+    return HttpResponseForbidden("You are not allowed to access this page.")
+
+@login_required
+@never_cache
 def donor_update(request):
-    if request.method=='POST':
-        user_form = UserUpdateForm(request.POST,instance=request.user)
-        profile_form=ProfileUpdateForm(request.POST, request.FILES,instance=request.user.donors)
+    if request.method == 'POST':
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.donors)
 
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            return redirect ('donor_dashboard')
+            return redirect('donor_dashboard')
     else:
         if request.user.is_authenticated and request.user.donors:
-         donor= request.user.donors
+            donor = request.user.donors
         user_form = UserUpdateForm(instance=request.user)
-        profile_form=ProfileUpdateForm(instance=request.user.donors)
+        profile_form = ProfileUpdateForm(instance=request.user.donors)
     context = {
-     'user_form': user_form,
-     'profile_form':profile_form,
-     'donor':donor,
-     
+        'user_form': user_form,
+        'profile_form': profile_form,
+        'donor': donor,
     }
-    return render(request,'Donors/updateprofile.html', context)
+    return render(request, 'Donors/updateprofile.html', context)
 
+@login_required
+@never_cache
 def donate_waste(request):
-    
     if not hasattr(request.user, 'donors'):
         return HttpResponseForbidden("You are not allowed to access this page.")
-    
-    donor=request.user.donors
-    context={
+
+    donor = request.user.donors
+    context = {
         'mediums': MediumOfWaste.objects.all(),
-        'donor':donor
-        
+        'donor': donor
     }
 
     if request.method == 'POST':
@@ -72,30 +73,70 @@ def donate_waste(request):
         )
 
         messages.success(request, 'Donation recorded successfully.')
-        return redirect('donor_dashboard')  
+        return redirect('donor_dashboard')
 
     return render(request, 'Donors/donate_waste.html', context)
 
-
-
+@login_required
+@never_cache
 def view_donations(request):
-     donations = Donation.objects.filter(donor=request.user.donors)
-     donor=request.user.donors
-     context={
-         'donations': donations , 
-         'donor':donor
-     }
-     return render(request, 'Donors/manage_donation.html',context )
+    donations = Donation.objects.filter(donor=request.user.donors)
+    donor = request.user.donors
+    context = {
+        'donations': donations,
+        'donor': donor
+    }
+    return render(request, 'Donors/manage_donation.html', context)
 
+@login_required
+@never_cache
 def view_rates(request):
-  
-     donor=request.user.donors
-     mediums=MediumOfWaste.objects.all()
-     context={
-         'mediums': mediums , 
-         'donor':donor
-     }
-     return render(request, 'Donors/view_rates.html',context )
-  
-    # donations = Donation.objects.select_related('donor', 'medium_of_waste').all()
-    # return render(request, 'Donors/manage_donation.html', {'donations': donations})
+    donor = request.user.donors
+    mediums = MediumOfWaste.objects.all()
+    context = {
+        'mediums': mediums,
+        'donor': donor
+    }
+    return render(request, 'Donors/view_rates.html', context)
+
+@login_required
+@never_cache
+def donor_notifications(request):
+    donor = get_object_or_404(Donors, user=request.user)
+    notifications = DonorNotification.objects.filter(donor=donor).order_by('-created_at')
+    notifications.update(is_read=True)
+    return render(request, 'Donors/donor_notifications.html', {'notifications': notifications})
+
+@login_required
+@never_cache
+def handle_interest_request(request, notification_id):
+    notification = get_object_or_404(DonorNotification, id=notification_id)
+    interest_request = get_object_or_404(InterestRequest, id=notification.interest_request.id)
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'accept':
+            interest_request.status = 'accepted'
+            interest_request.save()
+            send_mail(
+                'Interest Accepted',
+                f'Your interest in the donation of {interest_request.donation.medium_of_waste.name} has been accepted',
+                'reartvault@gmail.com',
+                [interest_request.artist.user.email],
+                fail_silently=False,
+            )
+            messages.success(request, 'The interest request has been accepted and the artist has been notified')
+        elif action == 'reject':
+            interest_request.delete()
+            send_mail(
+                'Interest Rejected',
+                f'Your interest in the donation of {interest_request.donation.medium_of_waste.name} has been rejected',
+                'reartvault@gmail.com',
+                [interest_request.artist.user.email],
+                fail_silently=False,
+            )
+            messages.success(request, 'The interest request has been rejected and the artist has been notified')
+
+        notification.is_read = True
+        notification.save()
+    return redirect('donor_notifications')

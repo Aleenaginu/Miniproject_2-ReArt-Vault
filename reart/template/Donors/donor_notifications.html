@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>Notifications</title>
+    <style>
+    
+            body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: url("{% static 'pro.jpg' %}")no-repeat center center fixed; /* Replace 'your-image-url.jpg' with the path to your image */
+    background-size: cover;
+}
+        .popup {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 800px;
+            max-width: 90%;
+            position: relative;
+        }
+        .popup h2 {
+            margin-top: 0;
+        }
+        .popup ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .popup li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+        }
+        .popup li.read {
+            background-color: #f9f9f9;
+        }
+        .popup li.unread {
+            background-color: #e9f5ff;
+            font-weight: bold;
+        }
+        .popup li span.icon {
+            margin-right: 10px;
+        }
+        .popup li.read span.icon::before {
+            content: '✓';
+            color: green;
+        }
+        .popup li.unread span.icon::before {
+            content: '●';
+            color: blue;
+        }
+        .close-button {
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .btn-approve, .btn-reject ,.btn-primary {
+    padding: 8px 12px;
+
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+    display: inline-block;
+    margin: 5px;
+    text-align: center;
+  }
+
+  .btn-approve {
+    background-color: #28a745;
+  }
+  .btn-approve:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+  }
+
+  .btn-reject {
+    background-color: #dc3545;
+  }
+
+  .btn-reject:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+  }
+    </style>
+</head>
+<body>
+
+
+<div class="popup" id="notificationPopup">
+    <button class="close-button" onclick="window.history.back()">Close</button>
+   
+    <ul>
+        {% for notification in notifications %}
+            <li class="{% if notification.is_read %}read{% else %}unread{% endif %}">
+                {{ notification.message }} - {{ notification.created_at }}
+                
+                {% if notification.interest_request %}
+                    {% if notification.interest_request.status == 'pending' %}
+                        <form method="post" action="{% url 'handle_interest_request' notification.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-approve" name="action" value="accept">Accept</button>
+                            <button type="submit" class="btn-reject" name="action" value="reject">Reject</button>
+                        </form>
+                    {% elif notification.interest_request.status == 'accepted' %}
+                        <h2>Status: Accepted</h2>
+                    {% elif notification.interest_request.status == 'rejected' %}
+                        <h2>Status: Rejected</h2>
+                    {% endif %}
+                {% else %}
+                    <p>No related interest requests found.</p>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+    
+</div>
+
+
+    
+<script>
+    function closePopup() {
+        document.getElementById('notificationPopup').style.display = 'none';
+    }
+
+    function openPopup() {
+        document.getElementById('notificationPopup').style.display = 'block';
+    }
+
+    // Example function to open the popup when a button is clicked
+    document.getElementById('notificationsButton').addEventListener('click', function() {
+        openPopup();
+    });
+</script>
+ <script>
+    document.addEventListener("DOMContentLoaded", function () {
+     {% for message in messages %}
+         Swal.fire({
+             icon: '{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}', 
+             title: '{{ message }}',
+             showConfirmButton: false,
+             timer: 3000
+         });
+     {% endfor %}
+ });
+     </script>
+</body>
+</html>
