@@ -200,7 +200,7 @@
     </div>
     <div>
         <label for="id_profile_pic">Profile Picture:</label>
-        <input type="file" id="id_profile_pic" accept="image/*"   name="profile_pic">
+        <input type="file" id="id_profile_pic" accept="image/*"   name="profile_pic" required>
         {% if profile_form.profile_pic.errors %}
             <span class="form-error">{{ profile_form.profile_pic.errors }}</span>
         {% endif %}
@@ -214,7 +214,7 @@
         </div>
     </div>
     <script>
-        const id_profile_pic = document.getElementById("id_profile_pic");
+    const id_profile_pic = document.getElementById("id_profile_pic");
 const errorMessage = document.getElementById("error-message");
 
 id_profile_pic.addEventListener("change", function(event) {

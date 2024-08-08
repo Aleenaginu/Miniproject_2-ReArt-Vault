@@ -403,6 +403,16 @@ background-color: #f1f1f1;
       .table td:first-child {
           text-align: left;
       }
+      .badge {
+    background-color: red;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 50%;
+    font-size: 12px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
 
 
 </style>
@@ -431,9 +441,9 @@ background-color: #f1f1f1;
       </li>
       <li>
         <a href="{% url 'view_ratesartist' %}">
-            <i class='bx bx-pie-chart-alt-2'></i>
-            <span class="links_name">Price Listings</span>
-          </a>
+          <i class='bx bx-pie-chart-alt-2'></i>
+          <span class="links_name">Price Listings</span>
+        </a>
       </li>
       <li>
         <a href="{% url 'artist_interest_status' %}">
@@ -442,7 +452,7 @@ background-color: #f1f1f1;
         </a>
       </li>
   
-      <li>
+      <!-- <li>
         <a href="#">
           <i class='bx bx-message'></i>
           <span class="links_name">Messages</span>
@@ -465,7 +475,7 @@ background-color: #f1f1f1;
           <i class='bx bx-cog'></i>
           <span class="links_name">Setting</span>
         </a>
-      </li>
+      </li> -->
       <li class="log_out">
         <a href="{% url 'userlogout' %}">
           <i class='bx bx-log-out'></i>
@@ -493,7 +503,7 @@ background-color: #f1f1f1;
         <ul class="dropdown-menu">
           <li><a href="{% url 'userprofileartist' %}">View Profile</a></li>
           <li><a href="{% url 'profile_update' %}">Edit Profile</a></li>
-          <li><a href="#">Settings</a></li>
+          <!-- <li><a href="#">Settings</a></li> -->
           <li><a href="{% url 'userlogout' %}">Logout</a></li>
         </ul>
       </div>

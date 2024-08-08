@@ -294,14 +294,14 @@
       </li>
       <li>
         <a href="{% url 'donor_notifications' %}">
-          <i class='bx bx-messages'></i>
+          <i class='bx bx-message'></i>
           <span class="links_name">Notifications</span>
           {% if unread_count > 0 %}
           <span class="badge">{{unread_count}}</span>
           {% endif %}
         </a>
       </li>
-      <li>
+      <!-- <li>
         <a href="#">
           <i class='bx bx-book-alt'></i>
           <span class="links_name">Total Items</span>
@@ -330,7 +330,7 @@
           <i class='bx bx-cog'></i>
           <span class="links_name">Setting</span>
         </a>
-      </li>
+      </li> -->
       <li class="log_out">
         <a href="{% url 'userlogout' %}">
           <i class='bx bx-log-out'></i>
@@ -356,7 +356,7 @@
         <ul class="dropdown-menu">
           <li><a href="{% url 'userprofile' %}">View Profile</a></li>
           <li><a href="{% url 'donor_update' %}">Edit Profile</a></li>
-          <li><a href="#">Settings</a></li>
+          <!-- <li><a href="#">Settings</a></li> -->
           <li><a href="{% url 'userlogout' %}">Logout</a></li>
         </ul>
       </div>

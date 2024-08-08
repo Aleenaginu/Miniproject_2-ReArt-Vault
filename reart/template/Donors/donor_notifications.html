@@ -12,7 +12,7 @@
     align-items: center;
     height: 100vh;
     margin: 0;
-    background: url("{% static 'pro.jpg' %}")no-repeat center center fixed; /* Replace 'your-image-url.jpg' with the path to your image */
+    background: url("{% static 'profile.webp' %}")no-repeat center center fixed; /* Replace 'your-image-url.jpg' with the path to your image */
     background-size: cover;
 }
         .popup {
@@ -100,7 +100,7 @@
 
 <div class="popup" id="notificationPopup">
     <button class="close-button" onclick="window.history.back()">Close</button>
-   
+   <h3>Notifications</h3>
     <ul>
         {% for notification in notifications %}
             <li class="{% if notification.is_read %}read{% else %}unread{% endif %}">

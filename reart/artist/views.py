@@ -47,8 +47,6 @@ def profile_update(request):
 def pending_approval(request):
     return render(request, 'artist/pending_approval.html',{'user':request.user})
 
-@login_required
-@never_cache
 
 def upload_certificate(request):
     if request.method == 'POST':
@@ -91,9 +89,11 @@ def view_ratesartist(request):
   
      artist=request.user.artist
      mediums=MediumOfWaste.objects.all()
+     unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
      context={
          'mediums': mediums , 
-         'artist':artist
+         'artist':artist,
+        'unread_count':unread_count
      }
      return render(request, 'artist/view_rates.html',context )
 
@@ -131,7 +131,8 @@ def express_interest(request,donation_id):
     )
     return redirect('notifications')
 
-
+@login_required
+@never_cache
 def artist_interest_status(request):
     artist=request.user.artist
     interests=InterestRequest.objects.filter(artist=artist).select_related('donation','donor')

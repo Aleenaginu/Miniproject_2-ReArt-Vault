@@ -1,5 +1,4 @@
 from django.shortcuts import render,redirect, get_object_or_404
-
 from .models import MediumOfWaste
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -8,6 +7,7 @@ from accounts.models import *
 from donors.models import *
 from django.core.mail import send_mail
 from artist.models import Notification
+from django.views.decorators.cache import never_cache
 
 
 # Create your views here.
@@ -27,13 +27,15 @@ def UserLoginadmin(request):
     return render(request, 'admin/adminlogin.html')
 
 
-
+@login_required
+@never_cache
 def admin_dashboard(request):
        if request.user.is_authenticated and request.user.adminclick:
         adminclick= request.user.adminclick
         return render(request,'admin/dashboard.html',{'adminclick':adminclick})
        
-
+@login_required
+@never_cache
 def approve_artists(request):
     adminclick= request.user.adminclick
     pending_artists = Artist.objects.filter(is_approved=False)
@@ -48,6 +50,7 @@ def approve_artists(request):
     return render(request, 'admin/approve_artists.html', context)
 
 @login_required
+@never_cache
 def approve_artist(request, artist_id):
 
     artist = get_object_or_404(Artist, id=artist_id)
@@ -56,7 +59,7 @@ def approve_artist(request, artist_id):
 
     return redirect('approve_artists')
 
-@login_required
+
 def reject_artist(request, artist_id):
 
     artist = get_object_or_404(Artist, id=artist_id)
@@ -75,6 +78,7 @@ def artist_details(request, artist_id):
 
 
 @login_required
+@never_cache
 def add_medium_of_waste(request):
     adminclick= request.user.adminclick
     context={
@@ -99,6 +103,10 @@ def add_medium_of_waste(request):
 
     return render(request, 'admin/add_medium_of_waste.html', context)
 
+
+
+@login_required
+@never_cache
 def set_rates(request):
     adminclick=request.user.adminclick
     if request.method=='POST':
@@ -120,6 +128,9 @@ def set_rates(request):
     }
     return render(request,'admin/set_rates.html',context)
 
+
+@login_required
+@never_cache
 def donation_listview(request):
     adminclick= request.user.adminclick
     donations = Donation.objects.select_related('donor', 'medium_of_waste').all()
@@ -130,6 +141,9 @@ def donation_listview(request):
     }
     return render(request, 'admin/donation_list.html', context)
 
+
+@login_required
+@never_cache
 def donation_detail(request, pk):
     donation = get_object_or_404(Donation, pk=pk)
 
@@ -153,14 +167,15 @@ def donation_detail(request, pk):
                         f'Medium: {donation.medium_of_waste.name}\n'
                         f'Quantity: {donation.quantity}\n'
                         f'Location: {donation.location}\n',
-                        'your-email@example.com',
+                        'reartvault@gmail.com',
                         [artist.user.email],
                         fail_silently=False,
                     )
                     # Optional: Create in-app notification
                     Notification.objects.create(
                         user=artist.user,
-                        message=f'New waste donation in your medium: {donation.medium_of_waste.name}. Quantity: {donation.quantity}, Location: {donation.location}.'
+                        message=f'New waste donation in your medium: {donation.medium_of_waste.name}. Quantity: {donation.quantity}, Location: {donation.location}.',
+                        donation=donation,
                     )
 
             return redirect('donation_listview')
