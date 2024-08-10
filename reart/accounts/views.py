@@ -20,6 +20,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.urls import reverse
 
 from adminclick.models import *
+
 from .forms import CustomPasswordResetForm
 from django.contrib.auth.forms import SetPasswordForm
 from django.db import transaction
@@ -80,16 +81,22 @@ def UserLogin(request):
             messages.success(request, 'Login successful')
             return redirect('donor_dashboard')
         elif user is not None and hasattr(user, 'artist'):
+          
             if user.artist.is_approved:
                 login(request, user)
                 messages.success(request, 'Login successful')
                 return redirect('artist_dashboard')
+            
+            elif user.artist.certificate:
+                messages.warning(request, 'You uploaded your certificate, but the verification is still under processing.')
+                return redirect('userlogin')
+
             else:
-                messages.error(request, 'Your account is pending approval.')
+                messages.error(request, 'Your account is pending approval.Please upload your certificate')
                 return redirect('pending_approval')
         else:
             messages.error(request, 'Invalid credentials')
-        return render(request, 'login.html')
+            return render(request, 'login.html')
     return render(request, 'login.html')
 
 

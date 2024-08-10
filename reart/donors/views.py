@@ -4,9 +4,10 @@ from django.http import HttpResponseForbidden
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
-from .forms import UserUpdateForm, ProfileUpdateForm
+from .forms import DonationForm, UserUpdateForm, ProfileUpdateForm
 from .models import Donation, Donors, DonorNotification
 from artist.models import MediumOfWaste, InterestRequest
+from .models import Donation
 
 @login_required
 @never_cache
@@ -87,6 +88,35 @@ def view_donations(request):
         'donor': donor
     }
     return render(request, 'Donors/manage_donation.html', context)
+
+@login_required
+@never_cache
+def edit_donation(request, donation_id):
+    donation=get_object_or_404(Donation, id=donation_id, donor=request.user.donors)
+
+    if request.method == 'POST':
+        form=DonationForm(request.POST, request.FILES, instance=donation)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Donation updated successfully!")
+            return redirect('donor_dashboard')
+        
+    else:
+        form = DonationForm(instance=donation)
+
+    return render(request, 'Donors/edit_donation.html',{'form':form})
+
+def delete_donation(request,donation_id):
+    #  donor = get_object_or_404(Donors, user=request.user)
+     donation = get_object_or_404(Donation, id=donation_id, donor=request.user.donors)
+     if request.method == 'POST':
+        donation.delete()
+        messages.success(request, "Donation deleted successfully!")
+        return redirect('view_donations')
+
+     return redirect('view_donations')
+    
+
 
 @login_required
 @never_cache

@@ -1,0 +1,159 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Donation</title>
+    <link rel="stylesheet" href="{% static 'assets/css/profile.css' %}">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: url("{% static 'profile.webp' %}") no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .container {
+            display: flex;
+            max-width: 800px;
+            width: 90%;
+            height: auto;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            flex-direction: column;
+        }
+        h2 {
+            font-family: 'Times New Roman', serif;
+            font-size: 36px;
+            font-weight: bold;
+            color: #120952;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-family: 'Times New Roman', serif;
+            font-size: 18px;
+            color: #120952;
+            margin-bottom: 5px;
+            display: block;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="file"]:focus,
+        select:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+        button {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .form-error {
+            color: #ff0000; /* Red color for error messages */
+        }
+        .error-message {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Donation</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="id_medium_of_waste">Medium of Waste</label>
+                <select name="medium_of_waste" id="id_medium_of_waste" class="form-control">
+                    {% for medium in form.fields.medium_of_waste.queryset %}
+                        <option value="{{ medium.id }}" {% if form.initial.medium_of_waste == medium.id %}selected{% endif %}>{{ medium.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_quantity">Quantity</label>
+                <input type="number" name="quantity" id="id_quantity" class="form-control" value="{{ form.initial.quantity }}" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label for="id_location">Location</label>
+                <input type="text" name="location" id="id_location" oninput="validateName()" class="form-control" value="{{ form.initial.location }}">
+                <span class="error-message" id="location-error">Invalid Location</span>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_image">Image</label>
+                <input type="file" name="image" id="id_image" class="form-control">
+                <span id="error-message" style="color: red;"></span>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" id="submit-btn">Save changes</button>
+        </form>
+    </div>
+
+    <script>
+        function validateName() {
+            var location = document.getElementById("id_location").value;
+            var locationError = document.getElementById("location-error");
+            var submitBtn = document.getElementById("submit-btn");
+            const pattern = /^(?! )[A-Za-z0-9\s,.'-]+$/;
+            var res = pattern.test(location);
+            if (res) {
+                locationError.style.display = "none";
+                submitBtn.disabled = false;
+            } else {
+                locationError.style.display = "block";
+                submitBtn.disabled = true;
+            }
+        }
+
+        const id_image = document.getElementById("id_image");
+        const errorMessage = document.getElementById("error-message");
+
+        id_image.addEventListener("change", function(event) {
+            const file = event.target.files[0];
+            const fileType = file.type.toLowerCase();
+            if (!fileType.startsWith("image/")) {
+                errorMessage.textContent = "Please upload an image file.";
+                id_image.value = "";
+            } else {
+                errorMessage.textContent = "";
+            }
+        });
+    </script>
+</body>
+</html>
