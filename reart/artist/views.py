@@ -147,6 +147,7 @@ def express_interest(request,donation_id):
         message=f'Artist{artist.user.username} has expressed interest in your donotation',
         interest_request=interest_request
     )
+    
     return redirect('notifications')
 
 @login_required

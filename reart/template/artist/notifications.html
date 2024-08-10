@@ -173,6 +173,18 @@
         document.getElementById('notificationsButton').addEventListener('click', function() {
             openPopup();
         });
+        
+        document.addEventListener("DOMContentLoaded", function () {
+         {% for message in messages %}
+        Swal.fire({
+            icon: '{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}', 
+            title: '{{ message }}',
+            showConfirmButton: false,
+            timer: 3000
+        });
+    {% endfor %}
+});
+
     </script>
 </body>
 </html>

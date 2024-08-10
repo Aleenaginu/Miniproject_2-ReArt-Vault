@@ -409,13 +409,15 @@
               <div class="title" style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">Set Rates for Mediums of Waste</div>
     <!-- <h2>Set Rates for Mediums of Waste</h2> -->
     <div class="form-container">
-    <form method="post">
+      <form method="post">
         {% csrf_token %}
         {% for medium in mediums %}
             <div class="form-group">
                 <label for="rate_{{ medium.id }}">{{ medium.name }}</label>
-                <input type="number" step="0.01" id="rate_{{ medium.id }}" name="rate_{{ medium.id }}" class="form-control" value="{{ medium.rate }}" oninput="validateRate({{ medium.id }})" required>
-                <span class="error-message" id="rate-error-{{ medium.id }}">Invalid Rate</span>
+                <input type="number" step="0.01" id="rate_{{ medium.id }}" name="rate_{{ medium.id }}" 
+                       class="form-control" value="{{ medium.rate }}" 
+                       oninput="validateRate({{ medium.id }})" required>
+                <span class="error-message" id="rate-error-{{ medium.id }}" style="display:none;">Invalid Rate</span>
             </div>
             <br>
         {% endfor %}
@@ -424,19 +426,40 @@
     </div>
     <script>
      
-        function validateRate() {
-      const rateInput = document.getElementById('rate');
-      const rateError = document.getElementById('rate-error');
-      const submitBtn = document.getElementById('submit-btn');
-  
-      if (rateInput.value <= 0 || isNaN(rateInput.value)) {
-          rateError.style.display = 'block';
-          submitBtn.disabled = true;
-      } else {
-          rateError.style.display = 'none';
-          submitBtn.disabled = false;
-      }
-  }
+     function validateRate(mediumId) {
+    const rateInput = document.getElementById(`rate_${mediumId}`);
+    const rateError = document.getElementById(`rate-error-${mediumId}`);
+    const submitBtn = document.getElementById('submit-btn');
+
+    const rateValue = rateInput.value.trim();
+
+    // Convert rateValue to a number
+    const rateNumber = parseFloat(rateValue);
+
+    // Check if the input is not a number, less than 0, or more than 3 digits before the decimal
+    if (isNaN(rateNumber) || rateNumber < 0) {
+        rateError.textContent = 'Please enter a valid non-negative number.';
+        rateError.style.display = 'block';
+        submitBtn.disabled = true;
+    } else if (rateValue.split('.')[0].length > 3) {
+        rateError.textContent = 'Please enter a number not exceeding 3 digits before the decimal.';
+        rateError.style.display = 'block';
+        submitBtn.disabled = true;
+    } else {
+        rateError.style.display = 'none';
+    }
+
+    // Check if all inputs are valid and then enable the submit button
+    const allValid = Array.from(document.querySelectorAll('.form-group input')).every(input => {
+        const value = parseFloat(input.value.trim());
+        const errorSpan = document.getElementById(`rate-error-${input.id.split('_')[1]}`);
+        return !isNaN(value) && value >= 0 && input.value.split('.')[0].length <= 3 && errorSpan.style.display === 'none';
+    });
+
+    submitBtn.disabled = !allValid;
+}
+
+
         </script>
       <script>
         let sidebar = document.querySelector(".sidebar");

@@ -106,7 +106,8 @@
             
             <div class="form-group">
                 <label for="id_quantity">Quantity</label>
-                <input type="number" name="quantity" id="id_quantity" class="form-control" value="{{ form.initial.quantity }}" step="0.01">
+                <input type="number" name="quantity" id="id_quantity" oninput="validateRate()"  class="form-control" value="{{ form.initial.quantity }}" step="0.01">
+                <span class="error-message" id="rate-error">Invalid Quantity</span>
             </div>
             
             <div class="form-group">
@@ -117,7 +118,7 @@
             
             <div class="form-group">
                 <label for="id_image">Image</label>
-                <input type="file" name="image" id="id_image" class="form-control">
+                <input type="file" name="image" id="id_image" accept="image/*"  class="form-control">
                 <span id="error-message" style="color: red;"></span>
             </div>
             
@@ -140,20 +141,41 @@
                 submitBtn.disabled = true;
             }
         }
+        function validateRate() {
+    const rateInput = document.getElementById('id_quantity');
+    const rateError = document.getElementById('rate-error');
+    const submitBtn = document.getElementById('submit-btn');
 
-        const id_image = document.getElementById("id_image");
-        const errorMessage = document.getElementById("error-message");
+    const rateValue = rateInput.value;
 
-        id_image.addEventListener("change", function(event) {
-            const file = event.target.files[0];
-            const fileType = file.type.toLowerCase();
-            if (!fileType.startsWith("image/")) {
-                errorMessage.textContent = "Please upload an image file.";
-                id_image.value = "";
-            } else {
-                errorMessage.textContent = "";
-            }
-        });
+    // Check if the input is not a number, less than or equal to 0, or more than 6 digits
+    if (rateValue <= 0 || isNaN(rateValue)) {
+        rateError.textContent = 'Please enter a valid positive number.';
+        rateError.style.display = 'block';
+        submitBtn.disabled = true;
+    } else if (rateValue.length > 5) {
+        rateError.textContent = 'Please enter a number not exceeding 6 digits.';
+        rateError.style.display = 'block';
+        submitBtn.disabled = true;
+    } else {
+        rateError.style.display = 'none';
+        submitBtn.disabled = false;
+    }
+}
+
+const image = document.getElementById("id_image");
+const errorMessage = document.getElementById("error-message");
+
+image.addEventListener("change", function(event) {
+    const file = event.target.files[0];
+    const fileType = file.type.toLowerCase();
+    if (!fileType.startsWith("image/")) {
+        errorMessage.textContent = "Please upload an image file.";
+        image.value = "";
+    } else {
+        errorMessage.textContent = "";
+    }
+});
     </script>
 </body>
 </html>

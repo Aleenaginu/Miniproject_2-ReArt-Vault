@@ -451,14 +451,29 @@
     const rateError = document.getElementById('rate-error');
     const submitBtn = document.getElementById('submit-btn');
 
-    if (rateInput.value <= 0 || isNaN(rateInput.value)) {
+    const rateValue = rateInput.value.trim();
+
+    // Convert rateValue to a number
+    const rateNumber = parseFloat(rateValue);
+
+    // Split the value at the decimal point
+    const [integerPart, decimalPart] = rateValue.split('.');
+
+    // Check if the input is not a number, less than or equal to 0
+    if (isNaN(rateNumber) || rateNumber < 0) {
+        rateError.textContent = 'Please enter a valid non-negative number.';
+        rateError.style.display = 'block';
+        submitBtn.disabled = true;
+    } else if (integerPart.length > 4) {
+        rateError.textContent = 'Please enter a number with up to 4 digits before the decimal point.';
         rateError.style.display = 'block';
         submitBtn.disabled = true;
     } else {
         rateError.style.display = 'none';
-        submitBtn.disabled = false;
-    }
+        submitBtn.disabled = false;
+    }
 }
+
       </script>
     <script>
       let sidebar = document.querySelector(".sidebar");
