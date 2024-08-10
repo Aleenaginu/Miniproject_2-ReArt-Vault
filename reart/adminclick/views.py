@@ -32,7 +32,16 @@ def UserLoginadmin(request):
 def admin_dashboard(request):
        if request.user.is_authenticated and request.user.adminclick:
         adminclick= request.user.adminclick
-        return render(request,'admin/dashboard.html',{'adminclick':adminclick})
+        total_medium_of_waste=MediumOfWaste.objects.count()
+        total_donations=Donation.objects.count()
+        total_artists=Artist.objects.count()
+        context={
+            'adminclick':adminclick,
+            'total_medium_of_waste':total_medium_of_waste,
+            'total_donations':total_donations,
+            'total_artists':total_artists
+            }
+        return render(request,'admin/dashboard.html',context)
        
 @login_required
 @never_cache
@@ -40,10 +49,16 @@ def approve_artists(request):
     adminclick= request.user.adminclick
     pending_artists = Artist.objects.filter(is_approved=False)
     artists = Artist.objects.all()
+    total_medium_of_waste=MediumOfWaste.objects.count()
+    total_donations=Donation.objects.count()
+    total_artists=Artist.objects.count()
     context={
         'pending_artists': pending_artists,
         'artists': artists,
-        'adminclick':adminclick
+         'adminclick':adminclick,
+            'total_medium_of_waste':total_medium_of_waste,
+            'total_donations':total_donations,
+            'total_artists':total_artists
 
     }
 
@@ -69,10 +84,16 @@ def reject_artist(request, artist_id):
 
 def artist_details(request, artist_id):
     adminclick= request.user.adminclick
+    total_medium_of_waste=MediumOfWaste.objects.count()
+    total_donations=Donation.objects.count()
+    total_artists=Artist.objects.count()
     artist=get_object_or_404(Artist, id=artist_id)
     context={
         'artist': artist,
-        'adminclick': adminclick
+         'adminclick':adminclick,
+            'total_medium_of_waste':total_medium_of_waste,
+            'total_donations':total_donations,
+            'total_artists':total_artists
     }
     return render(request, 'admin/artist_details.html', context)
 
@@ -81,8 +102,14 @@ def artist_details(request, artist_id):
 @never_cache
 def add_medium_of_waste(request):
     adminclick= request.user.adminclick
+    total_medium_of_waste=MediumOfWaste.objects.count()
+    total_donations=Donation.objects.count()
+    total_artists=Artist.objects.count()
     context={
-        'adminclick':adminclick,
+         'adminclick':adminclick,
+            'total_medium_of_waste':total_medium_of_waste,
+            'total_donations':total_donations,
+            'total_artists':total_artists
     }
 
     if request.method == 'POST':
@@ -109,6 +136,9 @@ def add_medium_of_waste(request):
 @never_cache
 def set_rates(request):
     adminclick=request.user.adminclick
+    total_medium_of_waste=MediumOfWaste.objects.count()
+    total_donations=Donation.objects.count()
+    total_artists=Artist.objects.count()
     if request.method=='POST':
         for medium_id, rate in request.POST.items():
             if medium_id.startswith('rate_'):
@@ -124,7 +154,10 @@ def set_rates(request):
     mediums=MediumOfWaste.objects.all()
     context={
         'mediums': mediums,
-        'adminclick': adminclick
+         'adminclick':adminclick,
+            'total_medium_of_waste':total_medium_of_waste,
+            'total_donations':total_donations,
+            'total_artists':total_artists
     }
     return render(request,'admin/set_rates.html',context)
 
@@ -133,10 +166,16 @@ def set_rates(request):
 @never_cache
 def donation_listview(request):
     adminclick= request.user.adminclick
+    total_medium_of_waste=MediumOfWaste.objects.count()
+    total_donations=Donation.objects.count()
+    total_artists=Artist.objects.count()
     donations = Donation.objects.select_related('donor', 'medium_of_waste').all()
     context={
     'donations': donations,
-    'adminclick':adminclick
+    'adminclick':adminclick,
+    'total_medium_of_waste':total_medium_of_waste,
+    'total_donations':total_donations,
+    'total_artists':total_artists
 
     }
     return render(request, 'admin/donation_list.html', context)

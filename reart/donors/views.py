@@ -14,7 +14,15 @@ from .models import Donation
 def donor_dashboard(request):
     if request.user.is_authenticated and request.user.donors:
         donor = request.user.donors
-        return render(request, 'Donors/dashboard.html', {'donor': donor})
+        total_donations = Donation.objects.filter(donor=donor).count()
+        approved_donations = Donation.objects.filter(donor=donor, status ='accepted').count()
+
+        context={
+            'donor':donor,
+            'total_donations':total_donations,
+            'approved_donations':approved_donations
+            }
+        return render(request, 'Donors/dashboard.html', context)
     return HttpResponseForbidden("You are not allowed to access this page.")
 
 @login_required
@@ -47,9 +55,13 @@ def donate_waste(request):
         return HttpResponseForbidden("You are not allowed to access this page.")
 
     donor = request.user.donors
+    total_donations = Donation.objects.filter(donor=donor).count()
+    approved_donations = Donation.objects.filter(donor=donor, status ='accepted').count()
     context = {
         'mediums': MediumOfWaste.objects.all(),
-        'donor': donor
+        'donor':donor,
+        'total_donations':total_donations,
+        'approved_donations':approved_donations
     }
 
     if request.method == 'POST':
@@ -83,9 +95,14 @@ def donate_waste(request):
 def view_donations(request):
     donations = Donation.objects.filter(donor=request.user.donors)
     donor = request.user.donors
+    total_donations = Donation.objects.filter(donor=donor).count()
+    approved_donations = Donation.objects.filter(donor=donor, status ='accepted').count()
     context = {
         'donations': donations,
-        'donor': donor
+        'donor':donor,
+        'total_donations':total_donations,
+        'approved_donations':approved_donations
+        
     }
     return render(request, 'Donors/manage_donation.html', context)
 
@@ -122,10 +139,14 @@ def delete_donation(request,donation_id):
 @never_cache
 def view_rates(request):
     donor = request.user.donors
+    total_donations = Donation.objects.filter(donor=donor).count()
+    approved_donations = Donation.objects.filter(donor=donor, status ='accepted').count()
     mediums = MediumOfWaste.objects.all()
     context = {
         'mediums': mediums,
-        'donor': donor
+        'donor':donor,
+        'total_donations':total_donations,
+        'approved_donations':approved_donations
     }
     return render(request, 'Donors/view_rates.html', context)
 

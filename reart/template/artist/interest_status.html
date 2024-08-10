@@ -245,7 +245,7 @@
         <li>
             <a href="{% url 'artist_dashboard' %}" class="active">
               <i class='bx bx-grid-alt'></i>
-              <span class="links_name">Dashboard</span>
+              <span class="links_name">Artist Dashboard</span>
             </a>
           </li>
           <li>
@@ -332,49 +332,50 @@
       <div class="overview-boxes">
         <div class="box" style="background-color:rgb(243, 212, 200);">
           <div class="right-side">
-            <div class="box-topic">Total Items</div>
-            <div class="number">40,876</div>
+            <div class="box-topic">Expressed Interest</div>
+            <div class="number">{{ expressed_interest_count }}</div>
             <div class="indicator">
               <!-- <i class='bx bx-up-arrow-alt'></i> -->
               <!-- <span class="text">Up from yesterday</span> -->
             </div>
           </div>
-          <i class='bx bx-cart-alt cart'></i>
+          <!-- <i class='bx bx-cart-alt cart'></i> -->
         </div>
         <div class="box" style="background-color:rgb(188, 233, 188);">
           <div class="right-side">
-            <div class="box-topic">Total Donations</div>
-            <div class="number">38,876</div>
+            <div class="box-topic">Accepted Interests</div>
+            <div class="number">{{ accepted_interest_count }}</div>
             <div class="indicator">
               <!-- <i class='bx bx-up-arrow-alt'></i> -->
               <!-- <span class="text">Up from yesterday</span> -->
             </div>
           </div>
-          <i class='bx bxs-cart-add cart two'></i>
+          <!-- <i class='bx bxs-cart-add cart two'></i> -->
         </div>
         <div class="box" style="background-color:rgb(240, 240, 205);">
           <div class="right-side">
-            <div class="box-topic">Updated Donations</div>
-            <div class="number"> 12,876</div>
+            <div class="box-topic">Added Categories</div>
+            <div class="number"> 0</div>
             <div class="indicator">
               <!-- <i class='bx bx-up-arrow-alt'></i> -->
               <!-- <span class="text">Up from yesterday</span> -->
             </div>
           </div>
-          <i class='bx bx-cart cart three'></i>
+          <!-- <i class='bx bx-cart cart three'></i> -->
         </div>
         <div class="box" style="background-color:rgb(240, 205, 228);">
           <div class="right-side">
-            <div class="box-topic">Total Collections</div>
-            <div class="number">11,086</div>
+            <div class="box-topic">Sold Items</div>
+            <div class="number">0</div>
             <div class="indicator">
               <!-- <i class='bx bx-down-arrow-alt down'></i> -->
               <!-- <span class="text">Down From Today</span> -->
             </div>
           </div>
-          <i class='bx bxs-cart-download cart four'></i>
+          <!-- <i class='bx bxs-cart-download cart four'></i> -->
         </div>
       </div>
+
 
 <div class="sales-boxes">
     <div class="recent-sales box" style="background-color: rgb(205, 231, 240); padding: 20px; border-radius: 10px; width:1000px;">

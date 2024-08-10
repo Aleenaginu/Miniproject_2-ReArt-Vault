@@ -16,10 +16,17 @@ from django.views.decorators.cache import never_cache
 def artist_dashboard(request):
        if request.user.is_authenticated and request.user.artist:
         artist= request.user.artist
+        expressed_interest_count = Interest.objects.filter(artist=artist).count()
+        accepted_interest_count = InterestRequest.objects.filter(
+            artist=artist,
+            status='accepted'
+        ).count()
         unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
         context={
             'artist':artist,
-            'unread_count':unread_count
+            'unread_count':unread_count,
+            'expressed_interest_count':expressed_interest_count,
+            'accepted_interest_count':accepted_interest_count
         }
         return render(request,'artist/dashboard.html',context)
 def profile_update(request):
@@ -93,11 +100,18 @@ def view_ratesartist(request):
   
      artist=request.user.artist
      mediums=MediumOfWaste.objects.all()
+     expressed_interest_count = Interest.objects.filter(artist=artist).count()
+     accepted_interest_count = InterestRequest.objects.filter(
+            artist=artist,
+            status='accepted'
+        ).count()
      unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
      context={
          'mediums': mediums , 
          'artist':artist,
-        'unread_count':unread_count
+        'unread_count':unread_count,
+        'expressed_interest_count':expressed_interest_count,
+        'accepted_interest_count':accepted_interest_count
      }
      return render(request, 'artist/view_rates.html',context )
 
@@ -139,8 +153,18 @@ def express_interest(request,donation_id):
 @never_cache
 def artist_interest_status(request):
     artist=request.user.artist
+    expressed_interest_count = Interest.objects.filter(artist=artist).count()
+    accepted_interest_count = InterestRequest.objects.filter(
+            artist=artist,
+            status='accepted'
+        ).count()
     interests=InterestRequest.objects.filter(artist=artist).select_related('donation','donor')
-    return render(request,'artist/interest_status.html',{'interests':interests})
+    context={
+        'interests':interests,
+        'expressed_interest_count':expressed_interest_count,
+        'accepted_interest_count':accepted_interest_count
+        }
+    return render(request,'artist/interest_status.html',context)
 
 def delete_notification(request, notification_id):
     notification=get_object_or_404(Notification,id=notification_id,user=request.user)
