@@ -160,6 +160,7 @@ def donor_notifications(request):
 
 @login_required
 @never_cache
+
 def handle_interest_request(request, notification_id):
     notification = get_object_or_404(DonorNotification, id=notification_id)
     interest_request = get_object_or_404(InterestRequest, id=notification.interest_request.id)
@@ -178,7 +179,9 @@ def handle_interest_request(request, notification_id):
             )
             messages.success(request, 'The interest request has been accepted and the artist has been notified')
         elif action == 'reject':
-            interest_request.delete()
+            # Update status to rejected instead of deleting
+            interest_request.status = 'rejected'
+            interest_request.save()
             send_mail(
                 'Interest Rejected',
                 f'Your interest in the donation of {interest_request.donation.medium_of_waste.name} has been rejected',

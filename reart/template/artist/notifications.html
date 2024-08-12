@@ -136,28 +136,31 @@
         <button class="close-button" onclick="window.history.back()">Close</button>
         <h2>Your Notifications</h2>
         <ul>
-            {% for notification in notifications %}
-                <li class="{% if notification.is_read %}read{% else %}unread{% endif %}">
-                    <span class="icon"></span>
-                    {{ notification.message }} - {{ notification.created_at }}
-    
-                    {% if notification.donation %}
-    
-                        <form method="post" action="{% url 'express_interest' notification.donation.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="button button-express">Express Interest</button>
-                        </form>
-                    {% else %}
-                        <p>No donation available.</p>
-                    {% endif %}
-                    <a href="{% url 'delete_notification' notification.id %}">
-                         <button type="submit" class="button button-delete">Delete</button></a> 
-                </li>
-            {% endfor %}
-          
-              
-           
-        </ul>
+    {% for notification in notifications %}
+        <li class="{% if notification.is_read %}read{% else %}unread{% endif %}">
+            <span class="icon"></span>
+            {{ notification.message }} - {{ notification.created_at }}
+
+            {% if notification.donation %}
+                {% if notification.interest_request %}
+                    <!-- Interest has been sent -->
+                    <p>Interest has been sent</p>
+                {% else %}
+                    <!-- Allow expressing interest -->
+                    <form method="post" action="{% url 'express_interest' notification.donation.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="button button-express">Express Interest</button>
+                    </form>
+                {% endif %}
+            {% else %}
+                <p>No donation available.</p>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+
+        
+        
     </div>
 
     <script>

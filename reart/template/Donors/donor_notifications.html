@@ -65,34 +65,148 @@
             top: 10px;
             right: 10px;
         }
-        .btn-approve, .btn-reject ,.btn-primary {
-    padding: 8px 12px;
+        /* General Button Styling */
+/* General Button Styling */
+button {
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    display: inline-block; /* This ensures buttons are side by side */
+    margin-right: 10px; /* Space between buttons */
+}
 
-    text-decoration: none;
-    color: #fff;
-    font-weight: bold;
-    transition: background-color 0.3s, transform 0.2s;
-    display: inline-block;
-    margin: 5px;
-    text-align: center;
-  }
-
-  .btn-approve {
+/* Approve Button Styling */
+.btn-approve {
     background-color: #28a745;
-  }
-  .btn-approve:hover {
+    color: white;
+}
+
+.btn-approve:hover {
     background-color: #218838;
-    transform: scale(1.05);
-  }
+    transform: translateY(-2px);
+}
 
-  .btn-reject {
+.btn-approve:active {
+    background-color: #1e7e34;
+    transform: translateY(0);
+}
+
+/* Reject Button Styling */
+.btn-reject {
     background-color: #dc3545;
-  }
+    color: white;
+}
 
-  .btn-reject:hover {
+.btn-reject:hover {
     background-color: #c82333;
-    transform: scale(1.05);
-  }
+    transform: translateY(-2px);
+}
+
+.btn-reject:active {
+    background-color: #bd2130;
+    transform: translateY(0);
+}
+.popup{
+    width:1000px;
+
+
+}
+
+
+/* Basic Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Table Header Styling */
+thead th {
+    background-color: #5e768f;
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-size: 18px;
+}
+
+/* Table Row Styling */
+tbody tr {
+    border-bottom: 1px solid #ddd;
+}
+
+/* Table Data Cell Styling */
+td {
+    padding: 12px;
+    vertical-align: middle;
+}
+
+/* Zebra Stripe Effect for Table Rows */
+tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Hover Effect for Table Rows */
+tbody tr:hover {
+    background-color: #e2e8eb;
+}
+
+/* Read and Unread Notifications */
+tbody tr.read td {
+    color: #888;
+}
+
+tbody tr.unread td {
+    font-weight: bold;
+}
+
+/* Button Styling */
+button {
+    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Approve Button Styling */
+.btn-approve {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-approve:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
+
+.btn-approve:active {
+    background-color: #1e7e34;
+    transform: translateY(0);
+}
+
+/* Reject Button Styling (If Needed) */
+.btn-reject {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-reject:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+}
+
+.btn-reject:active {
+    background-color: #bd2130;
+    transform: translateY(0);
+}
+
+
+
     </style>
 </head>
 <body>
@@ -101,29 +215,52 @@
 <div class="popup" id="notificationPopup">
     <button class="close-button" onclick="window.history.back()">Close</button>
    <h3>Notifications</h3>
-    <ul>
+   <table>
+    <thead>
+        <tr>
+            <th>Notification</th>
+            <th>Status</th>
+            <th a>Action</th>
+        </tr>
+    </thead>
+    <tbody>
         {% for notification in notifications %}
-            <li class="{% if notification.is_read %}read{% else %}unread{% endif %}">
-                {{ notification.message }} - {{ notification.created_at }}
-                
-                {% if notification.interest_request %}
-                    {% if notification.interest_request.status == 'pending' %}
+            <tr class="{% if notification.is_read %}read{% else %}unread{% endif %}">
+                <!-- Notification Message and Date -->
+                <td>
+                    {{ notification.message }} - {{ notification.created_at }}
+                </td>
+
+                <!-- Status of Interest Request -->
+                <td>
+                    {% if notification.interest_request %}
+                        {% if notification.interest_request.status == 'accepted' %}
+                            Status: Accepted
+                        {% elif notification.interest_request.status == 'rejected' %}
+                            Status: Rejected
+                        {% else %}
+                            Status: Pending
+                        {% endif %}
+                    {% else %}
+                        No related interest requests found.
+                    {% endif %}
+                </td>
+
+                <!-- Action Buttons -->
+                <td>
+                    {% if notification.interest_request and notification.interest_request.status == 'pending' %}
                         <form method="post" action="{% url 'handle_interest_request' notification.id %}">
                             {% csrf_token %}
                             <button type="submit" class="btn-approve" name="action" value="accept">Accept</button>
                             <button type="submit" class="btn-reject" name="action" value="reject">Reject</button>
                         </form>
-                    {% elif notification.interest_request.status == 'accepted' %}
-                        <h2>Status: Accepted</h2>
-                    {% elif notification.interest_request.status == 'rejected' %}
-                        <h2>Status: Rejected</h2>
                     {% endif %}
-                {% else %}
-                    <p>No related interest requests found.</p>
-                {% endif %}
-            </li>
+                </td>
+            </tr>
         {% endfor %}
-    </ul>
+    </tbody>
+</table>
+
     
 </div>
 
