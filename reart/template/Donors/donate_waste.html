@@ -417,14 +417,21 @@
                 {% csrf_token %}
                 <div class="form-group">
                   <label for="medium_of_waste">Medium of Waste:</label>
-                  <select id="medium_of_waste" name="medium_of_waste" class="form-control" required>
+                  <select id="medium_of_waste" name="medium_of_waste" class="form-control" required onchange="toggleOtherField()">
                     {% for medium in mediums %}
                     <option value="{{ medium.id }}">{{ medium.name }}</option>
                     {% endfor %}
+                    <!-- <option value="other">Other</option> -->
                   </select>
                 </div>
+                
+                <!-- <div id="other_waste_field" class="form-group" style="display: none;">
+                  <label for="other_waste">Please specify:</label>
+                  <input type="text" id="other_waste" name="other_waste" class="form-control">
+                </div> -->
+
                 <div class="form-group">
-                  <label for="quantity">Quantity:</label>
+                  <label for="quantity">Quantity(Kg):</label>
                   <input type="number" id="quantity" name="quantity" oninput="validateRate()" class="form-control" step="0.01" required>
                   <span class="error-message" id="rate-error">Invalid Quantity</span>
                 </div>
@@ -434,9 +441,10 @@
                   <span class="error-message" id="location-error">Invalid Location</span>
                 </div>
                 <div class="form-group">
-                  <label for="image">Image of Donation:</label>
-                  <input type="file" id="image" name="image"  accept="image/*"  class="form-control"  required>
+                  <label for="images">Images of Donation:</label>
+                  <input type="file" id="images" name="images"  accept="image/*"  class="form-control" multiple required>
                   <span id="error-message" style="color: red;"></span>
+                  <ul id="file-list"></ul>
                   <!-- <span class="error-message" id="location-error">Invalid Location</span> -->
                 </div>
                 <button type="submit" id="submit-btn" class="btn btn-primary " disabled >Donate</button>
@@ -447,19 +455,45 @@
                 
       <!-- </section> -->
       <script>
+        document.getElementById('image').addEventListener('change',function(){
+          var fileList = this.files;
+          var output = document.getElementById('file-list');
+          output.innerHTML = '';
+
+          for (var i=0; i<fileList.length; i++){
+            var li = document.createElement('li');
+            li.textContent=fileList[i].name;
+            output.appendChild(li);
+          }
+        });
        const image = document.getElementById("image");
 const errorMessage = document.getElementById("error-message");
 
-image.addEventListener("change", function(event) {
+images.addEventListener("change", function(event) {
     const file = event.target.files[0];
     const fileType = file.type.toLowerCase();
     if (!fileType.startsWith("image/")) {
         errorMessage.textContent = "Please upload an image file.";
-        image.value = "";
+        images.value = "";
     } else {
         errorMessage.textContent = "";
     }
 });
+
+function toggleOtherField() {
+  var mediumSelect = document.getElementById('medium_of_waste');
+  var otherField = document.getElementById('other_waste_field');
+  
+  if (mediumSelect.value === 'other') {
+    otherField.style.display = 'block';
+  } else {
+    otherField.style.display = 'none';
+  }
+}
+document.getElementById('other_waste').addEventListener('input', function() {
+  document.getElementById('hidden_other_waste').value = this.value;
+});
+
         function validateName() {
             var location = document.getElementById("location").value;
             var locationError = document.getElementById("location-error");

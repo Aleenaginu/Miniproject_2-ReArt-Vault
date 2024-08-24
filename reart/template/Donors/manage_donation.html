@@ -264,7 +264,7 @@
     }
   
         .table {
-            width: 100%;
+            width: 90%;
             border-collapse: collapse;
             margin-bottom: 20px;
             font-family: Arial, sans-serif;
@@ -337,7 +337,7 @@
     justify-content: center;
     align-items: center;
     padding: 20px;
-    width: 80%; /* Adjust the width as needed */
+    width: 100%; /* Adjust the width as needed */
     max-width: 1200px; /* Optional: limit the maximum width */
     margin: 0 auto; /* Center the container if width is less than 100% */
 }
@@ -347,7 +347,7 @@
             padding: 20px;
             border-radius: 10px;
             width: 100%;
-            max-width: 1000px;
+            max-width: 1200px;
         }
 
         .sales-boxes {
@@ -366,7 +366,10 @@
             text-align: center;
             color: #333;
         }
-
+        .text-success {
+    color: green;
+    font-weight: bold;
+}
   
   
   </style>
@@ -521,49 +524,66 @@
           </div>
         </div>
     
-          <div class="sales-boxes">
-            <div class="recent-sales box" style="background-color: rgb(205, 231, 240); padding: 20px; border-radius: 10px; width:1000px;">
-                <div class="title" style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">Manage Donations</div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <!-- <th>ID</th> -->
-                            <th>Image</th>
-                            <th>Medium of Waste</th>
-                            <th>Quantity</th>
-                            <th>Location</th>
-                            <th>Date Donated</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for donation in donations %}
-                        <tr>
-                            <!-- <td>{{ donation.id }}</td> -->
-                            <!-- <td>{{ donation.donor.user.username }}</td> -->
-                            <td><img src="{{donation.image.url}}" alt="image"  width="100" height="65"></td>
-                            <td>{{ donation.medium_of_waste.name }}</td>
-                            <td>{{ donation.quantity }}</td>
-                            <td>{{ donation.location }}</td>
-                            <td>{{ donation.date_donated }}</td>
-                            <td>
-                              <a href="{% url 'edit_donation' donation.id %}" class="btn btn-primary">Edit</a>
-                            </td>
-                            <td>
-                              <form method="post" action="{% url 'delete_donation' donation.id %}" style="display:inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this donation?');">Delete</button>
-                            </form>
-                            </td>
-
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-          
+        <div class="sales-boxes">
+          <div class="recent-sales box" style="background-color: rgb(205, 231, 240); padding: 20px; border-radius: 10px; width: 1200px;">
+              <div class="title" style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">Manage Donations</div>
+              <table class="table">
+                  <thead>
+                      <tr>
+                          <!-- <th>ID</th> -->
+                          <th>Image</th>
+                          <th>Medium of Waste</th>
+                          <th>Quantity</th>
+                          <th>Location</th>
+                          <th>Date Donated</th>
+                          <th>Status</th>
+                          <th>Edit</th>
+                          <th>Delete</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for donation in donations %}
+                      <tr>
+                          <td>
+                              {% if donation.images.exists %}
+                                  {% for image in donation.images.all %}
+                                      <img src="{{ image.image.url }}" alt="image of waste" width="100" height="100">
+                                  {% endfor %}
+                              {% else %}
+                                  No picture
+                              {% endif %}
+                          </td>
+                          <td>{{ donation.medium_of_waste.name }}</td>
+                          <td>{{ donation.quantity }}</td>
+                          <td>{{ donation.location }}</td>
+                          <td>{{ donation.date_donated }}</td>
+                          <td>
+                              {% if donation.status == 'accepted' %}
+                                  <span class="text-success">Donation is accepted</span>
+                              {% else %}
+                                  <span class="text-warning">Pending</span>
+                              {% endif %}
+                          </td>
+                          <td>
+                              {% if donation.status != 'accepted' %}
+                                  <a href="{% url 'edit_donation' donation.id %}" class="btn btn-primary">Edit</a>
+                              {% endif %}
+                          </td>
+                          <td>
+                              {% if donation.status != 'accepted' %}
+                                  <form method="post" action="{% url 'delete_donation' donation.id %}" style="display:inline;">
+                                      {% csrf_token %}
+                                      <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this donation?');">Delete</button>
+                                  </form>
+                              {% endif %}
+                          </td>
+                      </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+      </div>
+      
           
                 
       <!-- </section> -->

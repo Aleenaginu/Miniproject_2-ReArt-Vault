@@ -12,7 +12,17 @@ class ProfileUpdateForm(forms.ModelForm):
         fields=['phone', 'profile_pic']
 
 class DonationForm(forms.ModelForm):
+    images=forms.FileField(widget=forms.ClearableFileInput(),required=False)
     class Meta:
         model = Donation
-        fields = ['medium_of_waste','quantity','location','image']
+        fields = ['medium_of_waste','quantity','location','images']
+
+    def save(self,commit=True):
+        donation=super().save(commit=False)
+        if commit:
+            donation.save()
+        if self.cleaned_data['images']:
+            for image in self.cleaned_data['images']:
+                DonationImage.objects.create(donation=donation,image=image)
+        return donation
 

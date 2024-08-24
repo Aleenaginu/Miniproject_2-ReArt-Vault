@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from .forms import DonationForm, UserUpdateForm, ProfileUpdateForm
-from .models import Donation, Donors, DonorNotification
+from .models import Donation, Donors, DonorNotification,DonationImage
 from artist.models import MediumOfWaste, InterestRequest
 from .models import Donation
 
@@ -53,13 +53,13 @@ def donor_update(request):
 def donate_waste(request):
     if not hasattr(request.user, 'donors'):
         return HttpResponseForbidden("You are not allowed to access this page.")
-
+    
     donor = request.user.donors
     total_donations = Donation.objects.filter(donor=donor).count()
     approved_donations = Donation.objects.filter(donor=donor, status ='accepted').count()
     context = {
         'mediums': MediumOfWaste.objects.all(),
-        'donor':donor,
+        'donor': donor,
         'total_donations':total_donations,
         'approved_donations':approved_donations
     }
@@ -68,7 +68,7 @@ def donate_waste(request):
         medium_id = request.POST.get('medium_of_waste')
         quantity = request.POST.get('quantity')
         location = request.POST.get('location')
-        image = request.FILES.get('image')
+        images = request.FILES.getlist('images')  
 
         try:
             medium_of_waste = MediumOfWaste.objects.get(id=medium_id)
@@ -76,19 +76,22 @@ def donate_waste(request):
             messages.error(request, 'Invalid medium of waste selected.')
             return render(request, 'Donors/donate_waste.html', {'mediums': MediumOfWaste.objects.all()})
 
-        Donation.objects.create(
+        donation = Donation.objects.create(
             donor=request.user.donors,
             medium_of_waste=medium_of_waste,
             quantity=quantity,
             location=location,
-            image=image,
             status='pending'
         )
 
+     
+        for image in images:
+            DonationImage.objects.create(donation=donation, image=image)
+   
         messages.success(request, 'Donation recorded successfully.')
         return redirect('donor_dashboard')
 
-    return render(request, 'Donors/donate_waste.html', context)
+    return render(request, 'Donors/donate_waste.html',context)
 
 @login_required
 @never_cache
@@ -156,7 +159,16 @@ def donor_notifications(request):
     donor = get_object_or_404(Donors, user=request.user)
     notifications = DonorNotification.objects.filter(donor=donor).order_by('-created_at')
     notifications.update(is_read=True)
-    return render(request, 'Donors/donor_notifications.html', {'notifications': notifications})
+    total_donations = Donation.objects.filter(donor=donor).count()
+    approved_donations = Donation.objects.filter(donor=donor, status ='accepted').count()
+    context = {
+        
+        'donor':donor,
+        'total_donations':total_donations,
+        'approved_donations':approved_donations,
+        'notifications': notifications
+    }
+    return render(request, 'Donors/donor_notifications.html', context)
 
 @login_required
 @never_cache

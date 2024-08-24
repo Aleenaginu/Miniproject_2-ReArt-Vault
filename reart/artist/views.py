@@ -8,6 +8,7 @@ from donors.models import *
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.views.decorators.cache import never_cache
+from django.http import HttpResponseForbidden
 
 # Create your views here.
 @login_required
@@ -91,7 +92,21 @@ def upload_certificate(request):
 def notifications(request):
     notifications = Notification.objects.filter(user=request.user)
     notifications.update(is_read=True)
-    return render(request, 'artist/notifications.html', {'notifications': notifications})
+    artist= request.user.artist
+    expressed_interest_count = Interest.objects.filter(artist=artist).count()
+    accepted_interest_count = InterestRequest.objects.filter(
+        artist=artist,
+        status='accepted'
+        ).count()
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+    context={
+            'artist':artist,
+            'unread_count':unread_count,
+            'expressed_interest_count':expressed_interest_count,
+            'accepted_interest_count':accepted_interest_count,
+            'notifications': notifications
+    }
+    return render(request, 'artist/notifications.html', context)
 
 @login_required
 @never_cache
@@ -163,7 +178,8 @@ def artist_interest_status(request):
     context={
         'interests':interests,
         'expressed_interest_count':expressed_interest_count,
-        'accepted_interest_count':accepted_interest_count
+        'accepted_interest_count':accepted_interest_count,
+        'artist':artist,
         }
     return render(request,'artist/interest_status.html',context)
 
@@ -171,3 +187,39 @@ def delete_notification(request, notification_id):
     notification=get_object_or_404(Notification,id=notification_id,user=request.user)
     notification.delete()
     return render('notifications')
+
+@login_required
+@never_cache
+def add_mediums(request):
+    if not request.user.artist.is_approved:
+        return HttpResponseForbidden("You are not allowed to access this page.")
+
+    artist=request.user.artist
+    expressed_interest_count = Interest.objects.filter(artist=artist).count()
+    accepted_interest_count = InterestRequest.objects.filter(
+            artist=artist,
+            status='accepted'
+        ).count()
+    if request.method == 'POST':
+        mediums = request.POST.getlist('mediums')
+        custom_medium_name = request.POST.get('custom_medium')
+        
+        if custom_medium_name:
+            custom_medium, created = MediumOfWaste.objects.get_or_create(name=custom_medium_name)
+            artist.mediums.add(custom_medium)
+        
+        for medium_id in mediums:
+            medium = MediumOfWaste.objects.get(id=medium_id)
+            artist.mediums.add(medium)
+
+        messages.success(request, 'Mediums added successfully.')
+        return redirect('artist_dashboard')
+
+    context = {
+        'mediums': MediumOfWaste.objects.all(),
+        'expressed_interest_count':expressed_interest_count,
+        'accepted_interest_count':accepted_interest_count,
+        'artist':artist,
+
+    }
+    return render(request, 'artist/add_mediums.html',context)

@@ -44,7 +44,7 @@
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            height: 95vh;
+            height: 1000px;
             max-height: 1000px;
         }
         .left {
@@ -64,7 +64,7 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            /* height:85vh; */
+            height:85vh;
         }
         .input-box {
             width: 100%;
@@ -182,7 +182,7 @@
                         <input type="tel" class="form-control" id="phone" name="phone" oninput="validatePhoneNumber()" required>
                         <span class="error-message" id="phone-error">Invalid Phone Number</span>
                     </div>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="medium">Medium of Waste</label>
                         <select id="medium" name="medium" class="form-control" required>
                             <option value="">Select Medium</option>
@@ -190,7 +190,22 @@
                                 <option value="{{ medium.id }}">{{ medium.name }}</option>
                             {% endfor %}
                         </select>
-                    </div>
+                    </div> -->
+                    <!-- <div class="form-group">
+                        <label for="medium">Medium of Waste</label>
+                        <div id="mediums"  class="custom_multiselect" required>
+                           
+                            {% for medium in mediums %}
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="mediums" value="{{ medium.id }}">
+                                    {{ medium.name }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                            </div>
+                            </div> -->
+
                     <div class="form-group">
                         <label for="password">Password</label>
                         <input type="password" class="form-control" id="password" name="password" oninput="validatePassword()" required>

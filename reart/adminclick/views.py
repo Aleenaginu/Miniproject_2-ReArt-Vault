@@ -181,11 +181,53 @@ def donation_listview(request):
     return render(request, 'admin/donation_list.html', context)
 
 
+# @login_required
+# @never_cache
+# def donation_detail(request, pk):
+#     donation = get_object_or_404(Donation, pk=pk)
+
+#     if request.method == 'POST':
+#         status = request.POST.get('status')
+#         if status == 'rejected':
+#             donation.delete()
+#             return redirect('donation_listview')
+#         elif status in dict(Donation.STATUS_CHOICES):
+#             donation.status = status
+#             donation.save()
+            
+#             if status == 'accepted':
+               
+#                 artists = Artist.objects.filter(medium=donation.medium_of_waste, is_approved=True)
+#                 for artist in artists:
+                 
+#                     send_mail(
+#                         'Donation Accepted',
+#                         f'A new waste donation in your medium has been accepted:\n'
+#                         f'Medium: {donation.medium_of_waste.name}\n'
+#                         f'Quantity: {donation.quantity}\n'
+#                         f'Location: {donation.location}\n',
+#                         'reartvault@gmail.com',
+#                         [artist.user.email],
+#                         fail_silently=False,
+#                     )
+                    
+#                     Notification.objects.create(
+#                         user=artist.user,
+#                         message=f'New waste donation in your medium: {donation.medium_of_waste.name}. Quantity: {donation.quantity}, Location: {donation.location}.',
+#                         donation=donation,
+#                     )
+
+#             return redirect('donation_listview')
+
+#     return render(request, 'admin/donation_detail.html', {'donation': donation})
 @login_required
-@never_cache
 def donation_detail(request, pk):
     donation = get_object_or_404(Donation, pk=pk)
-
+    adminclick = request.user.adminclick
+    context = {
+        'donation': donation,
+        'adminclick': adminclick
+    }
     if request.method == 'POST':
         status = request.POST.get('status')
         if status == 'rejected':
@@ -194,23 +236,23 @@ def donation_detail(request, pk):
         elif status in dict(Donation.STATUS_CHOICES):
             donation.status = status
             donation.save()
-            
+
             if status == 'accepted':
-                # Notify relevant artists
-                artists = Artist.objects.filter(medium=donation.medium_of_waste, is_approved=True)
+             
+                artists = Artist.objects.filter(mediums__in=[donation.medium_of_waste], is_approved=True).distinct()
                 for artist in artists:
-                    # Send email
+                   
                     send_mail(
                         'Donation Accepted',
-                        f'A new waste donation in your medium has been accepted:\n'
+                        f'A new waste donation in one of your mediums has been accepted:\n'
                         f'Medium: {donation.medium_of_waste.name}\n'
                         f'Quantity: {donation.quantity}\n'
                         f'Location: {donation.location}\n',
-                        'reartvault@gmail.com',
+                        'your-email@example.com',
                         [artist.user.email],
                         fail_silently=False,
                     )
-                    # Optional: Create in-app notification
+                 
                     Notification.objects.create(
                         user=artist.user,
                         message=f'New waste donation in your medium: {donation.medium_of_waste.name}. Quantity: {donation.quantity}, Location: {donation.location}.',
@@ -219,7 +261,7 @@ def donation_detail(request, pk):
 
             return redirect('donation_listview')
 
-    return render(request, 'admin/donation_detail.html', {'donation': donation})
+    return render(request, 'admin/donation_detail.html', context)
 
 # def artist_list(request):
 #     artists = Artist.objects.all()

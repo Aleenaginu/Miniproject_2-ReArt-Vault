@@ -9,7 +9,6 @@ class Donation(models.Model):
     quantity = models.DecimalField(max_digits=10, decimal_places=2)
     location = models.CharField(max_length=255)
     date_donated = models.DateTimeField(auto_now_add=True)
-    image=models.ImageField(upload_to='picture/donor',null=True)
     STATUS_CHOICES = [
         ('pending','Pending'),
         ('accepted','Accepted'),
@@ -19,6 +18,13 @@ class Donation(models.Model):
 
     def __str__(self):
         return f'{self.donor.user.username} - {self.medium_of_waste.name}'
+    
+class DonationImage(models.Model):
+    donation = models.ForeignKey(Donation, on_delete=models.CASCADE, related_name='images')
+    image=models.ImageField(upload_to='picture/donor')
+
+    def __str__(self):
+        return f'Image for {self.donation}'
     
 
 class InterestRequest(models.Model):

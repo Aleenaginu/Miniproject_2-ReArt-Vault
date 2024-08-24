@@ -1,193 +1,444 @@
-<!DOCTYPE html>
 {% load static %}
-<html>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
 <head>
-    <title>Notifications</title>
-    <style>
-    
-            body {
-    font-family: Arial, sans-serif;
+  <meta charset="UTF-8">
+  <title>Responsive Admin Dashboard | ReArt Vault</title>
+  <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <!-- Boxicons CDN Link -->
+  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+  <script>
+    document.querySelector('.profile-details').addEventListener('click', function () {
+      this.querySelector('.dropdown-menu').classList.toggle('show');
+    });
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<style>
+  .profile-details .dropdown-menu {
+    display: none;
+  }
+
+  .profile-details .dropdown-menu.show {
+    display: block;
+  }
+
+
+  .profile-details {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .profile-details img {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+  }
+
+  .profile-details .admin_name {
+    margin-left: 10px;
+    font-size: 16px;
+    color: #333;
+  }
+
+  .profile-details .bx-chevron-down {
+    margin-left: 10px;
+    cursor: pointer;
+  }
+
+  .profile-details .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .profile-details .dropdown-menu li {
+    list-style: none;
+  }
+
+  .profile-details .dropdown-menu li a {
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .profile-details .dropdown-menu li a:hover {
+    background-color: #f0f0f0;
+  }
+
+  .profile-details:hover .dropdown-menu {
+    display: block;
+  }
+
+  .sales-details {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .details {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    /* Added gap between items */
+  }
+
+  .detail-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    /* Gap between image and text */
+  }
+
+  .item-pic {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+  }
+
+  .item-pic:hover {
+    transform: scale(1.1);
+  }
+
+  .detail-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    /* Adjust the spacing between list items if needed */
+  }
+
+  .item-pic {
+    width: 150px;
+    /* Adjust size as needed */
+    height: auto;
+    margin-right: 20px;
+    /* Adjust spacing between image and text */
+  }
+
+  .item-text {
+    font-weight: bold;
+    font-size: 1.2em;
+    /* Adjust the size as needed */
+    margin-bottom: 5px;
+    /* Space between heading and description */
+  }
+  .badge {
+    background-color: red;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 50%;
+    font-size: 12px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+
+
+
+.sales-boxes {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
-    background: url("{% static 'profile.webp' %}")no-repeat center center fixed; /* Replace 'your-image-url.jpg' with the path to your image */
-    background-size: cover;
+    padding: 20px;
+    width: 80%; /* Adjust the width as needed */
+    max-width: 1200px; /* Optional: limit the maximum width */
+    margin: 0 auto; /* Center the container if width is less than 100% */
 }
-        .popup {
-            background-color: white;
+
+        .recent-sales {
+            background-color: rgb(205, 231, 240);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 800px;
-            max-width: 90%;
-            position: relative;
+            width: 100%;
+            max-width: 1000px;
         }
-        .popup h2 {
-            margin-top: 0;
-        }
-        .popup ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .popup li {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            align-items: center;
-        }
-        .popup li.read {
-            background-color: #f9f9f9;
-        }
-        .popup li.unread {
-            background-color: #e9f5ff;
+
+        .sales-boxes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .recent-sales.box {
+    width: 100%;
+    max-width: 1000px;
+  }
+  .title {
+            font-size: 24px;
             font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
         }
-        .popup li span.icon {
-            margin-right: 10px;
-        }
-        .popup li.read span.icon::before {
-            content: '✓';
-            color: green;
-        }
-        .popup li.unread span.icon::before {
-            content: '●';
-            color: blue;
-        }
-        .close-button {
-            padding: 10px 20px;
-            background-color: #f44336;
-            color: white;
-            border: none;
-            cursor: pointer;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-        .button {
-        background-color: #4CAF50; /* Green background */
-        border: none; /* Remove borders */
-        color: white; /* White text */
-        padding: 10px 0; /* Vertical padding only */
-        text-align: center; /* Center the text */
-        text-decoration: none; /* Remove underlines */
-        display: inline-block; /* Align buttons in a row */
-        font-size: 16px; /* Increase font size */
-        margin: 4px; /* Add some margin */
-        cursor: pointer; /* Change cursor on hover */
-        border-radius: 4px; /* Rounded corners */
-        transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
-        width: 150px; /* Fixed width */
-        height: 50px; /* Fixed height */
-        line-height: 50px; /* Center text vertically */
-        text-align: center; /* Center text horizontally */
-    }
 
-    .button:hover {
-        transform: scale(1.05); /* Slightly enlarge the button */
-    }
+        .artist-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+  }
 
-    /* Specific styles for express interest button */
-    .button-express {
-        background-color: #4CAF50; /* Green background */
-    }
+  .artist-table th, .artist-table td {
+    border: none;
+    padding: 15px 20px;
+    text-align: left;
+  }
 
-    .button-express:hover {
-        background-color: #45a049; /* Darker green */
-    }
+  .artist-table th {
+    background-color: #f7f9fa;
+    color: #333;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
 
-    /* Specific styles for delete button */
-    .button-delete {
-        background-color: #f44336; /* Red background */
-    }
+  .artist-table tbody tr {
+    transition: background-color 0.3s;
+  }
 
-    .button-delete:hover {
-        background-color: #d32f2f; /* Darker red */
-    }
+  .artist-table tbody tr:nth-child(even) {
+    background-color: #f7f9fa;
+  }
 
-    /* Remove default styling from <a> tag */
-    .button-link {
-        text-decoration: none; /* Remove underline */
-    }
-    </style>
-</head>
+  .artist-table tbody tr:hover {
+    background-color: #e9eff4;
+  }
+
+  .artist-table img {
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+</style>
+
 <body>
-    <!-- <div class="popup" id="notificationPopup">
-        <button class="close-button" onclick="window.history.back()">Close</button>
-        <h2>Your Notifications</h2>
-        <ul>
-            {% for notification in notifications %}
-                {% if notification.is_read %}
-                    <li class="read">
-                        <span class="icon"></span>
-                        {{ notification.message }} - {{ notification.created_at }}
-                    </li>
-                {% else %}
-                    <li class="unread">
-                        <span class="icon"></span>
-                        {{ notification.message }} - {{ notification.created_at }}
-                    </li>
-                {% endif %}
-            {% endfor %}
-        </ul>
-    </div> -->
-    <div class="popup" id="notificationPopup">
-        <button class="close-button" onclick="window.history.back()">Close</button>
-        <h2>Your Notifications</h2>
-        <ul>
-    {% for notification in notifications %}
-        <li class="{% if notification.is_read %}read{% else %}unread{% endif %}">
-            <span class="icon"></span>
-            {{ notification.message }} - {{ notification.created_at }}
-
-            {% if notification.donation %}
-                {% if notification.interest_request %}
-                    <!-- Interest has been sent -->
-                    <p>Interest has been sent</p>
-                {% else %}
-                    <!-- Allow expressing interest -->
-                    <form method="post" action="{% url 'express_interest' notification.donation.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="button button-express">Express Interest</button>
-                    </form>
-                {% endif %}
-            {% else %}
-                <p>No donation available.</p>
-            {% endif %}
-        </li>
-    {% endfor %}
-</ul>
-
-        
-        
+  <div class="sidebar">
+    <div class="logo-details">
+      <!-- <i class=''></i> -->
+      <span class="logo_name" style="font-size: 30px; text-align: center; font-weight: 700; color: #b5c8c1;">ReArt Vault</span>
     </div>
+    <ul class="nav-links">
+        <li>
+            <a href="{% url 'artist_dashboard' %}" class="active">
+              <i class='bx bx-grid-alt'></i>
+              <span class="links_name">Artist Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'add_mediums' %}">
+              <i class='bx bx-list-ul'></i>
+              <span class="links_name">Add medium</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'notifications' %}">
+              <i class='bx bx-message'></i>
+              <span class="links_name">Notifications</span>
+              {% if unread_count > 0 %}
+              <span class="badge">{{ unread_count }}</span>
+              {% endif %}
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'view_ratesartist' %}">
+              <i class='bx bx-pie-chart-alt-2'></i>
+              <span class="links_name">Price Listings</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'artist_interest_status' %}">
+              <i class='bx bx-list-ul'></i>
+              <span class="links_name">Interest Status</span>
+            </a>
+          </li>
+     
+  
+      <!-- <li>
+        <a href="#">
+          <i class='bx bx-message'></i>
+          <span class="links_name">Messages</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-message'></i>
+          <span class="links_name">Conatct</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-heart'></i>
+          <span class="links_name">Favorites</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-cog'></i>
+          <span class="links_name">Setting</span>
+        </a>
+      </li> -->
+      <li class="log_out">
+        <a href="{% url 'userlogout' %}">
+          <i class='bx bx-log-out'></i>
+          <span class="links_name">Log out</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <section class="home-section">
+    <nav>
+      <div class="sidebar-button">
+        <i class='bx bx-menu sidebarBtn'></i>
+        <span class="dashboard">Dashboard</span>
+      </div>
+      <div class="search-box">
+        <input type="text" placeholder="Search...">
+        <i class='bx bx-search'></i>
+      </div>
+      <div class="profile-details">
+        {% if artist.profile_pic %}
+         <img src="{{artist.profile_pic.url}}" alt="">
+        {% endif %}
+        <span class="admin_name" style="font-size: 25px; font-weight: 900; color: #010302;">Hi {{user.username}}</span>
+        <i class='bx bx-chevron-down'></i>
+        <ul class="dropdown-menu">
+          <li><a href="{% url 'userprofileartist' %}">View Profile</a></li>
+          <li><a href="{% url 'profile_update' %}">Edit Profile</a></li>
+          <!-- <li><a href="#">Settings</a></li> -->
+          <li><a href="{% url 'userlogout' %}">Logout</a></li>
+        </ul>
+      </div>
+    </nav>
 
+    <div class="home-content">
+      <div class="overview-boxes">
+        <div class="box" style="background-color:rgb(243, 212, 200);">
+          <div class="right-side">
+            <div class="box-topic">Expressed Interest</div>
+            <div class="number">{{ expressed_interest_count }}</div>
+            <div class="indicator">
+              <!-- <i class='bx bx-up-arrow-alt'></i> -->
+              <!-- <span class="text">Up from yesterday</span> -->
+            </div>
+          </div>
+          <!-- <i class='bx bx-cart-alt cart'></i> -->
+        </div>
+        <div class="box" style="background-color:rgb(188, 233, 188);">
+          <div class="right-side">
+            <div class="box-topic">Accepted Interests</div>
+            <div class="number">{{ accepted_interest_count }}</div>
+            <div class="indicator">
+              <!-- <i class='bx bx-up-arrow-alt'></i> -->
+              <!-- <span class="text">Up from yesterday</span> -->
+            </div>
+          </div>
+          <!-- <i class='bx bxs-cart-add cart two'></i> -->
+        </div>
+        <div class="box" style="background-color:rgb(240, 240, 205);">
+          <div class="right-side">
+            <div class="box-topic">Added Categories</div>
+            <div class="number"> 0</div>
+            <div class="indicator">
+              <!-- <i class='bx bx-up-arrow-alt'></i> -->
+              <!-- <span class="text">Up from yesterday</span> -->
+            </div>
+          </div>
+          <!-- <i class='bx bx-cart cart three'></i> -->
+        </div>
+        <div class="box" style="background-color:rgb(240, 205, 228);">
+          <div class="right-side">
+            <div class="box-topic">Sold Items</div>
+            <div class="number">0</div>
+            <div class="indicator">
+              <!-- <i class='bx bx-down-arrow-alt down'></i> -->
+              <!-- <span class="text">Down From Today</span> -->
+            </div>
+          </div>
+          <!-- <i class='bx bxs-cart-download cart four'></i> -->
+        </div>
+      </div>
+
+      <div class="sales-boxes">
+        <div class="recent-sales box" style="background-color: rgb(205, 231, 240); padding: 20px; border-radius: 10px;">
+            <div class="title" style="font-size: 24px; font-weight: bold;margin-bottom: 20px;">Your Notifications</div>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="text-align: left; padding: 10px; border-bottom: 2px solid #ddd;">Notification</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 2px solid #ddd;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for notification in notifications %}
+                    <tr class="{% if notification.is_read %}read{% else %}unread{% endif %}" 
+                        style="{% if notification.is_read %}background-color: #f7f7f7;{% else %}background-color: #ffffff;{% endif %}">
+                        <!-- Notification Message and Date -->
+                        <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                            <span class="icon"></span>
+                            {{ notification.message }} - {{ notification.created_at }}
+                        </td>
+    
+                        <!-- Action Buttons or Status -->
+                        <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                            {% if notification.donation %}
+                                {% if notification.interest_request %}
+                                    <p>Interest has been sent</p>
+                                {% else %}
+                                    <form method="post" action="{% url 'express_interest' notification.donation.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="button button-express" 
+                                                style="background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">
+                                            Express Interest
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            {% else %}
+                                <p>No donation available.</p>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
     <script>
-        function closePopup() {
-            document.getElementById('notificationPopup').style.display = 'none';
-        }
-
-        function openPopup() {
-            document.getElementById('notificationPopup').style.display = 'block';
-        }
-
-        // Example function to open the popup when a button is clicked
-        document.getElementById('notificationsButton').addEventListener('click', function() {
-            openPopup();
-        });
-        
         document.addEventListener("DOMContentLoaded", function () {
-         {% for message in messages %}
-        Swal.fire({
-            icon: '{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}', 
-            title: '{{ message }}',
-            showConfirmButton: false,
-            timer: 3000
+            {% for message in messages %}
+            Swal.fire({
+                icon: '{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}', 
+                title: '{{ message }}',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            {% endfor %}
         });
-    {% endfor %}
-});
-
     </script>
-</body>
-</html>
+    </body>
+    </html>
+    

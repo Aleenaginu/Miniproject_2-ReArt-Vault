@@ -11,4 +11,5 @@ urlpatterns = [
     path('express-interest/<int:donation_id>/', views.express_interest, name='express_interest'),
     path('interest-status/', views.artist_interest_status, name='artist_interest_status'),
     path('delete-notification/<int:notification_id>/', views.delete_notification, name='delete_notification'),
+    path('artist/add-mediums/', views.add_mediums, name='add_mediums'),
 ]

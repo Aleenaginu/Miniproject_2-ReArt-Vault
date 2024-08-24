@@ -216,6 +216,42 @@ def custom_password_reset_done(request):
     return render(request, 'registration/password_reset_done.html')
 
 
+# def artistRegister(request):
+#     if request.method == 'POST':
+#         username = request.POST.get('username')
+#         email = request.POST.get('email')
+#         phone = request.POST.get('phone')
+#         profile_pic = request.FILES.get('profile_pic')
+#         password = request.POST.get('password')
+#         confirm_password = request.POST.get('confirm_password')
+#         medium_id = request.POST.get('medium')
+        
+#         if password == confirm_password:
+#             if User.objects.filter(username=username).exists():
+#                 messages.error(request, 'Username Already Taken')
+#             elif User.objects.filter(email=email).exists():
+#                 messages.error(request, 'Email Already Taken')
+#             elif Artist.objects.filter(phone=phone).exists():
+#                 messages.error(request, 'Phone already registered')
+#             else:
+                        
+#                 try:
+#                     medium = MediumOfWaste.objects.get(id=medium_id)
+#                 except MediumOfWaste.DoesNotExist:
+#                     messages.error(request, 'Invalid medium selected')
+#                     return render(request, 'artist_register.html', {'mediums': MediumOfWaste.objects.all()})
+                
+#                 with transaction.atomic():
+#                     user = User.objects.create_user(username=username, email=email, password=password)
+#                     Artist.objects.create(user=user, phone=phone, profile_pic=profile_pic,medium=medium)
+#                 messages.success(request, 'Registered successfully')
+#                 return redirect('userlogin')
+#         else:
+#             messages.error(request, 'Passwords do not match')
+#         return redirect('artist_register')
+#     mediums = MediumOfWaste.objects.all()
+#     return render(request, 'artist/Register.html', {'mediums': mediums})
+
 def artistRegister(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -224,8 +260,7 @@ def artistRegister(request):
         profile_pic = request.FILES.get('profile_pic')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
-        medium_id = request.POST.get('medium')
-        
+
         if password == confirm_password:
             if User.objects.filter(username=username).exists():
                 messages.error(request, 'Username Already Taken')
@@ -234,24 +269,20 @@ def artistRegister(request):
             elif Artist.objects.filter(phone=phone).exists():
                 messages.error(request, 'Phone already registered')
             else:
-                        
-                try:
-                    medium = MediumOfWaste.objects.get(id=medium_id)
-                except MediumOfWaste.DoesNotExist:
-                    messages.error(request, 'Invalid medium selected')
-                    return render(request, 'artist_register.html', {'mediums': MediumOfWaste.objects.all()})
-                
                 with transaction.atomic():
                     user = User.objects.create_user(username=username, email=email, password=password)
-                    Artist.objects.create(user=user, phone=phone, profile_pic=profile_pic,medium=medium)
-                messages.success(request, 'Registered successfully')
+                    artist = Artist.objects.create(user=user, phone=phone, profile_pic=profile_pic)
+
+                    artist.save()
+                    
+                messages.success(request, 'Registered successfully. You can add mediums to your profile after approval.')
                 return redirect('userlogin')
         else:
             messages.error(request, 'Passwords do not match')
         return redirect('artist_register')
-    mediums = MediumOfWaste.objects.all()
-    return render(request, 'artist/Register.html', {'mediums': mediums})
 
+    return render(request, 'artist/Register.html')
+                                                    
 # def UserLoginArtist(request):
 #     if request.method == 'POST':
 #         username = request.POST.get('username')
