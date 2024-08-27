@@ -12,7 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <style>
         body {
-            overflow: hidden; /* Disable scrollbar */
+            overflow: hidden; /* Hide scrollbars */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -40,10 +40,11 @@
             max-width: 1200px; /* Adjust max-width for better fit */
             background: rgba(255, 255, 255, 0.9); /* Semi-transparent background */
             border-radius: 10px;
-            overflow: hidden;
+            /* overflow: hidden; */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
             height: 70vh; /* Adjust the height as needed */
             max-height: 1000px; /* Optionally set a maximum height */
+            overflow: hidden; /* Hide scrollbars for the main container */
         }
         .left {
             flex: 1;
@@ -71,7 +72,8 @@
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-            overflow: auto; /* Allows scrolling if content overflows */
+            /* overflow: auto;  */
+            overflow: hidden; /* Hide scrollbars for the input box */
         }
         header {
             font-size: 24px;
@@ -128,6 +130,30 @@
             margin-top: 5px; /* Adjusted margin-top */
             margin-bottom: -10px; /* Adjusted margin-bottom */
         }
+        .btn-google {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #4285F4;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            width: 100%;
+            transition: background-color 0.3s ease;
+            margin-top: 10px; /* Ensure consistent spacing */
+        }
+
+        .btn-google:hover {
+            background-color: #357ae8;
+        }
+
+        .btn-google i {
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body>
@@ -154,6 +180,9 @@
                     <div class="input-field">
                         <input type="submit" class="submit btn btn-primary btn-block" value="Login">
                     </div>
+                    <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn-google">
+                        <i class="fab fa-google"></i> Sign in with Google
+                    </a>
                     <div class="signin">
                         <span>Don't have an account? <a href="{% url 'index' %}">Register here</a></span>
                     </div>

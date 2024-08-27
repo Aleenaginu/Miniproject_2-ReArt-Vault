@@ -27,6 +27,10 @@ from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 def donorRegister(request):
     request.session['user_role']='donor'
     if request.method == 'POST':
@@ -74,29 +78,46 @@ def UserLogin(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(username=username, password=password)
         
-        if user is not None and hasattr(user, 'donors'):
-            login(request, user)
-            messages.success(request, 'Login successful')
-            return redirect('donor_dashboard')
-        elif user is not None and hasattr(user, 'artist'):
-          
-            if user.artist.is_approved:
-                login(request, user)
-                messages.success(request, 'Login successful')
-                return redirect('artist_dashboard')
-            
-            elif user.artist.certificate:
-                messages.warning(request, 'You uploaded your certificate, but the verification is still under processing.')
-                return redirect('userlogin')
-
-            else:
-                messages.error(request, 'Your account is pending approval.Please upload your certificate')
-                return redirect('pending_approval')
-        else:
+        logger.debug(f"Login attempt for username: {username}")
+        
+        # Check if the user exists
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            logger.warning(f"User does not exist: {username}")
             messages.error(request, 'Invalid credentials')
             return render(request, 'login.html')
+        
+        # Attempt to authenticate
+        user = authenticate(username=username, password=password)
+        
+        if user is not None:
+            logger.debug(f"User authenticated: {username}")
+            
+            if hasattr(user, 'donors'):
+                login(request, user)
+                messages.success(request, 'Login successful')
+                return redirect('donor_dashboard')
+            elif hasattr(user, 'artist'):
+                if user.artist.is_approved:
+                    login(request, user)
+                    messages.success(request, 'Login successful')
+                    return redirect('artist_dashboard')
+                elif user.artist.certificate:
+                    messages.warning(request, 'You uploaded your certificate, but the verification is still under processing.')
+                    return redirect('userlogin')
+
+                else:
+                    messages.error(request, 'Your account is pending approval. Please upload your certificate')
+                    return redirect('pending_approval')
+            else:
+                logger.warning(f"User has no donor or artist profile: {username}")
+                messages.error(request, 'Invalid user type')
+        else:
+            logger.warning(f"Authentication failed for username: {username}")
+            messages.error(request, 'Invalid credentials')
+        
     return render(request, 'login.html')
 
 

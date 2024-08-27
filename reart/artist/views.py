@@ -9,6 +9,9 @@ from django.core.mail import send_mail
 from django.contrib import messages
 from django.views.decorators.cache import never_cache
 from django.http import HttpResponseForbidden
+from django.views.decorators.csrf import csrf_exempt 
+from django.conf import settings
+
 
 # Create your views here.
 @login_required
@@ -180,6 +183,7 @@ def artist_interest_status(request):
         'expressed_interest_count':expressed_interest_count,
         'accepted_interest_count':accepted_interest_count,
         'artist':artist,
+        'razorpay_api_key':settings.RAZORPAY_API_KEY,
         }
     return render(request,'artist/interest_status.html',context)
 
@@ -223,3 +227,93 @@ def add_mediums(request):
 
     }
     return render(request, 'artist/add_mediums.html',context)
+
+def create_payment(request, interest_id):
+    interest_request = get_object_or_404(InterestRequest, id=interest_id)
+    medium_of_waste = interest_request.donation.medium_of_waste
+    amount = medium_of_waste.rate * interest_request.donation.quantity  
+
+    client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET_KEY))
+    order_data = {
+        'amount': int(amount * 100),  # Amount in paise
+        'currency': 'INR',
+        'payment_capture': '1'
+    }
+    order = client.order.create(order_data)
+
+    payment = Payment.objects.create(
+        artist=interest_request.artist,
+        amount=amount,
+        order_id=order['id']
+    )
+
+    context = {
+        'order_id': order['id'],
+        'razorpay_key': settings.RAZORPAY_API_KEY,
+        'amount': amount,
+        'interest_request': interest_request,
+        'payment': payment
+    }
+
+    return render(request, 'artist/payment_page.html', context)
+
+
+def payment_success(request):
+    return render(request, 'artist/payment_success.html')
+
+def payment_failed(request):
+    return render(request, 'artist/payment_failed.html')
+
+def verify_payment(request, payment_id):
+    payment = get_object_or_404(Payment, id=payment_id)
+    client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET_KEY))
+
+    if request.method == "POST":
+        try:
+            params_dict = {
+                'razorpay_order_id': request.POST.get('razorpay_order_id'),
+                'razorpay_payment_id': request.POST.get('razorpay_payment_id'),
+                'razorpay_signature': request.POST.get('razorpay_signature')
+            }
+
+            client.utility.verify_payment_signature(params_dict)
+            payment.payment_id = params_dict['razorpay_payment_id']
+            payment.status = 'completed'
+            payment.save()
+
+            # Handle post-payment processing
+            return redirect('payment_success')
+
+        except razorpay.errors.SignatureVerificationError:
+            payment.status = 'failed'
+            payment.save()
+            return redirect('payment_failed')
+
+    return render(request, 'artist/payment_failed.html')
+
+
+@csrf_exempt
+def payment_callback(request):
+    if request.method == "POST":
+        client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET_KEY))
+        
+        try:
+            params_dict = {
+                'razorpay_payment_id': request.POST['razorpay_payment_id'],
+                'razorpay_order_id': request.POST['razorpay_order_id'],
+                'razorpay_signature': request.POST['razorpay_signature']
+            }
+
+            client.utility.verify_payment_signature(params_dict)
+
+            interest_id = request.POST['interest_id']
+            interest = InterestRequest.objects.get(id=interest_id)
+            interest.payment_status = 'paid'
+            interest.save()
+
+            return redirect('payment_success')
+
+        except razorpay.errors.SignatureVerificationError:
+            return redirect('payment_failed')
+    
+    return HttpResponseBadRequest()

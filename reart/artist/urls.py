@@ -12,4 +12,9 @@ urlpatterns = [
     path('interest-status/', views.artist_interest_status, name='artist_interest_status'),
     path('delete-notification/<int:notification_id>/', views.delete_notification, name='delete_notification'),
     path('artist/add-mediums/', views.add_mediums, name='add_mediums'),
+    path('create-payment/<int:interest_id>/', views.create_payment, name='create_payment'),
+    path('verify-payment/<int:payment_id>/', views.verify_payment, name='verify_payment'),
+    path('payment-success/', views.payment_success, name='payment_success'),
+    path('payment-failed/', views.payment_failed, name='payment_failed'),
+    path('payment-callback/', views.payment_callback, name='payment_callback'),
 ]

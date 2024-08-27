@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-ah(=!6a-hveva1elgo7npxy$k#&^nirroc4zoyqms@d6#73leq
 # SECRET_KEY = os.getenv('django-insecure-ah(=!6a-hveva1elgo7npxy$k#&^nirroc4zoyqms@d6#73leq')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+SITE_ID = 1
 ALLOWED_HOSTS = []
 
 
@@ -43,12 +43,13 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    
+    'django.contrib.sites',
     'django.contrib.staticfiles',
     'accounts',
     'donors',
     'artist',
     'adminclick',
+    'shop',
 ]
 
 MIDDLEWARE = [
@@ -197,3 +198,10 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 )
+
+
+RAZORPAY_API_KEY = 'rzp_test_zXqniu2WbyToOX'
+RAZORPAY_API_SECRET_KEY = 'PqqXMqDJViYcLIIocc65V9m4'
+CSRF_TRUSTED_ORIGINS = ['https://api.razorpay.com']
+
+

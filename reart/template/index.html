@@ -46,31 +46,41 @@
     <div class="container d-flex align-items-center justify-content-between">
       <a href="index.html" class="logo"><img src="{% static 'logo.png' %}" alt="" class="img-fluid"></a>
 
-      <h1 class="logo"><a href="index.html">ReartVault</a></h1>
+      <h1 class="logo">
+        <a href="index.html" style="
+          font-family: 'Poppins', sans-serif;
+          font-weight: 700;
+          font-size: 50px;
+          color: #96c4a2;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          text-decoration: none;
+          transition: all 0.3s ease;
+        ">
+          Reart  Vault
+        </a>
+      </h1>
       <!-- Uncomment below if you prefer to use an image logo -->
      
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
-          <li><a class="nav-link scrollto" href="{% url 'userloginadmin' %}">Admin Click</a></li>
-          <li><a class="nav-link scrollto" href="{% url 'userlogin' %}">Login</a></li>
-          
-          <li class="dropdown"><a href="#"><span>Register</span> <i class="bi bi-chevron-down"></i></a>
+          <li><a class="nav-link scrollto active" href="#hero" style="font-size: 0.9rem;">Home</a></li>
+          <li><a class="nav-link scrollto" href="{% url 'userloginadmin' %}" style="font-size:0.9rem;">Admin Click</a></li>
+          <li><a class="nav-link scrollto" href="{% url 'userlogin' %}" style="font-size: 0.9rem;">Login</a></li>
+          <li class="dropdown"><a href="#" style="font-size:0.9rem;"><span>Register</span> <i class="bi bi-chevron-down"></i></a>
             <ul>
-              <li><a href="{% url 'donor_register' %}">Donor Registration</a></li>
-             
-              <li><a href="{% url 'artist_register' %}">Artist Registration</a></li>
-           
+              <li><a href="{% url 'donor_register' %}" style="font-size: 0.9rem;">Donor Registration</a></li>
+              <li><a href="{% url 'artist_register' %}" style="font-size: 0.9rem;">Artist Registration</a></li>
             </ul>
           </li>
-         
-        
+          <li><a class="nav-link scrollto" href="{% url 'shop:shop_home' %}" style="font-size: 0.9rem;">Shop</a></li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
         <div class="widget-header">
+          <small class="nav-link scrollto active" style="font-size: 1rem;">WELCOME </small>
 				
-          <small class="title text-white">Welcome {{user.username}}</small>
-          {% if user.is_authenticated and request.user.donors %}
+          <!-- <small class="title text-white">Welcome {{user.username}}</small> 
+           {% if user.is_authenticated and request.user.donors %}
           <a href="">Dashboard</a> <span class="dark-transp"> | </span>
           <a href="">Logout</a> 
           
@@ -79,7 +89,7 @@
           <a href="">Logout</a> 
           {% else %}
           <a href="#"> Guest </a>
-          {% endif %}
+          {% endif %} -->
            
         </div>
       </nav><!-- .navbar -->
@@ -90,7 +100,21 @@
   <!-- ======= Hero Section ======= -->
   <section id="hero">
     <div class="hero-container" data-aos="fade-up" data-aos-delay="150">
-      <h1>Reduce. ReUse. ReCycle.</h1>
+      <h1 class="logo">
+        <a href="index.html" style="
+          font-family: 'Poppins', sans-serif;
+          font-weight: 700;
+          font-size: 70px;
+          color: #96c4a2;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          text-decoration: none;
+          transition: all 0.3s ease;
+        ">
+          Reduce. ReUse. ReCycle.
+        </a>
+      </h1>
+    
       <h2>We are team for Recycle your Trash</h2>
       <div class="d-flex">
         <a href="" class="btn-get-started scrollto">Get Started</a>
