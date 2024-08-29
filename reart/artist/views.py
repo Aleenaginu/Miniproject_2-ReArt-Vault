@@ -11,6 +11,7 @@ from django.views.decorators.cache import never_cache
 from django.http import HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt 
 from django.conf import settings
+from django.db import transaction
 
 
 # Create your views here.
@@ -317,3 +318,103 @@ def payment_callback(request):
             return redirect('payment_failed')
     
     return HttpResponseBadRequest()
+
+@login_required
+@never_cache
+def artist_shop(request):
+    if not hasattr(request.user, 'artist'):
+        return HttpResponseForbidden("You are not allowed to access this page.")
+    artist=request.user.artist
+    products=Product.objects.filter(artist=artist)
+    context={
+        'products':products,
+        'artist':artist,
+    }
+    return render(request, 'artist/shop_overview.html',context)
+
+@login_required
+@never_cache
+def add_product(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        price = request.POST.get('price')
+        image = request.FILES.get('image')
+        stock = request.POST.get('stock')
+        category_ids = request.POST.getlist('categories')
+        custom_category = request.POST.get('custom_category')
+
+        product = Product.objects.create(
+            artist=request.user.artist,
+            name=name,
+            description=description,
+            price=price,
+            image=image,
+            stock=stock,
+        )
+        for category_id in category_ids:
+            try:
+                category = Category.objects.get(id=category_id)
+                product.categories.add(category)
+            except Category.DoesNotExist:
+                continue
+
+        if custom_category:
+            custom_category_obj, created = Category.objects.get_or_create(name=custom_category)
+            product.categories.add(custom_category_obj)
+
+        product.save()
+        return redirect('artist_dashboard') 
+
+    categories = Category.objects.all()
+    return render(request, 'artist/add_product.html', {'categories': categories})
+
+@login_required
+@never_cache
+
+def edit_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id, artist=request.user.artist)
+
+    if request.method == 'POST':
+        product.name = request.POST.get('name')
+        product.description = request.POST.get('description')
+        product.price = request.POST.get('price')
+        if 'image' in request.FILES:
+            product.image = request.FILES['image']
+        product.stock = request.POST.get('stock')
+        category_ids = request.POST.getlist('categories')
+        custom_category = request.POST.get('custom_category')
+
+        product.categories.clear()  
+
+        for category_id in category_ids:
+            try:
+                category = Category.objects.get(id=category_id)
+                product.categories.add(category)
+            except Category.DoesNotExist:
+                continue
+
+        if custom_category:
+            custom_category_obj, created = Category.objects.get_or_create(name=custom_category)
+            product.categories.add(custom_category_obj)
+
+        product.save()
+        return redirect('artist_dashboard')
+
+    categories = Category.objects.all()
+    return render(request, 'artist/edit_product.html', {'product': product, 'categories': categories})
+
+@login_required
+@never_cache
+def shopdash(request):
+    artist=request.user.artist
+    context={
+        'artist':artist,
+    }
+    return render(request, 'artist/shopdash.html',context)
+
+
+                
+                
+                
+

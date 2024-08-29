@@ -236,6 +236,10 @@
         <input type="text" placeholder="Search...">
         <i class='bx bx-search'></i>
       </div>
+      <a href="{% url 'shopdash' %}" style="text-decoration:none;"><div class="profile-details">
+        <i class='bx bx-shopping-bag'></i>
+        <span class="admin_name" style="font-size: 25px; font-weight: 900; color: #010302;">SHOP</span>
+      </div></a>
       <div class="profile-details">
         {% if artist.profile_pic %}
          <img src="{{artist.profile_pic.url}}" alt="">

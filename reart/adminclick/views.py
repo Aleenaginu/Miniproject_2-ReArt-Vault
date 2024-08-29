@@ -263,6 +263,21 @@ def donation_detail(request, pk):
 
     return render(request, 'admin/donation_detail.html', context)
 
+
+@login_required
+def add_category(request):
+
+    if request.method == 'POST':
+        category_name=request.POST.get('category_name')
+
+        if category_name:
+            Category.objects.create(name=category_name)
+            messages.success(request,'Category added successfully')
+            return redirect('add_category')
+        messages.error(request,'Category name is required')
+    return render(request,'admin/add_category.html')
+
+
 # def artist_list(request):
 #     artists = Artist.objects.all()
 #     return render(request, 'admin/artist_list.html', {'artists': artists})

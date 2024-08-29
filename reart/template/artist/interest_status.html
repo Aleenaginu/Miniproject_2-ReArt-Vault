@@ -15,6 +15,8 @@
     });
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 </head>
 <style>
   .profile-details .dropdown-menu {
@@ -232,6 +234,11 @@
     border-radius: 50%;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
+ 
+    #rzp-button{{ interest.id }}:hover {
+      background-color: #45a049;
+    }
+ 
 
 </style>
 
@@ -319,6 +326,10 @@
         <input type="text" placeholder="Search...">
         <i class='bx bx-search'></i>
       </div>
+      <a href="{% url 'shopdash' %}" style="text-decoration:none;"><div class="profile-details">
+        <i class='bx bx-shopping-bag'></i>
+        <span class="admin_name" style="font-size: 25px; font-weight: 900; color: #010302;">SHOP</span>
+      </div></a>
       <div class="profile-details">
         {% if artist.profile_pic %}
          <img src="{{artist.profile_pic.url}}" alt="">
@@ -403,6 +414,12 @@
             <td>{{ interest.donation.quantity }}</td>
             <td>{{ interest.donation.location }}</td>
             <td>{{ interest.get_status_display }}</td>
+      
+        <td>
+          {% if interest.status == 'accepted' %}
+          <button id="rzp-button{{ interest.id }}" onclick="payNow('{{ interest.id }}', '{{ interest.amount }}')" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; transition: background-color 0.3s;">Pay Now</button>
+          {% endif %}
+        </td>
         </tr>
         {% empty %}
         <tr>
@@ -413,5 +430,36 @@
     </table>
     </div>
     </div>
+    <script>
+      function payNow(interestId, amount) {
+        // Convert amount to paise (Razorpay expects amount in smallest currency unit)
+        var amountInPaise = amount * 100;
+  
+        var options = {
+          "key": "rzp_test_zXqniu2WbyToOX", // Replace with your actual Razorpay Key ID
+          "amount": amountInPaise,
+          "currency": "INR",
+          "name": "ReArt Vault",
+          "description": "Payment for Interest ID: " + interestId,
+          "handler": function (response){
+            // Handle successful payment
+            alert("Payment successful. Payment ID: " + response.razorpay_payment_id);
+            // You may want to update the server about the successful payment here
+          },
+          "prefill": {
+            "name": "{{ user.username }}",
+            "email": "{{ user.email }}"
+          },
+          "theme": {
+            "color": "#F37254"
+          }
+        };
+  
+        var rzp = new Razorpay(options);
+        rzp.open();
+      }
+    </script>
+    
 </body>
+
 </html>

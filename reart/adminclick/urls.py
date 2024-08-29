@@ -14,6 +14,7 @@ urlpatterns = [
         path('donations/<int:pk>/', views.donation_detail, name='donation_detail'),
          path('artist-details/<int:artist_id>/',views. artist_details, name='artist_details'),
          path('set_rates', views.set_rates, name='set_rates'),
+         path('add_category/', views.add_category, name='add_category'),
         # path('artist_list/', views.artist_list, name='artist_list'),
 
 ]

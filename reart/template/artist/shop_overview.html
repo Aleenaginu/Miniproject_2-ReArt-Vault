@@ -1,0 +1,449 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Responsive Admin Dashboard | ReArt Vault</title>
+  <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <!-- Boxicons CDN Link -->
+  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+  <script>
+    document.querySelector('.profile-details').addEventListener('click', function () {
+      this.querySelector('.dropdown-menu').classList.toggle('show');
+    });
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<style>
+  .profile-details .dropdown-menu {
+    display: none;
+  }
+
+  .profile-details .dropdown-menu.show {
+    display: block;
+  }
+
+
+  .profile-details {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .profile-details img {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+  }
+
+  .profile-details .admin_name {
+    margin-left: 10px;
+    font-size: 16px;
+    color: #333;
+  }
+
+  .profile-details .bx-chevron-down {
+    margin-left: 10px;
+    cursor: pointer;
+  }
+
+  .profile-details .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .profile-details .dropdown-menu li {
+    list-style: none;
+  }
+
+  .profile-details .dropdown-menu li a {
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .profile-details .dropdown-menu li a:hover {
+    background-color: #f0f0f0;
+  }
+
+  .profile-details:hover .dropdown-menu {
+    display: block;
+  }
+
+  .sales-details {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .details {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    /* Added gap between items */
+  }
+
+  .detail-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    /* Gap between image and text */
+  }
+
+  .item-pic {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+  }
+
+  .item-pic:hover {
+    transform: scale(1.1);
+  }
+
+  .detail-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    /* Adjust the spacing between list items if needed */
+  }
+
+  .item-pic {
+    width: 150px;
+    /* Adjust size as needed */
+    height: auto;
+    margin-right: 20px;
+    /* Adjust spacing between image and text */
+  }
+
+  .item-text {
+    font-weight: bold;
+    font-size: 1.2em;
+    /* Adjust the size as needed */
+    margin-bottom: 5px;
+    /* Space between heading and description */
+  }
+  .badge {
+    background-color: red;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 50%;
+    font-size: 12px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.form-container input[type="text"],
+    .form-container textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+      color: #333;
+      transition: border-color 0.3s;
+    }
+  
+    .form-container input[type="text"]:focus,
+    .form-container textarea:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+.error-message {
+            display: none; /* Hide error message by default */
+            color: red;
+            font-size: 0.875em;
+}
+</style>
+
+<body>
+  <div class="sidebar">
+    <div class="logo-details">
+      <!-- <i class=''></i> -->
+      <span class="logo_name" style="font-size: 30px; text-align: center; font-weight: 700; color: #b5c8c1;">ReArt Vault:Shop</span>
+    </div>
+    <ul class="nav-links">
+      <li>
+        <a href="{% url 'shopdash' %}" class="active">
+          <i class='bx bx-grid-alt'></i>
+          <span class="links_name">Artist Dashboard</span>
+        </a>
+      </li>
+   
+      <li>
+        <a href="{% url 'artist_shop' %}">
+          <i class='bx bx-message'></i>
+          <span class="links_name">Shop Overview</span>
+        
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'add_product' %}">
+          <i class='bx bx-list-ul'></i>
+          <span class="links_name">Add Product</span>
+        </a>
+      </li>
+      <!-- <li>
+        <a href="{% url 'view_ratesartist' %}">
+          <i class='bx bx-pie-chart-alt-2'></i>
+          <span class="links_name">Price Listings</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'artist_interest_status' %}">
+          <i class='bx bx-list-ul'></i>
+          <span class="links_name">Interest Status</span>
+        </a>
+      </li> -->
+  
+      <!-- <li>
+        <a href="#">
+          <i class='bx bx-message'></i>
+          <span class="links_name">Messages</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-message'></i>
+          <span class="links_name">Conatct</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-heart'></i>
+          <span class="links_name">Favorites</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-cog'></i>
+          <span class="links_name">Setting</span>
+        </a>
+      </li> -->
+      <li class="log_out">
+        <a href="{% url 'userlogout' %}">
+          <i class='bx bx-log-out'></i>
+          <span class="links_name">Log out</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <section class="home-section">
+    <nav>
+      <div class="sidebar-button">
+        <i class='bx bx-menu sidebarBtn'></i>
+        <span class="dashboard">Dashboard</span>
+      </div>
+      <div class="search-box">
+        <input type="text" placeholder="Search...">
+        <i class='bx bx-search'></i>
+      </div>
+      <a href="{% url 'artist_shop' %}" style="text-decoration:none;"><div class="profile-details">
+        <i class='bx bx-shopping-bag'></i>
+        <span class="admin_name" style="font-size: 25px; font-weight: 900; color: #010302;">SHOP</span>
+      </div></a>
+      <div class="profile-details">
+        {% if artist.profile_pic %}
+         <img src="{{artist.profile_pic.url}}" alt="">
+        {% endif %}
+        <span class="admin_name" style="font-size: 25px; font-weight: 900; color: #010302;">Hi {{user.username}}</span>
+        <i class='bx bx-chevron-down'></i>
+        <ul class="dropdown-menu">
+          <li><a href="{% url 'userprofileartist' %}">View Profile</a></li>
+          <li><a href="{% url 'profile_update' %}">Edit Profile</a></li>
+          <!-- <li><a href="#">Settings</a></li> -->
+          <li><a href="{% url 'userlogout' %}">Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="home-content">
+      <div class="overview-boxes">
+        <div class="box" style="background-color:rgb(243, 212, 200);">
+          <div class="right-side">
+            <div class="box-topic">Products Added</div>
+            <div class="number">0</div>
+            <div class="indicator">
+              <!-- <i class='bx bx-up-arrow-alt'></i> -->
+              <!-- <span class="text">Up from yesterday</span> -->
+            </div>
+          </div>
+          <!-- <i class='bx bx-cart-alt cart'></i> -->
+        </div>
+        <div class="box" style="background-color:rgb(188, 233, 188);">
+          <div class="right-side">
+            <div class="box-topic">Accepted Interests</div>
+            <div class="number">0</div>
+            <div class="indicator">
+              <!-- <i class='bx bx-up-arrow-alt'></i> -->
+              <!-- <span class="text">Up from yesterday</span> -->
+            </div>
+          </div>
+          <!-- <i class='bx bxs-cart-add cart two'></i> -->
+        </div>
+        <div class="box" style="background-color:rgb(240, 240, 205);">
+          <div class="right-side">
+            <div class="box-topic">Added Categories</div>
+            <div class="number"> 0</div>
+            <div class="indicator">
+              <!-- <i class='bx bx-up-arrow-alt'></i> -->
+              <!-- <span class="text">Up from yesterday</span> -->
+            </div>
+          </div>
+          <!-- <i class='bx bx-cart cart three'></i> -->
+        </div>
+        <div class="box" style="background-color:rgb(240, 205, 228);">
+          <div class="right-side">
+            <div class="box-topic">Sold Items</div>
+            <div class="number">0</div>
+            <div class="indicator">
+              <!-- <i class='bx bx-down-arrow-alt down'></i> -->
+              <!-- <span class="text">Down From Today</span> -->
+            </div>
+          </div>
+          <!-- <i class='bx bxs-cart-download cart four'></i> -->
+        </div>
+      </div>
+
+      
+      <div class="sales-boxes">
+        <div class="recent-sales box" style="background-color: #cde7f0; padding: 20px; border-radius: 10px; width: 100%; max-width: 1000px;">
+          <div class="title" style="font-size: 24px; font-weight: bold; margin-bottom: 20px; text-align: center; color: #333;">Shop Overview: Your Products</div>
+          
+          <div class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for product in products %}
+                <tr>
+                  <td>{{ product.name }}</td>
+                  <td>₹{{ product.price }}</td>
+                  <td>{{ product.stock }}</td>
+                  <td>
+                    <a href="{% url 'edit_product' product.id %}" style="display: inline-block; padding: 5px 10px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 3px; margin-right: 5px;">Edit</a>
+                    <a href="" style="display: inline-block; padding: 5px 10px; background-color: #f44336; color: white; text-decoration: none; border-radius: 3px;">Delete</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <div style="text-align: center; margin-top: 20px;">
+            <a href="{% url 'add_product' %}" class="btn btn-primary">Add Product</a>
+          </div>
+        </div>
+      </div>
+
+      <style>
+        .table-container {
+          width: 100%;
+          margin: auto;
+          background-color: #fff;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 20px 0;
+          font-size: 1em;
+          text-align: left;
+        }
+        .table thead {
+          background-color: #007bff;
+          color: #fff;
+        }
+        .table th, .table td {
+          padding: 12px 15px;
+          border: 1px solid #ddd;
+        }
+        .table tbody tr:nth-child(even) {
+          background-color: #f9f9f9;
+        }
+        .table tbody tr:hover {
+          background-color: #f1f1f1;
+        }
+        .table th {
+          background-color: #696d6f;
+          color: white;
+          text-align: center;
+        }
+        .table td {
+          text-align: center;
+        }
+        .table td:first-child {
+          text-align: left;
+        }
+        .btn {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          font-weight: bold;
+          text-align: center;
+          text-decoration: none;
+          border-radius: 5px;
+        }
+        .btn-primary {
+          background-color: #007bff;
+          color: white;
+          border: none;
+          cursor: pointer;
+        }
+        .btn-primary:hover {
+          background-color: #0056b3;
+        }
+      </style>
