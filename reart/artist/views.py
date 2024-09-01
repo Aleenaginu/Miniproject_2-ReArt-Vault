@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render,redirect,get_object_or_404
 from . forms import *
 from .models import *
@@ -12,7 +12,12 @@ from django.http import HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt 
 from django.conf import settings
 from django.db import transaction
+from artist.models import *
+from category.models import *
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 @login_required
@@ -229,24 +234,42 @@ def add_mediums(request):
     }
     return render(request, 'artist/add_mediums.html',context)
 
+import razorpay
 def create_payment(request, interest_id):
+    logger.debug(f"create_payment called with interest_id: {interest_id}")
+    
     interest_request = get_object_or_404(InterestRequest, id=interest_id)
+    logger.debug(f"InterestRequest retrieved: {interest_request}")
+    
     medium_of_waste = interest_request.donation.medium_of_waste
+    logger.debug(f"MediumOfWaste retrieved: {medium_of_waste}")
+    
     amount = medium_of_waste.rate * interest_request.donation.quantity  
+    logger.debug(f"Calculated amount: {amount}")
 
     client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET_KEY))
+    logger.debug("Razorpay client initialized")
+    
     order_data = {
         'amount': int(amount * 100),  # Amount in paise
         'currency': 'INR',
         'payment_capture': '1'
     }
-    order = client.order.create(order_data)
-
+    logger.debug(f"Order data prepared: {order_data}")
+    
+    try:
+        order = client.order.create(order_data)
+        logger.debug(f"Order created: {order}")
+    except Exception as e:
+        logger.error(f"Error creating order: {e}")
+        return JsonResponse({'success': False, 'error': str(e)})
+    
     payment = Payment.objects.create(
         artist=interest_request.artist,
         amount=amount,
         order_id=order['id']
     )
+    logger.debug(f"Payment created: {payment}")
 
     context = {
         'order_id': order['id'],
@@ -255,6 +278,7 @@ def create_payment(request, interest_id):
         'interest_request': interest_request,
         'payment': payment
     }
+    logger.debug(f"Context prepared: {context}")
 
     return render(request, 'artist/payment_page.html', context)
 
@@ -342,7 +366,6 @@ def add_product(request):
         image = request.FILES.get('image')
         stock = request.POST.get('stock')
         category_ids = request.POST.getlist('categories')
-        custom_category = request.POST.get('custom_category')
 
         product = Product.objects.create(
             artist=request.user.artist,
@@ -359,9 +382,6 @@ def add_product(request):
             except Category.DoesNotExist:
                 continue
 
-        if custom_category:
-            custom_category_obj, created = Category.objects.get_or_create(name=custom_category)
-            product.categories.add(custom_category_obj)
 
         product.save()
         return redirect('artist_dashboard') 
@@ -371,7 +391,6 @@ def add_product(request):
 
 @login_required
 @never_cache
-
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id, artist=request.user.artist)
 
@@ -394,15 +413,12 @@ def edit_product(request, product_id):
             except Category.DoesNotExist:
                 continue
 
-        if custom_category:
-            custom_category_obj, created = Category.objects.get_or_create(name=custom_category)
-            product.categories.add(custom_category_obj)
-
         product.save()
         return redirect('artist_dashboard')
 
     categories = Category.objects.all()
-    return render(request, 'artist/edit_product.html', {'product': product, 'categories': categories})
+    return render(request, 'artist/edit_product.html', {'product': product, 'categories':categories})
+
 
 @login_required
 @never_cache

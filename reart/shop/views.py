@@ -1,16 +1,39 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.db import transaction
+
+
+from category.models import Category
 from .models import Customers
+from artist.models import Product
 
 # Create your views here.
 
-def shop_index(request):
-    return render(request, 'Customers/index.html')
+def shop_index(request, category_slug=None):
+    if category_slug:
+        category=get_object_or_404(Category,slug=category_slug)
+        products=Product.objects.filter(categories=category, is_available=True)
+    else:
+        products=Product.objects.filter(is_available=True)
+    products_count=products.count()
+    context={
+        'products':products,
+        'products_count':products_count,
+        'category':category if category_slug else None,
+    }
+    return render(request, 'Customers/index.html',context)
+
+def product_detail(request,category_slug,product_slug):
+    category=get_object_or_404(Category,slug=category_slug)
+    single_product=get_object_or_404(Product,categories=category,slug=product_slug)
+    context={
+        'single_product':single_product,
+    }
+    return render(request, 'Customers/product_detail.html',context)
 
 
 

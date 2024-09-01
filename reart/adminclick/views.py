@@ -8,6 +8,8 @@ from donors.models import *
 from django.core.mail import send_mail
 from artist.models import Notification
 from django.views.decorators.cache import never_cache
+from category.models import *
+from django.utils.text import slugify
 
 
 # Create your views here.
@@ -271,9 +273,15 @@ def add_category(request):
         category_name=request.POST.get('category_name')
 
         if category_name:
-            Category.objects.create(name=category_name)
+            slug=slugify(category_name)
+
+            if Category.objects.filter(slug=slug).exists():
+                messages.info(request,'Category with this name already exists')
+                return redirect('add_category')
+            Category.objects.create(name=category_name, slug=slug)
             messages.success(request,'Category added successfully')
             return redirect('add_category')
+            
         messages.error(request,'Category name is required')
     return render(request,'admin/add_category.html')
 

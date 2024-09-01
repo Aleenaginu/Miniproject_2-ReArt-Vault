@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'artist',
     'adminclick',
     'shop',
+    'category',
 ]
 
 MIDDLEWARE = [
@@ -78,6 +79,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
+                'category.context_processors.menu_links',
             ],
         },
     },
@@ -200,8 +202,10 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 
-RAZORPAY_API_KEY = 'rzp_test_zXqniu2WbyToOX'
-RAZORPAY_API_SECRET_KEY = 'PqqXMqDJViYcLlIocc65V9m4'
+# RAZORPAY_API_KEY = 'rzp_test_zXqniu2WbyToOX'
+# RAZORPAY_API_SECRET_KEY = 'PqqXMqDJViYcLlIocc65V9m4'
+RAZORPAY_API_KEY = 'rzp_test_Q16TA7WvW93Ile'
+RAZORPAY_API_SECRET_KEY = 'kDbKUnWN7G9LQTznXOXMIPv5'
 CSRF_TRUSTED_ORIGINS = ['https://api.razorpay.com']
 
 

@@ -1,17 +1,80 @@
-<form action="{% url 'verify_payment' payment.id %}" method="POST">
-    {% csrf_token %}
-    <script
-        src="https://checkout.razorpay.com/v1/checkout.js"
-        data-key="{{ razorpay_key }}"
-        data-amount="{{ amount|floatformat:2 }}"
-        data-currency="INR"
-        data-order_id="{{ order_id }}"
-        data-buttontext="Pay with Razorpay"
-        data-name="Your Company Name"
-        data-description="Purchase Description"
-        data-image="/your_logo_url"
-        data-prefill.name="{{ request.user.username }}"
-        data-prefill.email="{{ request.user.email }}"
-        data-theme.color="#F37254"
-    ></script>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .payment-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+        .payment-container h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .payment-container img {
+            width: 100px;
+            margin-bottom: 20px;
+        }
+        .payment-container p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .payment-container form {
+            margin: 0;
+        }
+        .payment-container button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .payment-container button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <img src="/your_logo_url" alt="Reart Vault Logo">
+        <h1>Secure Payment</h1>
+        <p>Please complete your payment to proceed.</p>
+        <form action="{% url 'verify_payment' payment.id %}" method="POST">
+            {% csrf_token %}
+            <script
+                src="https://checkout.razorpay.com/v1/checkout.js"
+                data-key="{{ razorpay_key }}"
+                data-amount="{{ amount|floatformat:2 }}"
+                data-currency="INR"
+                data-order_id="{{ order_id }}"
+                data-buttontext="Pay with Your Banking Partner"
+                data-name="Reart Vault"
+                data-description="Purchase Description"
+                data-image="/your_logo_url"
+                data-prefill.name="{{ request.user.username }}"
+                data-prefill.email="{{ request.user.email }}"
+                data-theme.color="#F37254"
+            ></script>
+        </form>
+    </div>
+</body>
+</html>

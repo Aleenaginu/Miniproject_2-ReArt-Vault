@@ -417,7 +417,11 @@
       
         <td>
           {% if interest.status == 'accepted' %}
-          <button id="rzp-button{{ interest.id }}" onclick="payNow('{{ interest.id }}', '{{ interest.amount }}')" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; transition: background-color 0.3s;">Pay Now</button>
+            {% if interest.payment.status == 'completed' %}
+              <button style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: not-allowed; font-size: 14px;" disabled>Paid</button>
+            {% else %}
+              <a href="{% url 'create_payment' interest.id %}" id="rzp-button{{ interest.id }}" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; transition: background-color 0.3s;">Pay Now</a>
+            {% endif %}
           {% endif %}
         </td>
         </tr>
@@ -430,35 +434,7 @@
     </table>
     </div>
     </div>
-    <script>
-      function payNow(interestId, amount) {
-        // Convert amount to paise (Razorpay expects amount in smallest currency unit)
-        var amountInPaise = amount * 100;
-  
-        var options = {
-          "key": "rzp_test_zXqniu2WbyToOX", // Replace with your actual Razorpay Key ID
-          "amount": amountInPaise,
-          "currency": "INR",
-          "name": "ReArt Vault",
-          "description": "Payment for Interest ID: " + interestId,
-          "handler": function (response){
-            // Handle successful payment
-            alert("Payment successful. Payment ID: " + response.razorpay_payment_id);
-            // You may want to update the server about the successful payment here
-          },
-          "prefill": {
-            "name": "{{ user.username }}",
-            "email": "{{ user.email }}"
-          },
-          "theme": {
-            "color": "#F37254"
-          }
-        };
-  
-        var rzp = new Razorpay(options);
-        rzp.open();
-      }
-    </script>
+    
     
 </body>
 
