@@ -384,6 +384,7 @@ def add_product(request):
 
 
         product.save()
+        messages.success(request, 'Product added successfully.')
         return redirect('artist_dashboard') 
 
     categories = Category.objects.all()
@@ -414,6 +415,7 @@ def edit_product(request, product_id):
                 continue
 
         product.save()
+        messages.success(request, 'Product updated successfully.')
         return redirect('artist_dashboard')
 
     categories = Category.objects.all()
