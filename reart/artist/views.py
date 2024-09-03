@@ -174,24 +174,77 @@ def express_interest(request,donation_id):
     
     return redirect('notifications')
 
+from django.db.models import Max
+
 @login_required
 @never_cache
 def artist_interest_status(request):
-    artist=request.user.artist
+    artist = request.user.artist
     expressed_interest_count = Interest.objects.filter(artist=artist).count()
     accepted_interest_count = InterestRequest.objects.filter(
-            artist=artist,
-            status='accepted'
-        ).count()
-    interests=InterestRequest.objects.filter(artist=artist).select_related('donation','donor')
-    context={
-        'interests':interests,
-        'expressed_interest_count':expressed_interest_count,
-        'accepted_interest_count':accepted_interest_count,
-        'artist':artist,
-        'razorpay_api_key':settings.RAZORPAY_API_KEY,
-        }
-    return render(request,'artist/interest_status.html',context)
+        artist=artist,
+        status='accepted'
+    ).count()
+    interests = InterestRequest.objects.filter(artist=artist).select_related('donation', 'donor')
+    
+    # Fetch the most recent payment status for each interest
+    for interest in interests:
+        latest_payment = Payment.objects.filter(interest_request=interest).order_by('-created_at').first()
+        if latest_payment:
+            interest.payment_status = latest_payment.status
+        else:
+            interest.payment_status = None
+
+    context = {
+        'interests': interests,
+        'expressed_interest_count': expressed_interest_count,
+        'accepted_interest_count': accepted_interest_count,
+        'artist': artist,
+        'razorpay_api_key': settings.RAZORPAY_API_KEY,
+    }
+    return render(request, 'artist/interest_status.html', context)
+    
+from django.shortcuts import render, get_object_or_404
+from .models import Interest
+
+from django.shortcuts import render, get_object_or_404
+from .models import Interest, Payment
+
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from io import BytesIO
+from django.shortcuts import get_object_or_404
+from .models import InterestRequest, Payment
+
+def view_receipt(request, interest_id):
+    interest = get_object_or_404(InterestRequest, id=interest_id)
+    try:
+        # Get the latest payment
+        payment = Payment.objects.filter(interest_request=interest).latest('created_at')
+        payment_status = payment.status
+    except Payment.DoesNotExist:
+        payment = None
+        payment_status = "No payment found"
+    
+    context = {
+        'interest': interest,
+        'payment': payment,
+        'payment_status': payment_status
+    }
+    
+    # Generate PDF
+    template = get_template('artist/receipt_template.html')
+    html = template.render(context)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+    
+    if not pdf.err:
+        response = HttpResponse(result.getvalue(), content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="receipt_{interest_id}.pdf"'
+        return response
+    else:
+        return HttpResponse('Error generating PDF', status=400)
 
 def delete_notification(request, notification_id):
     notification=get_object_or_404(Notification,id=notification_id,user=request.user)
@@ -267,7 +320,8 @@ def create_payment(request, interest_id):
     payment = Payment.objects.create(
         artist=interest_request.artist,
         amount=amount,
-        order_id=order['id']
+        order_id=order['id'],
+        interest_request=interest_request
     )
     logger.debug(f"Payment created: {payment}")
 

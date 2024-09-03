@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from donors.models import *
 from donors.models import InterestRequest
+
 from category.models import Category
 from accounts.models import Artist  # Import Artist from accounts app
 
@@ -39,12 +40,13 @@ class InterestNotification(models.Model):
 
 
 class Payment(models.Model):
-    artist=models.ForeignKey(Artist, on_delete=models.CASCADE)
-    amount=models.DecimalField(max_digits=10, decimal_places=2)
-    payment_id=models.CharField(max_length=100,blank=True,null=True)
-    order_id=models.CharField(max_length=100,blank=True,null=True)
-    status=models.CharField(max_length=20,default='pending')
-    created_at=models.DateTimeField(auto_now_add=True)
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_id = models.CharField(max_length=100, blank=True, null=True)
+    order_id = models.CharField(max_length=100, blank=True, null=True)
+    status = models.CharField(max_length=20, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    interest_request = models.ForeignKey(InterestRequest, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return f'Payment {self.id} - {self.artist.user.username}'

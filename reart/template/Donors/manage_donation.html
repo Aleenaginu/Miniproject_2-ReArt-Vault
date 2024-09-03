@@ -9,6 +9,10 @@
   <!-- Boxicons CDN Link -->
   <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Add Slick Carousel CSS -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+  
   <style>
     .profile-details .dropdown-menu {
       display: none;
@@ -370,7 +374,23 @@
     color: green;
     font-weight: bold;
 }
-  
+.image-carousel {
+      width: 150px;
+      margin: 0 auto;
+    }
+    .image-carousel img {
+      width: 100%;
+      height: auto;
+    }
+    .slick-prev, .slick-next {
+      z-index: 1;
+    }
+    .slick-prev {
+      left: 5px;
+    }
+    .slick-next {
+      right: 5px;
+    }
   
   </style>
   
@@ -546,9 +566,11 @@
                       <tr>
                           <td>
                               {% if donation.images.exists %}
-                                  {% for image in donation.images.all %}
-                                      <img src="{{ image.image.url }}" alt="image of waste" width="100" height="100">
-                                  {% endfor %}
+                                  <div class="image-carousel">
+                                      {% for image in donation.images.all %}
+                                          <div><img src="{{ image.image.url }}" alt="image of waste"></div>
+                                      {% endfor %}
+                                  </div>
                               {% else %}
                                   No picture
                               {% endif %}
@@ -612,6 +634,21 @@
           {% endfor %}
       });
           </script>
+      <!-- Add jQuery and Slick Carousel JS -->
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+      
+      <script>
+        $(document).ready(function(){
+          $('.image-carousel').slick({
+            dots: true,
+            infinite: true,
+            speed: 300,
+            slidesToShow: 1,
+            adaptiveHeight: true
+          });
+        });
+      </script>
     </body>
     
     </html>

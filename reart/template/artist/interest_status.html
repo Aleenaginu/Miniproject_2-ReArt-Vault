@@ -403,39 +403,79 @@
                 <th>Donor</th>
                 <th>Quantity</th>
                 <th>Location</th>
+                <th>Unit Price</th>
+                <th>Total Price</th>
                 <th>Status</th>
+                <th>Payment Status</th>
+                <th>Payment Receipt</th>
             </tr>
           </thead>
         
         <tbody>
         {% for interest in interests %}
-        <tr>
+        <tr data-quantity="{{ interest.donation.quantity }}" data-price="{{ interest.donation.medium_of_waste.rate }}">
             <td>{{ interest.donor.user.username }}</td>
             <td>{{ interest.donation.quantity }}</td>
             <td>{{ interest.donation.location }}</td>
+            <td>{{ interest.donation.medium_of_waste.rate }}</td>
+            <td><span id="total-price-{{ forloop.counter }}"></span></td>
             <td>{{ interest.get_status_display }}</td>
-      
-        <td>
-          {% if interest.status == 'accepted' %}
-            {% if interest.payment.status == 'completed' %}
-              <button style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: not-allowed; font-size: 14px;" disabled>Paid</button>
-            {% else %}
-              <a href="{% url 'create_payment' interest.id %}" id="rzp-button{{ interest.id }}" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; transition: background-color 0.3s;">Pay Now</a>
-            {% endif %}
-          {% endif %}
-        </td>
+            
+            <td>
+              {% if interest.status == 'accepted' %}
+                {% if interest.payment_status == 'completed' %}
+                  <a href="#" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; text-decoration: none; font-size: 14px; display: inline-block;">Completed</a>
+                {% else %}
+                  <a href="{% url 'create_payment' interest.id %}" style="background-color: #007BFF; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; text-decoration: none; display: inline-block;">Pay Now</a>
+                {% endif %} 
+              {% else %}
+                <button style="background-color: #808080; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: not-allowed; font-size: 14px;" disabled>N/A</button>
+              {% endif %}
+            </td>
+
+            <!-- ... previous code ... -->
+<td>
+  {% if interest.status == 'accepted' and interest.payment_status == 'completed' %}
+    <a href="{% url 'view_receipt' interest.id %}" style="background-color: #007BFF; color: white; padding: 10px 15px; border: none; border-radius: 5px; text-decoration: none; font-size: 14px;"> Receipt</a>
+  {% else %}
+    <span>-</span>
+  {% endif %}
+</td>
+<!-- ... remaining code ... -->
         </tr>
         {% empty %}
         <tr>
             <td colspan="6">No expressed interests found.</td>
         </tr>
         {% endfor %}
+  
     </tbody>
     </table>
+
     </div>
     </div>
+</div>
+
+<!-- Add JavaScript to calculate the total amount -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    let totalAmount = 0;
+    const rows = document.querySelectorAll('.artist-table tbody tr[data-quantity][data-price]');
     
+    rows.forEach((row, index) => {
+      const quantity = parseFloat(row.getAttribute('data-quantity'));
+      const price = parseFloat(row.getAttribute('data-price'));
+      const totalPrice = quantity * price;
+      totalAmount += totalPrice;
+      
+      // Set the total price for each row
+      document.getElementById(`total-price-${index + 1}`).textContent = totalPrice.toFixed(2);
+    });
     
+    document.getElementById('total-amount').textContent = totalAmount.toFixed(2);
+  });
+</script>
+
 </body>
 
 </html>

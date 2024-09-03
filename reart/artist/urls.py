@@ -17,6 +17,7 @@ urlpatterns = [
     path('payment-success/', views.payment_success, name='payment_success'),
     path('payment-failed/', views.payment_failed, name='payment_failed'),
     path('payment-callback/', views.payment_callback, name='payment_callback'),
+    path('receipt/<int:interest_id>/', views.view_receipt, name='view_receipt'),
 
 
     #shop
@@ -24,4 +25,5 @@ urlpatterns = [
     path('artist_shop/',views.artist_shop,name='artist_shop'),
     path('add_product/',views.add_product,name='add_product'),
     path('edit_product/<int:product_id>/',views.edit_product,name='edit_product'),
+    
 ]
