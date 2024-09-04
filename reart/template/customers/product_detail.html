@@ -161,7 +161,11 @@
                                 </div>
                             </div>
                             
-                            <a href="{% url 'add_cart' single_product.id %}" class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</a>
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'add_cart' single_product.id %}" class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</a>
+                            {% else %}
+                                <a href="{% url 'customerlogin' %}?next={% url 'add_cart' single_product.id %}" class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</a>
+                            {% endif %}
                             <ul>
                                 <li><a href="#"><span class="icon_heart_alt"></span></a></li>
                                 <li><a href="#"><span class="icon_adjust-horiz"></span></a></li>

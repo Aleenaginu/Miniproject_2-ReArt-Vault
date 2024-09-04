@@ -26,6 +26,8 @@
     <link rel="stylesheet" href="{% static "shop/css/style.css" %}" type="text/css">
 </head>
 
+
+
 <body>
     <!-- Page Preloder -->
     <div id="preloder">
@@ -33,27 +35,36 @@
     </div>
 
     <!-- Offcanvas Menu Begin -->
-    <div class="offcanvas-menu-overlay"></div>
-    <div class="offcanvas-menu-wrapper">
-        <div class="offcanvas__close">+</div>
-        <ul class="offcanvas__widget">
-            <li><span class="icon_search search-switch"></span></li>
-            <li><a href="#"><span class="icon_heart_alt"></span>
-                <div class="tip">2</div>
-            </a></li>
-            <li><a href="#"><span class="icon_bag_alt"></span>
-                <div class="tip">2</div>
-            </a></li>
-        </ul>
-        <div class="offcanvas__logo">
-            <a href="./index.html"><img src="img/logo.png" alt=""></a>
+    <body>
+        <!-- Page Preloder -->
+        {% comment %} <div id="preloder">
+            <div class="loader"></div>
+        </div> {% endcomment %}
+    
+        <!-- Offcanvas Menu Begin -->
+        <div class="offcanvas-menu-overlay"></div>
+        <div class="offcanvas-menu-wrapper">
+            <div class="offcanvas__close">+</div>
+            <ul class="offcanvas__widget">
+                <li><span class="icon_search search-switch"></span></li>
+                <li><a href="#"><span class="icon_heart_alt"></span>
+                    <div class="tip">2</div>
+                </a></li>
+                <li><a href="#"><span class="icon_bag_alt"></span>
+                    <div class="tip">2</div>
+                </a></li>
+            </ul>
+            <div class="offcanvas__logo">
+                <a href="./index.html"><img src="img/logo.png" alt=""></a>
+            </div>
+            <div id="mobile-menu-wrap"></div>
+            <div class="offcanvas__auth">
+                <a href="#">Login</a>
+                <a href="#">Register</a>
+            </div>
         </div>
-        <div id="mobile-menu-wrap"></div>
-        <div class="offcanvas__auth">
-            <a href="#">Login</a>
-            <a href="#">Register</a>
-        </div>
-    </div>
+        <!-- Offcanvas Menu End -->
+    
     <!-- Offcanvas Menu End -->
 
     <!-- Header Section Begin -->
@@ -69,29 +80,34 @@
                     <nav class="header__menu">
                         <ul>
                             <li class="active"><a href="./index.html">Home</a></li>
-                            <li><a href="#">Women’s</a></li>
-                            <li><a href="#">Men’s</a></li>
+                            {% if user.is_authenticated and request.user.customers %}
                             <li><a href="./shop.html">Shop</a></li>
-                            <li><a href="#">Pages</a>
+                            <li><a href="#">Product Details</a>
                                 <ul class="dropdown">
-                                    <li><a href="./product-details.html">Product Details</a></li>
+                                    <li><a href="./product-details.html"></a>Orders</li>
                                     <li><a href="./shop-cart.html">Shop Cart</a></li>
                                     <li><a href="./checkout.html">Checkout</a></li>
-                                    <li><a href="./blog-details.html">Blog Details</a></li>
+                                    <li><a href="./blog-details.html">Address Details</a></li>
                                 </ul>
                             </li>
-                            <li><a href="./blog.html">Blog</a></li>
+                            
                             <li><a href="./contact.html">Contact</a></li>
+                          <li> <a href="{% url 'customerlogout' %}">Logout</a></li> 
+                            {% else %}
+                            <li><a href="{% url 'customerlogin' %}">Login</a></li> 
+                            <li><a href="{% url 'customer_register' %}">Register</a></li> 
+                            {% endif %}
                         </ul>
                     </nav>
                 </div>
+
                 <div class="col-lg-3">
                     <div class="header__right">
-                        <div class="header_right_auth">
+                        <!-- <div class="header__right__auth">
                             <a href="#">Login</a>
                             <a href="#">Register</a>
-                        </div>
-                        <ul class="header_right_widget">
+                        </div> -->
+                        <ul class="header__right__widget">
                             <li><span class="icon_search search-switch"></span></li>
                             <li><a href="#"><span class="icon_heart_alt"></span>
                                 <div class="tip">2</div>
@@ -187,62 +203,59 @@
         <div class="row">
             <div class="col-lg-12">
                 {% if cartitems %}
-                <div class="shop_cart_table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Total</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for cart_item in cartitems %}
-                            <tr>
-                                <td class="cart_product_item">
-                                    <img src="{{ cart_item.product.image.url }}" alt="" height="150px" width="150px">
-                                    <div class="cart_productitem_title">
-                                        <h6>{{ cart_item.product.name }}</h6>
-                                    </div>
-                                </td>
-                                <td class="cart__price">₹ {{ cart_item.product.price }} each</td>
-                                <td class="cart__quantity">
-                                    <div class="col">
-                                        <div class="input-group input-spinner">
+                <div class="shop_cart_table card shadow-sm">
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cart_item in cartitems %}
+                                <tr>
+                                    <td class="cart_product_item">
+                                        <img src="{{ cart_item.product.image.url }}" alt="" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
+                                        <div class="cart_productitem_title ml-3">
+                                            <h6>{{ cart_item.product.name }}</h6>
+                                        </div>
+                                    </td>
+                                    <td class="cart__price">₹ {{ cart_item.product.price }}</td>
+                                    <td class="cart__quantity">
+                                        <div class="input-group input-group-sm" style="width: 120px;">
                                             <div class="input-group-prepend">
-                                                <a href="{% url 'remove_cart' cart_item.product.id %}">
-                                                    <button class="btn btn-light" type="button" id="button-plus">
-                                                        <i class="fa fa-minus"></i>
-                                                    </button>
+                                                <a href="{% url 'remove_cart' cart_item.product.id %}" class="btn btn-outline-secondary">
+                                                    <i class="fa fa-minus"></i>
                                                 </a>
                                             </div>
-                                            <input type="text" class="form-control" value="{{ cart_item.Quantity }}">
+                                            <input type="text" class="form-control text-center" value="{{ cart_item.Quantity }}">
                                             <div class="input-group-append">
-                                                <a href="{% url 'add_cart' cart_item.product.id %}">
-                                                    <button class="btn btn-light" type="button" id="button-minus">
-                                                        <i class="fa fa-plus"></i>
-                                                    </button>
+                                                <a href="{% url 'add_cart' cart_item.product.id %}" class="btn btn-outline-secondary">
+                                                    <i class="fa fa-plus"></i>
                                                 </a>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td class="cart__total">₹ {{ cart_item.sub_total }}</td>
-                                <td class="cart__close">
-                                    <a href="{% url 'remove_cartitem' cart_item.product.id %}">
-                                        <span class="icon_close"></span>
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                    </td>
+                                    <td class="cart__total">₹ {{ cart_item.sub_total }}</td>
+                                    <td class="cart__close">
+                                        <a href="{% url 'remove_cartitem' cart_item.product.id %}" class="btn btn-sm btn-danger">
+                                            <i class="fa fa-times"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 {% else %}
-                <div class="text-center">
-                    <p>Your cart is currently empty.</p>
+                <div class="text-center mt-5">
+                    <h4 class="text-muted">Your cart is currently empty.</h4>
+                    <a href="{% url 'shop_index' %}" class="btn btn-primary mt-3">Continue Shopping</a>
                 </div>
                 {% endif %}
             </div>
@@ -250,40 +263,53 @@
     </div>
 </section>
 
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-6">
-                    <div class="cart__btn">
-                        <a href="{% url 'shop_index' %}">Continue Shopping</a>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-6">
-                    <div class="cart_btn update_btn">
-                        <a href="#"><span class="icon_loading"></span> Update cart</a>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-4 offset-lg-2">
-                    <div class="cart_total_procced">
-                        <h6>Cart total</h6>
-                        <ul>
-                            <li>Subtotal <span>₹ {{total}}</span></li>
-                            <li>Tax <span> ₹ {{tax}}</span></li>
-                           
-                            <li>Total <span>₹ {{grand_total}}</span></li>
-                        </ul>
-                        <a href="#" class="primary-btn">Proceed to checkout</a>
-                    </div>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <a href="{% url 'shop_index' %}" class="btn btn-outline-primary">
+                <i class="fa fa-arrow-left mr-2"></i>Continue Shopping
+            </a>
+        </div>
+        <div class="col-md-6 text-right">
+            <button class="btn btn-outline-secondary">
+                <i class="fa fa-refresh mr-2"></i>Update Cart
+            </button>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6 offset-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Cart Summary</h5>
+                    <table class="table table-borderless">
+                        <tr>
+                            <td>Subtotal</td>
+                            <td class="text-right">₹ {{ total }}</td>
+                        </tr>
+                        <tr>
+                            <td>Tax</td>
+                            <td class="text-right">₹ {{ tax }}</td>
+                        </tr>
+                        <tr class="font-weight-bold">
+                            <td>Total</td>
+                            <td class="text-right">₹ {{ grand_total }}</td>
+                        </tr>
+                    </table>
+                    <a href="#" style="background-color: #e32626; color: #fff;" class="btn btn-primary btn-block mt-3">
+                        Proceed to Checkout
+                    </a>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</div>
 
     {% comment %} {% endif %} {% endcomment %}
     <!-- Shop Cart Section End -->
 
     <!-- Instagram Begin -->
-    <div class="instagram">
+    <!-- <div class="instagram">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-2 col-md-4 col-sm-4 p-0">
@@ -336,7 +362,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- Instagram End -->
 
     <!-- Footer Section Begin -->

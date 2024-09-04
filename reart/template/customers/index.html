@@ -197,7 +197,7 @@
             </div>
             <div class="col-lg-8 col-md-8">
                 <ul class="filter__controls">
-                    <li class="active" data-filter="*">All</li>
+                    <li class="active" data-filter="*"><a href="{% url 'shop_index' %}">All</a></li>
                     {% for category in links %}
                     <li data-filter=".{{ category.slug }}"><a href="{{ category.get_url }}">{{ category.name }}</a></li>
                 {% endfor %}
@@ -240,7 +240,7 @@
         {% endfor %}
     </div>
 
-            <div class="col-lg-3 col-md-4 col-sm-6 mix men">
+            <!-- <div class="col-lg-3 col-md-4 col-sm-6 mix men">
                 <div class="product__item">
                     <div class="product__item__pic set-bg" data-setbg="{% static 'shop/img/product/product-2.jpg' %}">
                         <ul class="product__hover">
@@ -399,7 +399,7 @@
             </div>
         </div>
     </div>
-</section>
+</section> -->
 <!-- Product Section End -->
 
 <!-- Banner Section Begin -->
