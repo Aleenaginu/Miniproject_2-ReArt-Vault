@@ -8,3 +8,4 @@ admin.site.register(InterestNotification)
 admin.site.register(Payment)
 admin.site.register(Product)
 
+

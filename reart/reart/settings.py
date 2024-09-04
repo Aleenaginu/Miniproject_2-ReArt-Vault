@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'adminclick',
     'shop',
     'category',
+    'cart',
 ]
 
 MIDDLEWARE = [
@@ -80,6 +81,7 @@ TEMPLATES = [
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
                 'category.context_processors.menu_links',
+                'cart.context_processors.counter',
             ],
         },
     },
