@@ -25,21 +25,6 @@
     <link rel="stylesheet" href="{% static "shop/css/slicknav.min.css" %}" type="text/css">
     <link rel="stylesheet" href="{% static "shop/css/style.css" %}" type="text/css">
 
-
-
-
-    <link rel="stylesheet" href="{% static 'shop/css/bootstrap.min.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'shop/css/font-awesome.min.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'shop/css/style.css' %}" type="text/css">
-
-    <link rel="stylesheet" href="{% static "shop/css/bootstrap.min.css" %}" type="text/css">
-    <link rel="stylesheet" href="{% static "shop/css/font-awesome.min.css" %}" type="text/css">
-    <link rel="stylesheet" href="{% static "shop/css/elegant-icons.css" %}" type="text/css">
-    <link rel="stylesheet" href="{% static "shop/css/jquery-ui.min.css" %}" type="text/css">
-    <link rel="stylesheet" href="{% static "shop/css/magnific-popup.css" %}" type="text/css">
-    <link rel="stylesheet" href="{% static "shop/css/owl.carousel.min.css" %}" type="text/css">
-    <link rel="stylesheet" href="{% static "shop/css/slicknav.min.css" %}" type="text/css">
-    <link rel="stylesheet" href="{% static "shop/css/style.css" %}" type="text/css">
     <style>
         .wishlist-items {
             list-style-type: none;
@@ -135,6 +120,210 @@
         .profile-details .dropdown-menu:hover {
             display: block; /* Show on hover */
         }
+
+        .search-container {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            width: 300px;
+            margin-right: 20px;
+            vertical-align: middle;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 35px 8px 15px;
+            border: 1px solid #e5e5e5;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #ca1515;
+            box-shadow: 0 0 5px rgba(202, 21, 21, 0.2);
+            background-color: #fff;
+        }
+
+        .voice-btn {
+            position: absolute;
+            right: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-icon {
+            color: #777;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .voice-btn:hover .voice-icon {
+            color: #ca1515;
+        }
+
+        .voice-btn.recording .voice-icon {
+            color: #ca1515;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .search-form {
+            display: inline-block;
+            margin-right: 15px;
+        }
+        .header__search {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .search-input {
+            width: 300px;
+            padding: 8px 35px 8px 15px;
+            border: 1px solid #e5e5e5;
+            border-radius: 20px;
+        }
+        .header__search button {
+            position: absolute;
+            right: 15px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .header__search button i {
+            color: #777;
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        /* Enhanced search container styles */
+        .search-container {
+            position: relative;
+            margin-right: 15px;
+        }
+        
+        .header__search {
+            position: relative;
+            display: flex;
+            align-items: center;
+            max-width: 400px;
+        }
+        
+        /* Enhanced input styles */
+        .search-input {
+            width: 100%;
+            padding: 12px 90px 12px 20px;
+            border: 2px solid #e5e5e5;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-color: #333;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        
+        /* Enhanced button styles */
+        .search-button,
+        .voice-search-button {
+            position: absolute;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border-radius: 50%;
+        }
+        
+        .search-button {
+            right: 45px;
+        }
+        
+        .voice-search-button {
+            right: 5px;
+        }
+        
+        .search-button i,
+        .voice-search-button i {
+            color: #777;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        /* Enhanced recording state */
+        .voice-search-button.recording {
+            background-color: #ff4444;
+            box-shadow: 0 0 10px rgba(255,68,68,0.5);
+        }
+        
+        .voice-search-button.recording i {
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+        
+        /* Enhanced hover states */
+        .search-button:hover,
+        .voice-search-button:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .search-button:hover i,
+        .voice-search-button:hover i {
+            color: #333;
+        }
+        
+        /* Enhanced animation */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .search-input {
+                width: 250px;
+                padding-right: 80px;
+            }
+            
+            .search-button,
+            .voice-search-button {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .search-button i,
+            .voice-search-button i {
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 
@@ -183,12 +372,7 @@
     <header class="header">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-xl-3 col-lg-2">
-                    <div class="header__logo">
-                        <a href="./index.html"><img src="img/logo.png" alt=""></a>
-                    </div>
-                </div>
-                <div class="col-xl-6 col-lg-7">
+                <div class="col-xl-9 col-lg-9">
                     <nav class="header__menu">
                         <ul>
                             <li class="active"><a href="{% url 'shop_index' %}">Home</a></li>
@@ -205,7 +389,22 @@
                             </li> -->
                             
                             <!-- <li><a href="./contact.html">Contact</a></li> -->
-                          <li> <a href="{% url 'customerlogout' %}">Logout</a></li> 
+                          <li> <a href="{% url 'customerlogout' %}">Logout</a></li>
+                          <!-- Adjusted search container -->
+                          <div class="search-container" style="display: inline-flex; align-items: center; margin-left: 20px;">
+                              <form method="GET" action="{% url 'search_products' %}" class="search-form">
+                                <div class="header__search">
+                                    <input type="text" name="q" id="searchInput" class="search-input" placeholder="Search products..." value="{{ query|default:'' }}">
+                                    <!-- <button type="submit" class="search-button"><i class="fa fa-search"></i></button> -->
+                                    <button type="button" id="voiceSearchBtn" class="voice-search-button">
+                                        <i class="fa fa-microphone"></i>
+                                    </button>
+                                </div>
+                              </form>
+                          </div>
+                          <!-- <li><a href="{% url 'wishlist' %}"><span class="icon_heart_alt"></span>
+                              <div class="tip">{{ wishlist_count }}</div>
+                          </a></li> -->
                           <!-- <div class="profile-details" style="display: inline-block; vertical-align: middle; margin-left: 10px;">
                             <a href="{% url 'customerprofile' %}">
                                 <span class="admin_name" style="font-size: 16px; font-weight: 700; color: black;">Hi {{ user.username }}</span>
@@ -351,219 +550,58 @@
 <section class="product spad" id="new-product-section">
     <div class="container">
         <div class="row">
-            <div class="col-lg-4 col-md-4">
+            <div class="col-lg-12">
                 <div class="section-title">
-                    <h4>New product</h4>
+                    {% if query %}
+                        <h4>Search Results for "{{ query }}"</h4>
+                    {% else %}
+                        <h4>All Products</h4>
+                    {% endif %}
                 </div>
             </div>
-            <div class="col-lg-8 col-md-8">
-                <ul class="filter__controls">
-                    <li class="active" data-filter="*"><a href="{% url 'shop_index' %}">All</a></li>
-                    {% for category in links %}
-                    <li data-filter=".{{ category.slug }}"><a href="{{ category.get_url }}">{{ category.name }}</a></li>
+        </div>
+        
+        <div class="row">
+            {% if products %}
+                {% for product in products %}
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="product__item">
+                            {% if product.image %}
+                                <div class="product__item__pic set-bg" data-setbg="{{ product.image.url }}">
+                                    <ul class="product__hover">
+                                        <li><a href="{{ product.image.url }}" class="image-popup"><span class="arrow_expand"></span></a></li>
+                                        <li><a href="{% url 'add_to_wishlist' product.id %}"><span class="icon_heart_alt"></span></a></li>
+                                        <li><a href="{% url 'add_cart' product.id %}"><span class="icon_bag_alt"></span></a></li>
+                                    </ul>
+                                </div>
+                            {% endif %}
+                            <div class="product__item__text">
+                                <h6>
+                                    {% if product.categories.first %}
+                                        <a href="{% url 'product_detail' category_slug=product.categories.first.slug product_slug=product.slug %}">{{ product.name }}</a>
+                                    {% else %}
+                                        <span>{{ product.name }}</span>
+                                    {% endif %}
+                                </h6>
+                                <div class="product__price">₹{{ product.price }}</div>
+                            </div>
+                        </div>
+                    </div>
                 {% endfor %}
-
-                </ul>
-            </div>
-        </div>
-        <div class="row property__gallery">
-            {% for product in products %}
-
-            <div class="col-lg-3 col-md-4 col-sm-6 mix {% for category in product.categories.all %}{{ category.slug }} {% endfor %}">
-                <div class="product__item">
-                    <div class="product__item__pic set-bg" data-setbg="{{ product.image.url }}">
-                        <div class="label new">New</div>
-                        <ul class="product__hover">
-                            <li><a href="{{ product.image.url }}" class="image-popup"><span class="arrow_expand"></span></a></li>
-                            <!-- <li><a href="#"><span class="icon_heart_alt"></span></a></li> -->
-                            <li><a href="{% url 'add_to_wishlist' product.id %}"><span class="icon_heart_alt"></span>
- 
-                            </a></li>
-                            <li><a href="{% url 'add_cart' product.id %}"><span class="icon_bag_alt"></span></a></li>
-                        </ul>
+            {% else %}
+                {% if query %}
+                    <div class="col-12 text-center">
+                        <p>No products found matching "{{ query }}"</p>
                     </div>
-                    <div class="product__item__text">
-                        <h6>  {% if product.categories.first %}
-                            <a href="{% url 'product_detail' category_slug=product.categories.first.slug product_slug=product.slug %}">{{ product.name }}</a>
-                            {% else %}
-                            <span>{{ product.name }}</span>
-                        {% endif %}
-                    </h6>
-
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product__price">{{ product.price }}</div>
+                {% else %}
+                    <div class="col-12 text-center">
+                        <p>No products available</p>
                     </div>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-
-            <!-- <div class="col-lg-3 col-md-4 col-sm-6 mix men">
-                <div class="product__item">
-                    <div class="product__item__pic set-bg" data-setbg="{% static 'shop/img/product/product-2.jpg' %}">
-                        <ul class="product__hover">
-                            <li><a href="{% static 'shop/img/product/product-2.jpg' %}" class="image-popup"><span class="arrow_expand"></span></a></li>
-                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                            <li><a href="#"><span class="icon_bag_alt"></span></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6><a href="#">Flowy striped skirt</a></h6>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product__price">$ 49.0</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6 mix accessories">
-                <div class="product__item">
-                    <div class="product__item__pic set-bg" data-setbg="{% static 'shop/img/product/product-3.jpg' %}">
-                        <div class="label stockout">out of stock</div>
-                        <ul class="product__hover">
-                            <li><a href="{% static 'shop/img/product/product-3.jpg' %}" class="image-popup"><span class="arrow_expand"></span></a></li>
-                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                            <li><a href="#"><span class="icon_bag_alt"></span></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6><a href="#">Cotton T-Shirt</a></h6>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product__price">$ 59.0</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6 mix cosmetic">
-                <div class="product__item">
-                        <div class="product__item__pic set-bg" data-setbg="{% static 'shop/img/product/product-4.jpg' %}">
-                        <ul class="product__hover">
-                            <li><a href="{% static 'shop/img/product/product-4.jpg' %}" class="image-popup"><span class="arrow_expand"></span></a></li>
-                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                            <li><a href="#"><span class="icon_bag_alt"></span></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6><a href="#">Slim striped pocket shirt</a></h6>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product__price">$ 59.0</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6 mix kid">
-                <div class="product__item">
-                        <div class="product__item__pic set-bg" data-setbg="{% static 'shop/img/product/product-5.jpg' %}">
-                        <ul class="product__hover">
-                            <li><a href="{% static 'shop/img/product/product-5.jpg' %}" class="image-popup"><span class="arrow_expand"></span></a></li>
-                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                            <li><a href="#"><span class="icon_bag_alt"></span></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6><a href="#">Fit micro corduroy shirt</a></h6>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product__price">$ 59.0</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6 mix women men kid accessories cosmetic">
-                <div class="product__item sale">
-                    <div class="product__item__pic set-bg" data-setbg="{% static 'shop/img/product/product-6.jpg' %}    ">
-                        <div class="label sale">Sale</div>
-                        <ul class="product__hover">
-                            <li><a href="{% static 'shop/img/product/product-6.jpg' %}" class="image-popup"><span class="arrow_expand"></span></a></li>
-                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                            <li><a href="#"><span class="icon_bag_alt"></span></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6><a href="#">Tropical Kimono</a></h6>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product__price">$ 49.0 <span>$ 59.0</span></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6 mix women men kid accessories cosmetic">
-                <div class="product__item">
-                    <div class="product__item__pic set-bg" data-setbg="{% static 'shop/img/product/product-7.jpg' %}">
-                        <ul class="product__hover">
-                            <li><a href="{% static 'shop/img/product/product-7.jpg' %}" class="image-popup"><span class="arrow_expand"></span></a></li>
-                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                            <li><a href="#"><span class="icon_bag_alt"></span></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6><a href="#">Contrasting sunglasses</a></h6>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product__price">$ 59.0</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6 mix women men kid accessories cosmetic">
-                <div class="product__item sale">
-                    <div class="product__item__pic set-bg" data-setbg="{% static 'shop/img/product/product-8.jpg' %}">
-                        <div class="label">Sale</div>
-                        <ul class="product__hover">
-                            <li><a href="{% static 'shop/img/product/product-8.jpg' %}" class="image-popup"><span class="arrow_expand"></span></a></li>
-                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                            <li><a href="#"><span class="icon_bag_alt"></span></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6><a href="#">Water resistant backpack</a></h6>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product__price">$ 49.0 <span>$ 59.0</span></div>
-                    </div>
-                </div>
-            </div>
+                {% endif %}
+            {% endif %}
         </div>
     </div>
-</section> -->
+</section>
 <!-- Product Section End -->
 
 <!-- Banner Section Begin -->
@@ -997,13 +1035,15 @@
 <script src="{% static 'shop/js/jquery-3.3.1.min.js' %}"></script>
 <script src="{% static 'shop/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'shop/js/jquery.magnific-popup.min.js' %}"></script>
-<script src="{% static 'shop/js/jquery-ui.min.js' %}    "></script>
+<script src="{% static 'shop/js/jquery-ui.min.js' %}"></script>
 <script src="{% static 'shop/js/mixitup.min.js' %}"></script>
 <script src="{% static 'shop/js/jquery.countdown.min.js' %}"></script>
 <script src="{% static 'shop/js/jquery.slicknav.js' %}"></script>
 <script src="{% static 'shop/js/owl.carousel.min.js' %}"></script>
 <script src="{% static 'shop/js/jquery.nicescroll.min.js' %}"></script>
 <script src="{% static 'shop/js/main.js' %}"></script>
+
+<!-- Your existing scripts -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const shopLink = document.querySelector('a[href="#new-product-section"]');
@@ -1017,24 +1057,152 @@
             });
         }
     });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const profileDetails = document.querySelector('.profile-details');
-            const dropdownMenu = profileDetails.querySelector('.dropdown-menu');
+</script>
 
-            // Toggle dropdown visibility on click
-            profileDetails.addEventListener('click', function(e) {
-                e.stopPropagation(); // Prevent event bubbling
-                dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block'; // Toggle dropdown visibility
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const profileDetails = document.querySelector('.profile-details');
+        const dropdownMenu = profileDetails.querySelector('.dropdown-menu');
+
+        // Toggle dropdown visibility on click
+        profileDetails.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent event bubbling
+            dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block'; // Toggle dropdown visibility
+        });
+
+        // Close the dropdown if clicking outside of it
+        document.addEventListener('click', function() {
+            dropdownMenu.style.display = 'none';
+        });
+    });
+</script>
+
+<script>
+    // Voice Search Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const voiceBtn = document.getElementById('voiceSearchBtn');
+        const searchInput = document.getElementById('searchInput');
+        let recognition = null;
+
+        // Check if browser supports speech recognition
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            // Configure recognition
+            recognition.onstart = function() {
+                voiceBtn.classList.add('recording');
+                searchInput.placeholder = 'Listening...';
+            };
+
+            recognition.onend = function() {
+                voiceBtn.classList.remove('recording');
+                searchInput.placeholder = 'Search products...';
+            };
+
+            recognition.onresult = function(event) {
+                const result = event.results[0][0].transcript;
+                searchInput.value = result;
+                // Optional: Auto-submit the form after recognition
+                searchInput.form.submit();
+            };
+
+            recognition.onerror = function(event) {
+                voiceBtn.classList.remove('recording');
+                searchInput.placeholder = 'Search products...';
+                if (event.error === 'not-allowed') {
+                    alert('Please allow microphone access to use voice search.');
+                }
+            };
+
+            // Add click handler for voice search button
+            voiceBtn.addEventListener('click', function() {
+                if (voiceBtn.classList.contains('recording')) {
+                    recognition.stop();
+                } else {
+                    recognition.start();
+                }
             });
+        } else {
+            // Hide voice search button if not supported
+            voiceBtn.style.display = 'none';
+        }
+    });
+</script>
 
-            // Close the dropdown if clicking outside of it
-            document.addEventListener('click', function() {
-                dropdownMenu.style.display = 'none';
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get all filter buttons and products
+        const filterButtons = document.querySelectorAll('.filter__controls li');
+        const products = document.querySelectorAll('.mix');  
+
+        // Add click event to each filter button
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+
+                const filterValue = this.getAttribute('data-filter');
+
+                // Show/hide products based on category
+                products.forEach(product => {
+                    if (filterValue === 'all') {
+                        product.style.display = '';  
+                    } else {
+                        if (product.classList.contains(filterValue)) {
+                            product.style.display = '';  
+                        } else {
+                            product.style.display = 'none';  
+                        }
+                    }
+                });
             });
         });
-    </script>
+    });
+</script>
+
+<script>
+    function handleSearch(event) {
+        event.preventDefault();
+        const searchInput = document.querySelector('.search-input');
+        const searchQuery = searchInput.value.trim();
+        
+        if (searchQuery) {
+            window.location.href = `/search-products?q=${encodeURIComponent(searchQuery)}`;
+        }
+        return false;
+    }
+
+    // Handle form submission
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchForm = document.getElementById('searchForm');
+        if (searchForm) {
+            searchForm.addEventListener('submit', handleSearch);
+        }
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.querySelector('.search-input');
+
+        if (searchForm) {
+            searchForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const searchQuery = searchInput.value.trim();
+                if (searchQuery) {
+                    window.location.href = `{% url 'search_products' %}?q=${encodeURIComponent(searchQuery)}`;
+                }
+            });
+        }
+    });
+</script>
+
 </body>
 
 </html>

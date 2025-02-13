@@ -162,8 +162,6 @@
     <input type="text" id="state" name="state" required>
     <label for="zipcode">Zip Code</label>
     <input type="text" id="zipcode" name="zipcode" required>
-    <label for="country">Country</label>
-    <input type="text" id="country" name="country" required>
     <button type="submit" class="btn-submit">Proceed to Payment</button>
 </form>
             
@@ -189,18 +187,15 @@
         </div>
     </div>
 
-    {% if razorpay_order_id %}
     <script>
+        // Define base Razorpay options
         var options = {
             "key": "{{ razorpay_merchant_key }}",
-            "amount": "{{ grand_total|floatformat:2 }}",
             "currency": "INR",
-            "name": "Your Company Name",
+            "name": "Reart",
             "description": "Order Payment",
-            "order_id": "{{ razorpay_order_id }}",
             "handler": function (response){
-                // Send the payment details to your server
-                fetch("{{ callback_url }}", {
+                fetch("{% url 'razorpay_callback' %}", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -215,15 +210,14 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        // Redirect to a success page
-                        window.location.href = "{% url 'payment_success' order.id %}";
+                        window.location.href = data.redirect_url;
                     } else {
-                        alert("Payment failed. Please try again.");
+                        alert("Payment failed: " + data.message);
                     }
                 })
                 .catch((error) => {
                     console.error('Error:', error);
-                    alert("An error occurred. Please try again.");
+                    alert("An error occurred during payment verification. Please contact support.");
                 });
             },
             "prefill": {
@@ -234,36 +228,63 @@
                 "color": "#3498db"
             }
         };
-        var rzp1 = new Razorpay(options);
-        document.getElementById('shipping-form').onsubmit = function(e){
+
+        // Initialize Razorpay instance
+        var rzp = null;
+
+        document.getElementById('shipping-form').addEventListener('submit', async function(e) {
             e.preventDefault();
-            rzp1.open();
-        }
-    </script>
-    {% endif %}
+            
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('{% url "checkout" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // Update options with order-specific data
+                    options.order_id = data.razorpay_order_id;
+                    options.amount = data.amount; // Amount is already in paise from backend
+                    
+                    // Create new Razorpay instance and open payment
+                    rzp = new Razorpay(options);
+                    rzp.open();
+                } else {
+                    alert(data.message || 'Please select or enter a valid shipping address.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while processing your order. Please try again.');
+            }
+        });
 
-
-    <script>
         const savedAddresses = {
             {% for address in saved_addresses %}
                 {{ address.id }}: {
                     address: "{{ address.address }}",
                     city: "{{ address.city }}",
                     state: "{{ address.state }}",
-                    zipcode: "{{ address.zip_code }}",
-                    country: "{{ address.country }}"
+                    zipcode: "{{ address.zip_code }}"
                 },
             {% endfor %}
         };
-    
+
         function fillAddressForm(addressId) {
             const selectedAddress = savedAddresses[addressId];
-
-            document.getElementById('address').value = selectedAddress.address;
-            document.getElementById('city').value = selectedAddress.city;
-            document.getElementById('state').value = selectedAddress.state;
-            document.getElementById('zip_code').value = selectedAddress.zipcode;
-            document.getElementById('phone').value = selectedAddress.phone;
+            if (selectedAddress) {
+                document.getElementById('address').value = selectedAddress.address;
+                document.getElementById('city').value = selectedAddress.city;
+                document.getElementById('state').value = selectedAddress.state;
+                document.getElementById('zipcode').value = selectedAddress.zipcode;
+            }
         }
     </script>
     

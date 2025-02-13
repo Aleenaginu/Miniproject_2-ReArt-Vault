@@ -1,0 +1,279 @@
+{% extends 'delivery/deliverybase.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4" data-aos="fade-up">
+        <div class="col-md-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="display-icon me-4">
+                            <i class="fas fa-user-circle fa-3x"></i>
+                        </div>
+                        <div>
+                            <h2 class="mb-1">Welcome back, {{ request.user.first_name }}!</h2>
+                            <p class="mb-0 opacity-75">Here's your delivery dashboard for today</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Section -->
+    <div class="row mb-4">
+        <!-- Active Deliveries -->
+        <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="stats-icon me-3">
+                            <div class="icon-circle bg-primary-light">
+                                <i class="fas fa-route text-primary"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">{{ active_deliveries_count }}</h3>
+                            <p class="text-muted mb-0">Active Deliveries</p>
+                            <small class="text-muted">Orders in progress</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed Today -->
+        <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="stats-icon me-3">
+                            <div class="icon-circle bg-success-light">
+                                <i class="fas fa-check text-success"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">{{ completed_today_count }}</h3>
+                            <p class="text-muted mb-0">Completed Today</p>
+                            <small class="text-muted">Successfully delivered orders</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Available Orders -->
+        <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="stats-icon me-3">
+                            <div class="icon-circle bg-info-light">
+                                <i class="fas fa-box text-info"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">{{ available_orders_count }}</h3>
+                            <p class="text-muted mb-0">Available Orders</p>
+                            <small class="text-muted">Orders in your area</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Cards -->
+    <div class="row mb-4">
+        <!-- Available Orders Card -->
+        <div class="col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
+            <div class="card h-100">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <div class="action-icon bg-primary-light mb-4">
+                            <i class="fas fa-list-ul text-primary"></i>
+                        </div>
+                        <h3 class="card-title">Available Orders</h3>
+                        <p class="text-muted mb-4">View and accept new delivery orders in your area</p>
+                        <a href="{% url 'available_orders' %}" class="btn btn-primary btn-lg">
+                            View Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Deliveries Card -->
+        <div class="col-md-6 mb-4" data-aos="fade-up" data-aos-delay="500">
+            <div class="card h-100">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <div class="action-icon bg-success-light mb-4">
+                            <i class="fas fa-truck text-success"></i>
+                        </div>
+                        <h3 class="card-title">My Deliveries</h3>
+                        <p class="text-muted mb-4">Manage your active and completed deliveries</p>
+                        <a href="{% url 'my_deliveries' %}" class="btn btn-success btn-lg">
+                            View Deliveries
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="row" data-aos="fade-up" data-aos-delay="600">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h4 class="card-title mb-4">
+                        <i class="fas fa-id-card me-2 text-primary"></i>Profile Information
+                    </h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="text-muted mb-1">Full Name</label>
+                                <p class="h5">{{ request.user.first_name }} {{ request.user.last_name }}</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted mb-1">Email Address</label>
+                                <p class="h5">{{ request.user.email }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="text-muted mb-1">Phone Number</label>
+                                <p class="h5">{{ request.user.deliverypartner.phone }}</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted mb-1">Service Area</label>
+                                <p class="h5">
+                                    <span class="badge bg-primary">{{ request.user.deliverypartner.pin_code }}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .icon-circle i {
+        font-size: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .action-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        transition: all 0.3s ease;
+    }
+
+    .action-icon i {
+        font-size: 32px;
+        transition: all 0.3s ease;
+    }
+
+    .bg-primary-light {
+        background-color: rgba(255, 107, 107, 0.1);
+    }
+
+    .bg-success-light {
+        background-color: rgba(81, 207, 102, 0.1);
+    }
+
+    .bg-info-light {
+        background-color: rgba(51, 154, 240, 0.1);
+    }
+
+    .card {
+        background: white;
+    }
+
+    .stats-icon {
+        flex-shrink: 0;
+    }
+
+    /* Hover Animations */
+    .card:hover .icon-circle {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .card:hover .icon-circle i {
+        transform: scale(1.2);
+    }
+
+    .card:hover .action-icon {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    .card:hover .action-icon i {
+        transform: scale(1.2);
+    }
+
+    /* Pulse Animation for Stats Icons */
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .stats-icon .icon-circle {
+        animation: pulse 2s infinite;
+    }
+
+    .card:hover .stats-icon .icon-circle {
+        animation: none;
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    /* Floating Animation for Action Icons */
+    @keyframes floating {
+        0% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-8px);
+        }
+        100% {
+            transform: translateY(0px);
+        }
+    }
+
+    .action-icon {
+        animation: floating 3s ease-in-out infinite;
+    }
+
+    .card:hover .action-icon {
+        animation: none;
+        transform: scale(1.1) rotate(5deg);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,474 @@
+{% extends 'delivery/deliverybase.html' %}
+{% load static %}
+{% load delivery_extras %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-1">My Deliveries</h2>
+                            <p class="mb-0 opacity-75">Manage your assigned deliveries</p>
+                        </div>
+                        <div class="stats-icon">
+                            <div class="icon-circle bg-white bg-opacity-10">
+                                <i class="fas fa-truck fa-2x text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deliveries List -->
+    <div class="row">
+        <div class="col-12">
+            {% if active_deliveries %}
+                <h4 class="mb-4">Active Deliveries</h4>
+                {% for delivery in active_deliveries %}
+                    <div class="card mb-3 delivery-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <!-- Order Info -->
+                                <div class="col-md-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="order-icon me-3">
+                                            <div class="icon-circle bg-primary-light">
+                                                <i class="fas fa-box text-primary"></i>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1">Order #{{ delivery.order.id }}</h5>
+                                            <p class="text-muted mb-0">
+                                                <i class="fas fa-clock me-1"></i>
+                                                {{ delivery.created_at|date:"M d, Y h:i A" }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Status -->
+                                <div class="col-md-3">
+                                    <div class="mb-2">
+                                        <small class="text-muted">Current Status</small>
+                                        <p class="mb-0">
+                                            <span class="badge bg-{{ delivery.get_status_color }}">
+                                                {{ delivery.get_status_display }}
+                                            </span>
+                                            <small class="d-block text-muted mt-1">
+                                                <i class="fas fa-clock me-1"></i>
+                                                Updated {{ delivery.status_timestamp|timesince }} ago
+                                            </small>
+                                            {% if delivery.latest_status_update and delivery.latest_status_update.notes %}
+                                            <small class="d-block text-muted mt-1">
+                                                <i class="fas fa-comment me-1"></i>
+                                                {{ delivery.latest_status_update.notes }}
+                                            </small>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Customer Info -->
+                                <div class="col-md-3">
+                                    <div class="mb-2">
+                                        <small class="text-muted">Customer</small>
+                                        <p class="mb-1">
+                                            <i class="fas fa-user me-1"></i>
+                                            {{ delivery.order.customer.get_full_name|default:delivery.order.customer.username }}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted">Delivery Location</small>
+                                        <p class="mb-0">
+                                            <i class="fas fa-map-marker-alt me-1"></i>
+                                            {{ delivery.customer_address }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateStatusModal{{ delivery.id }}">
+                                        <i class="fas fa-sync-alt me-1"></i>Update Status
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Order Details (Collapsible) -->
+                            <div class="mt-3">
+                                <button class="btn btn-link text-decoration-none p-0" type="button" 
+                                        data-bs-toggle="collapse" data-bs-target="#deliveryDetails{{ delivery.id }}">
+                                    <i class="fas fa-chevron-down me-1"></i>View Order Details
+                                </button>
+                                <div class="collapse mt-3" id="deliveryDetails{{ delivery.id }}">
+                                    <div class="card card-body bg-light">
+                                        <h6 class="mb-3">Order Items</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Item</th>
+                                                        <th>Quantity</th>
+                                                        <th>Price</th>
+                                                        <th>Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for item in delivery.order.orderitem_set.all %}
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="product-thumbnail me-2">
+                                                                <div>
+                                                                    <strong>{{ item.product.name }}</strong>
+                                                                    <small class="d-block text-muted">By {{ item.product.artist.user.first_name }}</small>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>{{ item.quantity }}</td>
+                                                        <td>₹{{ item.price }}</td>
+                                                        <td>₹{{ item.get_subtotal }}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                                        <td><strong>₹{{ delivery.order.total_amount }}</strong></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Update Status Modal -->
+                    <div class="modal fade" id="updateStatusModal{{ delivery.id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Update Delivery Status</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form id="updateStatusForm{{ delivery.id }}" onsubmit="return updateDeliveryStatus(event, {{ delivery.id }})">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="status{{ delivery.id }}" class="form-label">New Status</label>
+                                            <select class="form-select" id="status{{ delivery.id }}" name="status" required data-current-status="{{ delivery.status }}">
+                                                <option value="">Select Status</option>
+                                                <option value="PICKING_UP" {% if delivery.status != 'ASSIGNED' %}disabled{% endif %}>Picking Up</option>
+                                                <option value="PICKED_UP" {% if delivery.status != 'PICKING_UP' %}disabled{% endif %}>Picked Up</option>
+                                                <option value="IN_TRANSIT" {% if delivery.status != 'PICKED_UP' %}disabled{% endif %}>In Transit</option>
+                                                <option value="DELIVERED" {% if delivery.status != 'IN_TRANSIT' %}disabled{% endif %}>Delivered</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="notes{{ delivery.id }}" class="form-label">Notes</label>
+                                            <textarea class="form-control" id="notes{{ delivery.id }}" name="notes" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-primary">Update Status</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                {% if completed_deliveries %}
+                    <h4 class="mt-5 mb-4">Recently Completed Deliveries</h4>
+                    {% for delivery in completed_deliveries %}
+                        <div class="card mb-3 delivery-card completed" data-aos="fade-up" data-aos-delay="100">
+                            <div class="card-body p-4">
+                                <div class="row align-items-center">
+                                    <!-- Order Info -->
+                                    <div class="col-md-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="order-icon me-3">
+                                                <div class="icon-circle bg-success-light">
+                                                    <i class="fas fa-check text-success"></i>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h5 class="mb-1">Order #{{ delivery.order.id }}</h5>
+                                                <p class="text-muted mb-0">
+                                                    <i class="fas fa-clock me-1"></i>
+                                                    Completed {{ delivery.completion_timestamp|timesince }} ago
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Customer Info -->
+                                    <div class="col-md-4">
+                                        <div class="mb-2">
+                                            <small class="text-muted">Customer</small>
+                                            <p class="mb-1">
+                                                <i class="fas fa-user me-1"></i>
+                                                {{ delivery.order.customer.get_full_name|default:delivery.order.customer.username }}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted">Delivery Location</small>
+                                            <p class="mb-0">
+                                                <i class="fas fa-map-marker-alt me-1"></i>
+                                                {{ delivery.customer_address }}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- View Details -->
+                                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                        <button class="btn btn-link text-decoration-none" type="button" 
+                                                data-bs-toggle="collapse" data-bs-target="#completedDetails{{ delivery.id }}">
+                                            <i class="fas fa-chevron-down me-1"></i>View Details
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Completed Order Details -->
+                                <div class="collapse mt-3" id="completedDetails{{ delivery.id }}">
+                                    <div class="card card-body bg-light">
+                                        <div class="table-responsive">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Item</th>
+                                                        <th>Quantity</th>
+                                                        <th>Price</th>
+                                                        <th>Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for item in delivery.order.orderitem_set.all %}
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="product-thumbnail me-2">
+                                                                <div>
+                                                                    <strong>{{ item.product.name }}</strong>
+                                                                    <small class="d-block text-muted">By {{ item.product.artist.user.first_name }}</small>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>{{ item.quantity }}</td>
+                                                        <td>₹{{ item.price }}</td>
+                                                        <td>₹{{ item.get_subtotal }}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                                        <td><strong>₹{{ delivery.order.total_amount }}</strong></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% else %}
+                <div class="card" data-aos="fade-up">
+                    <div class="card-body text-center p-5">
+                        <div class="mb-4">
+                            <div class="icon-circle bg-light mx-auto">
+                                <i class="fas fa-truck text-muted fa-2x"></i>
+                            </div>
+                        </div>
+                        <h4>No Deliveries Yet</h4>
+                        <p class="text-muted mb-4">You haven't accepted any deliveries yet.</p>
+                        <a href="{% url 'available_orders' %}" class="btn btn-primary">
+                            <i class="fas fa-search me-1"></i>Find Available Orders
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .order-icon .icon-circle {
+        width: 40px;
+        height: 40px;
+    }
+
+    .delivery-card {
+        transition: transform 0.2s;
+    }
+
+    .delivery-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .delivery-card.completed {
+        opacity: 0.8;
+    }
+
+    .delivery-card.completed:hover {
+        opacity: 1;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table th {
+        font-weight: 600;
+        color: var(--dark-text);
+    }
+
+    .product-thumbnail {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    /* Modal Styles */
+    .modal {
+        backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        background-color: #f8f9fa;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .modal-footer {
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        background-color: #f8f9fa;
+        border-radius: 0 0 12px 12px;
+    }
+
+    .bg-success-light {
+        background-color: rgba(40, 167, 69, 0.1);
+    }
+</style>
+
+{% block extra_js %}
+<script>
+    function updateDeliveryStatus(event, deliveryId) {
+        event.preventDefault();
+        
+        const form = document.getElementById(`updateStatusForm${deliveryId}`);
+        const statusSelect = form.querySelector('select[name="status"]');
+        const notes = form.querySelector('textarea[name="notes"]').value;
+        const currentStatus = statusSelect.dataset.currentStatus;
+        const newStatus = statusSelect.value;
+        
+        // Validate status transition
+        const validTransitions = {
+            'ASSIGNED': ['PICKING_UP'],
+            'PICKING_UP': ['PICKED_UP'],
+            'PICKED_UP': ['IN_TRANSIT'],
+            'IN_TRANSIT': ['DELIVERED'],
+            'DELIVERED': []
+        };
+        
+        if (!validTransitions[currentStatus] || !validTransitions[currentStatus].includes(newStatus)) {
+            alert('Invalid status transition. Please follow the correct order.');
+            return false;
+        }
+        
+        fetch(`/delivery/order/${deliveryId}/update-status/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: JSON.stringify({
+                status: newStatus,
+                notes: notes
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => Promise.reject(data));
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Update the UI to show new status
+                const statusBadge = document.querySelector(`#delivery${deliveryId}Status`);
+                if (statusBadge) {
+                    statusBadge.textContent = data.status_display;
+                    statusBadge.className = `badge bg-${data.status_color}`;
+                }
+                
+                // Update current status for next transition
+                statusSelect.dataset.currentStatus = newStatus;
+                
+                // Update options availability based on new status
+                const options = statusSelect.options;
+                for (let option of options) {
+                    if (option.value) {
+                        if (newStatus === 'DELIVERED') {
+                            option.disabled = true;  // Disable all options after delivery
+                        } else {
+                            option.disabled = !validTransitions[newStatus]?.includes(option.value);
+                        }
+                    }
+                }
+                
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById(`updateStatusModal${deliveryId}`));
+                modal.hide();
+                
+                // Show success message
+                alert('Status updated successfully!');
+                location.reload(); // Refresh to show updated status
+            } else {
+                alert('Error updating status: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error updating status: ' + (error.message || 'Please try again.'));
+        });
+        
+        return false;
+    }
+
+    function getCSRFToken() {
+        const cookieValue = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('csrftoken='))
+            ?.split('=')[1];
+        return cookieValue;
+    }
+</script>
+{% endblock %}
+{% endblock %}

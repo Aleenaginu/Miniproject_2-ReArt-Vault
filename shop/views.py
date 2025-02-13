@@ -5,7 +5,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.db import transaction
-from django.urls import reverse  # Add this import
+from django.urls import reverse
+from django.utils import timezone
+from datetime import timedelta
 
 from category.models import Category
 from .models import Customers, Order, OrderItem, Payment, ShippingAddress, Wishlist
@@ -14,31 +16,39 @@ from artist.models import ProNotification, Product
 # Create your views here.
 
 def shop_index(request, category_slug=None):
-    products = Product.objects.filter(is_available=True)  # Fetch available products
-    categories = Category.objects.all()  # Fetch all categories
+    try:
+        products = Product.objects.filter(is_available=True)
+        categories = Category.objects.all()
 
-    # Cart and wishlist logic (ensure Cart and Wishlist models are imported)
-    cart_count = 0
-    wishlist_count = 0
+        if category_slug:
+            category = get_object_or_404(Category, slug=category_slug)
+            products = products.filter(categories=category)
 
-    # Check if the user is authenticated for cart and wishlist counts
-    if request.user.is_authenticated:
-        try:
-            customer = get_object_or_404(Customers, user=request.user)
-            wishlist_count = Wishlist.objects.filter(user=customer).count()
-        except Customers.DoesNotExist:
-            wishlist_count = 0  # Handle case where customer does not exist
+        cart_count = 0
+        wishlist_count = 0
 
-    if not products.exists():
-        return render(request, 'shop/no_products.html')  # Render a different template
+        if request.user.is_authenticated:
+            try:
+                customer = Customers.objects.get(user=request.user)
+                wishlist_count = Wishlist.objects.filter(user=customer).count()
+            except Customers.DoesNotExist:
+                wishlist_count = 0
 
-    context = {
-        'products': products,
-        'categories': categories,
-        'cart_count': cart_count,
-        'wishlist_count': wishlist_count,
-    }
-    return render(request, 'Customers/index.html', context)
+        context = {
+            'products': products,
+            'categories': categories,
+            'cart_count': cart_count,
+            'wishlist_count': wishlist_count,
+        }
+        return render(request, 'customers/index.html', context)
+    except Exception as e:
+        messages.error(request, f"An error occurred: {str(e)}")
+        return render(request, 'customers/index.html', {
+            'categories': Category.objects.all(),
+            'products': [],
+            'cart_count': 0,
+            'wishlist_count': 0,
+        })
 
 def product_detail(request,category_slug,product_slug):
     category=get_object_or_404(Category,slug=category_slug)
@@ -292,71 +302,100 @@ def checkout(request):
         grand_total = cart_total + tax
     except Cart.DoesNotExist:
         logger.warning("Cart does not exist")
-        pass
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Cart is empty'
+            }, status=400)
+        return redirect('cart')
 
     if request.method == 'POST':
         logger.info("POST request received")
         selected_address_id = request.POST.get('selected_address')
         logger.info(f"Selected address ID: {selected_address_id}")
-        if selected_address_id:
-            shipping_address = get_object_or_404(SavedAddress, id=selected_address_id, user=request.user)
+        
+        try:
+            if selected_address_id:
+                shipping_address = get_object_or_404(SavedAddress, id=selected_address_id, user=request.user)
+            else:
+                # For manual address entry
+                address = request.POST.get('address')
+                city = request.POST.get('city')
+                state = request.POST.get('state')
+                zipcode = request.POST.get('zipcode')
+                
+                if not all([address, city, state, zipcode]):
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': 'Please fill all address fields'
+                    }, status=400)
+                
+                shipping_address = SavedAddress.objects.create(
+                    user=request.user,
+                    address=address,
+                    city=city,
+                    state=state,
+                    zip_code=zipcode
+                )
             
-            try:
-                logger.info("Creating Razorpay order")
-                # Create Razorpay order
-                client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET_KEY))
-                razorpay_order = client.order.create({
-                    'amount': int(grand_total * 100),  # Amount in paise
-                    'currency': 'INR',
-                    'payment_capture': '1'
-                })
-                logger.info(f"Razorpay order created: {razorpay_order['id']}")
+            # Create Razorpay order
+            client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET_KEY))
+            razorpay_order = client.order.create({
+                'amount': int(grand_total * 100),  # Amount in paise
+                'currency': 'INR',
+                'payment_capture': '1'
+            })
+            logger.info(f"Razorpay order created: {razorpay_order['id']}")
 
-                # Create order in your database
-                order = Order.objects.create(
-                    customer=request.user,
-                    total_amount=grand_total,
-                    razorpay_order_id=razorpay_order['id']
-                )
-                logger.info(f"Order created in database: {order.id}")
+            # Create order in database
+            order = Order.objects.create(
+                customer=request.user,
+                total_amount=grand_total,
+                razorpay_order_id=razorpay_order['id']
+            )
+            logger.info(f"Order created in database: {order.id}")
 
-                # Create shipping address for the order
-                ShippingAddress.objects.create(
-                    customer=request.user,
+            # Create order items
+            for cart_item in cart_items:
+                OrderItem.objects.create(
                     order=order,
-                    address_type=shipping_address.address_type,
-                    full_name=shipping_address.full_name,
-                    phone=shipping_address.phone,
-                    address=shipping_address.address,
-                    city=shipping_address.city,
-                    state=shipping_address.state,
-                    zip_code=shipping_address.zip_code
+                    product=cart_item.product,
+                    quantity=cart_item.Quantity,
+                    price=cart_item.product.price
                 )
-                logger.info("Shipping address created")
+            logger.info("Order items created")
 
-                # Make sure to pass the order object to the context
-                context = {
-                    'order': order,  # Add this line
-                    'razorpay_order_id': razorpay_order['id'],
-                    'razorpay_merchant_key': settings.RAZORPAY_API_KEY,
-                    'callback_url': request.build_absolute_uri(reverse('razorpay_callback')),
-                    'cart_items': cart_items,
-                    'cart_total': cart_total,
-                    'tax': tax,
-                    'grand_total': grand_total,
-                    'addresses': SavedAddress.objects.filter(user=request.user),
-                }
-                logger.info("Rendering checkout template with Razorpay details")
-                logger.info(f"Context: {context}")
-                return render(request, 'customers/checkout.html', context)
-            except Exception as e:
-                logger.error(f"An error occurred: {str(e)}")
-                messages.error(request, f"An error occurred: {str(e)}")
-        else:
-            logger.warning("No address selected")
-            messages.error(request, "Please select a shipping address.")
-            return redirect('checkout')
+            # Create shipping address for the order
+            ShippingAddress.objects.create(
+                customer=request.user,
+                order=order,
+                address=shipping_address.address,
+                city=shipping_address.city,
+                state=shipping_address.state,
+                zip_code=shipping_address.zip_code
+            )
+            logger.info("Shipping address created")
 
+            return JsonResponse({
+                'status': 'success',
+                'razorpay_order_id': razorpay_order['id'],
+                'amount': int(grand_total * 100),
+                'message': 'Order created successfully'
+            })
+            
+        except SavedAddress.DoesNotExist:
+            logger.error("Selected address not found")
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Selected address not found'
+            }, status=400)
+        except Exception as e:
+            logger.error(f"An error occurred: {str(e)}")
+            return JsonResponse({
+                'status': 'error',
+                'message': f"An error occurred: {str(e)}"
+            }, status=400)
+    
     # For GET requests
     saved_addresses = SavedAddress.objects.filter(user=request.user)
     context = {
@@ -365,9 +404,10 @@ def checkout(request):
         'cart_total': cart_total,
         'tax': tax,
         'grand_total': grand_total,
+        'razorpay_merchant_key': settings.RAZORPAY_API_KEY,
+        'callback_url': request.build_absolute_uri(reverse('razorpay_callback'))
     }
     logger.info("Rendering initial checkout template")
-    logger.info(f"Initial context: {context}")
     return render(request, 'customers/checkout.html', context)
 
 from django.shortcuts import get_object_or_404
@@ -557,15 +597,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 import json
 import logging
-
-logger = logging.getLogger(__name__)
-
-import json
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
+from artist.models import ProNotification
+from cart.models import CartItem
 
 @csrf_exempt
 def razorpay_callback(request):
+    logger = logging.getLogger(__name__)
     logger.info("Razorpay callback received")
     logger.info(f"Request method: {request.method}")
     logger.info(f"Body: {request.body.decode('utf-8')}")
@@ -602,15 +639,40 @@ def razorpay_callback(request):
             order.save()
             logger.info(f"Order {order.id} status updated to Paid")
             
-            # Create a payment record
+            # Get the shipping address
+            shipping_address = order.shipping_addresses.first()
+            if not shipping_address:
+                logger.error(f"No shipping address found for order {order.id}")
+                return JsonResponse({'status': 'error', 'message': 'No shipping address found'}, status=400)
+            
+            # Create a payment record with shipping address
             Payment.objects.create(
                 order=order,
-                customer=order.customer,  # Add this line to include the customer
+                customer=order.customer,
                 payment_id=payment_details['razorpay_payment_id'],
                 amount=order.total_amount,
-                status='Success'
+                status='Success',
+                shipping_address=shipping_address
             )
             logger.info(f"Payment record created for order {order.id}")
+
+            # Get cart items and create notifications for artists
+            cart = Cart.objects.get(cart_id=_cart_id(request))
+            cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+            
+            # Create notifications for each artist whose product was purchased
+            for cart_item in cart_items:
+                product = cart_item.product
+                artist = product.artist
+                message = f"New order received! {order.customer.username} has purchased {cart_item.Quantity} unit(s) of {product.name}."
+                
+                # Create notification for the artist
+                ProNotification.objects.create(
+                    artist=artist,
+                    order=order,
+                    message=message
+                )
+                logger.info(f"Notification created for artist {artist.user.username}")
             
             return JsonResponse({
                 'status': 'success',
@@ -624,7 +686,6 @@ def razorpay_callback(request):
     
     logger.warning("Invalid request method for Razorpay callback")
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
-
 
 import razorpay
 import requests
@@ -831,9 +892,6 @@ def create_razorpay_order(request):
         ShippingAddress.objects.create(
             customer=request.user,
             order=order,
-            address_type=shipping_address.address_type,
-            full_name=shipping_address.full_name,
-            phone=shipping_address.phone,
             address=shipping_address.address,
             city=shipping_address.city,
             state=shipping_address.state,
@@ -855,20 +913,33 @@ def user_profile(request):
 from django.db.models import Prefetch
 @login_required
 def view_your_orders(request):
-    user_orders = Order.objects.filter(customer=request.user).order_by('-created_at').prefetch_related(
-        Prefetch('orderitem_set', queryset=OrderItem.objects.select_related('product'))
+    # Use select_related for ForeignKey relationships and prefetch_related for ManyToMany or reverse ForeignKey
+    user_orders = Order.objects.filter(
+        customer=request.user,
+        payment__status='Success'
+    ).order_by('-created_at').prefetch_related(
+        Prefetch('orderitem_set', 
+                queryset=OrderItem.objects.select_related('product'))
     )
+    
+    # Debug information
+    for order in user_orders:
+        for item in order.orderitem_set.all():
+            print(f"Product: {item.product.name}")
+            print(f"Image: {item.product.image.url if item.product.image else 'No image'}")
+    
     wishlist_count = 0
     if request.user.is_authenticated:
         try:
             customer = get_object_or_404(Customers, user=request.user)
             wishlist_count = Wishlist.objects.filter(user=customer).count()
         except Customers.DoesNotExist:
-            wishlist_count = 0  # In case the customer is not found
+            wishlist_count = 0
+
     context = {
         'user_orders': user_orders,
         'cart_count': get_cart_count(request),
-        'wishlist_count':wishlist_count
+        'wishlist_count': wishlist_count
     }
     return render(request, 'customers/view_your_orders.html', context)
 
@@ -889,40 +960,100 @@ def track_order_status(request):
     orders=Order.objects.filter(customer=request.user)
     return render(request,'customers/tracking.html',{'orders':orders})
 
+from django.db.models import Q
+from django.shortcuts import render
+from .models import Product
+from category.models import Category  # Import Category from the correct app
+
 def search_products(request):
-    cart_count = 0
-    wishlist_count = 0
-
-  
     try:
-        cart = Cart.objects.filter(cart_id=_cart_id(request)).first()
-        if cart:
-            cart_items = CartItem.objects.filter(cart=cart)
-            cart_count = cart_items.count()
-    except Cart.DoesNotExist:
-        pass
+        query = request.GET.get('q', '')
+        products = Product.objects.filter(is_available=True)
+        
+        if query:
+            products = products.filter(
+                Q(name__icontains=query) |
+                Q(description__icontains=query)
+            ).distinct()
+            
+            # Debug prints
+            print(f"Search Query: {query}")
+            print(f"Found {products.count()} products")
+            for product in products:
+                print(f"- {product.name}")
+        
+        context = {
+            'products': products,
+            'query': query,
+            'links': Category.objects.all(),  # Add this back for navigation
+        }
+        
+        return render(request, 'customers/index.html', context)
+    except Exception as e:
+        print(f"Error in search_products: {str(e)}")  # Debug print
+        # Return empty results in case of error
+        context = {
+            'products': [],
+            'query': query if 'query' in locals() else '',
+            'links': Category.objects.all(),
+            'error': 'An error occurred while searching. Please try again.'
+        }
+        return render(request, 'customers/index.html', context)
 
-    if request.user.is_authenticated:
-        try:
-            customer = get_object_or_404(Customers, user=request.user)
-            wishlist_count = Wishlist.objects.filter(user=customer).count()
-        except Customers.DoesNotExist:
-            wishlist_count = 0 
-    query = request.GET.get('q')
-    products = Product.objects.filter(is_available=True)  
-    categories = Category.objects.all() 
+from accounts.models import Artist, ArtistAddress
+from django.utils import timezone
+from datetime import timedelta
+from delivery.models import DeliveryOrder
 
-    if query:
-        products = products.filter(Q(name_icontains=query) | Q(description_icontains=query))  
-
-    context = {
-        'products': products,
-        'links': categories,
-        'query': query, 
-        'cart_count': cart_count,
-        'wishlist_count': wishlist_count, 
-    }
-
-    return render(request, 'customers/index.html', context)
-
-
+@login_required
+def update_order_status(request, order_id):
+    """Handle order dispatch and create delivery order"""
+    from accounts.models import Artist, ArtistAddress
+    from django.utils import timezone
+    from datetime import timedelta
+    from delivery.models import DeliveryOrder
+    
+    # Get the order and artist
+    order = get_object_or_404(Order, id=order_id)
+    artist = get_object_or_404(Artist, user=request.user)
+    artist_address = get_object_or_404(ArtistAddress, artist=artist)
+    
+    # Get shipping address directly from order
+    shipping_address = order.shipping_addresses.first()
+    if not shipping_address:
+        messages.error(request, 'No shipping address found for this order')
+        return redirect('order_notifications')
+    
+    print(f"Creating delivery order with artist pincode: {artist_address.pincode}")
+    
+    # Create delivery order
+    delivery_order = DeliveryOrder.objects.create(
+        order=order,
+        status='AVAILABLE',  # Changed from 'PENDING' to 'AVAILABLE'
+        delivery_pincode=artist_address.pincode,  # Match with delivery partner's pincode
+        
+        # Pickup details (artist's address)
+        artist_address=artist_address.address,
+        artist_pincode=artist_address.pincode,
+        pickup_date=timezone.now().date(),
+        pickup_time=timezone.now().time(),
+        
+        # Delivery details (customer's address)
+        customer_address=f"{shipping_address.address}, {shipping_address.city}, {shipping_address.state}",
+        customer_pincode=shipping_address.zip_code,
+        expected_delivery_date=timezone.now().date() + timedelta(days=3)  # Expected delivery in 3 days
+    )
+    
+    print(f"Created delivery order #{delivery_order.id} with status: {delivery_order.status} and pincode: {delivery_order.delivery_pincode}")
+    
+    # Update order status
+    order.status = 'DISPATCHED'
+    order.save()
+    
+    # Update notification as read
+    notification = get_object_or_404(ProNotification, order=order, artist=artist)
+    notification.is_read = True
+    notification.save()
+    
+    messages.success(request, 'Order has been dispatched successfully')
+    return redirect('order_notifications')

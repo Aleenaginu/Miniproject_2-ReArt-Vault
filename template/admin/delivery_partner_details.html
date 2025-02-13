@@ -1,0 +1,198 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delivery Partner Details | ReArt Vault</title>
+    <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .details-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgb(205, 231, 240);
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .details-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .details-header h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .details-section {
+            margin-bottom: 20px;
+        }
+
+        .details-row {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .details-label {
+            width: 200px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .details-value {
+            flex: 1;
+            color: #333;
+        }
+
+        .document-section {
+            margin-top: 30px;
+        }
+
+        .document-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .document-preview {
+            max-width: 300px;
+            margin: 10px 0;
+        }
+
+        .document-preview img {
+            width: 100%;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn-approve {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-reject {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .btn-back {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="details-container">
+        <div class="details-header">
+            <h2>Delivery Partner Details</h2>
+            {% if is_approved %}
+            <span class="badge" style="background-color: #4CAF50; color: white; padding: 5px 10px; border-radius: 3px;">Approved</span>
+            {% else %}
+            <span class="badge" style="background-color: #FFA500; color: white; padding: 5px 10px; border-radius: 3px;">Pending</span>
+            {% endif %}
+        </div>
+
+        <div class="details-section">
+            <div class="details-row">
+                <div class="details-label">Name</div>
+                <div class="details-value">{{ partner.first_name }} {{ partner.last_name }}</div>
+            </div>
+            <div class="details-row">
+                <div class="details-label">Email</div>
+                <div class="details-value">{{ partner.email }}</div>
+            </div>
+            <div class="details-row">
+                <div class="details-label">Phone</div>
+                <div class="details-value">{{ partner.phone }}</div>
+            </div>
+            <div class="details-row">
+                <div class="details-label">Date of Birth</div>
+                <div class="details-value">{{ partner.date_of_birth }}</div>
+            </div>
+            <div class="details-row">
+                <div class="details-label">Address</div>
+                <div class="details-value">{{ partner.address }}</div>
+            </div>
+            <div class="details-row">
+                <div class="details-label">PIN Code</div>
+                <div class="details-value">{{ partner.pin_code }}</div>
+            </div>
+            <div class="details-row">
+                <div class="details-label">Driving License</div>
+                <div class="details-value">{{ partner.driving_license }}</div>
+            </div>
+            <div class="details-row">
+                <div class="details-label">Aadhaar Number</div>
+                <div class="details-value">{{ partner.aadhaar_number }}</div>
+            </div>
+        </div>
+
+        <div class="document-section">
+            <h3>Documents</h3>
+            <div class="details-row">
+                <div class="details-label">Aadhaar Front</div>
+                <div class="details-value">
+                    <div class="document-preview">
+                        <img src="{{ partner.aadhaar_front_image.url }}" alt="Aadhaar Front">
+                    </div>
+                </div>
+            </div>
+            <div class="details-row">
+                <div class="details-label">Aadhaar Back</div>
+                <div class="details-value">
+                    <div class="document-preview">
+                        <img src="{{ partner.aadhaar_back_image.url }}" alt="Aadhaar Back">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            {% if not is_approved %}
+            <a href="{% url 'approve_delivery_partner' partner.id %}" class="btn btn-approve">Approve</a>
+            <a href="{% url 'reject_delivery_partner' partner.id %}" class="btn btn-reject">Reject</a>
+            {% endif %}
+            <a href="{% url 'manage_delivery_partners' %}" class="btn btn-back">Back to List</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            {% for message in messages %}
+            Swal.fire({
+                title: "{{ message.tags|title }}!",
+                text: "{{ message }}",
+                icon: "{{ message.tags }}",
+                confirmButtonText: "OK"
+            });
+            {% endfor %}
+        });
+    </script>
+</body>
+</html>

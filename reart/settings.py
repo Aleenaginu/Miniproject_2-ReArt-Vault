@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'shop',
     'category',
     'cart',
+    'delivery',
 ]
 
 MIDDLEWARE = [
@@ -106,7 +107,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / "db.sqlite3",
         'OPTIONS': {
-            'timeout': 30,  # Set timeout to 20 seconds
+            'timeout': 30,  # Increased timeout
+            'isolation_level': None,  # This will help with concurrent access
         },
     }
 }
@@ -211,5 +213,3 @@ SOCIAL_AUTH_PIPELINE = (
 RAZORPAY_API_KEY = 'rzp_test_Q16TA7WvW93Ile'
 RAZORPAY_API_SECRET_KEY = 'kDbKUnWN7G9LQTznXOXMIPv5'
 CSRF_TRUSTED_ORIGINS = ['https://api.razorpay.com']
-
-

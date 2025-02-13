@@ -33,5 +33,5 @@ urlpatterns = [
 
     path('order_notifications/',views.order_notifications, name='order_notifications'), 
     path('order/<int:order_id>/update_order_status/', views.update_order_status, name='update_order_status'),
-    
+    path('update-artist-address/', views.update_artist_address, name='update_artist_address'),
 ]

@@ -1,97 +1,694 @@
 {% load static %}
+{% load shop_extras %}
 <!DOCTYPE html>
-<html lang="zxx">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Ashion Template">
-    <meta name="keywords" content="Ashion, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Ashion | Order History</title>
+    <title>ReArt | Order History</title>
 
-    <!-- Css Styles -->
-    <link rel="stylesheet" href="{% static 'shop/css/bootstrap.min.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'shop/css/style.css' %}" type="text/css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <style>
-        .orders-section {
-            padding: 50px 0;
-            background-color: #f0f4f8;
-            min-height: 100vh;
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        .section-title {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #2c3e50;
-            font-size: 2.5rem;
-            font-weight: 300;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-bottom: 3rem;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 0 auto;
-            background-color: #fff;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        th {
-            background-color: #3498db;
+
+        .page-header {
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            padding: 3rem 0;
+            margin-bottom: 3rem;
             color: white;
         }
-        tr:hover {
-            background-color: #f1f1f1;
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: -0.5px;
         }
-        .no-orders {
+
+        .page-subtitle {
+            opacity: 0.9;
+            margin: 0.5rem 0 0;
+            font-size: 1.1rem;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .order-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .order-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+        }
+
+        .order-id {
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .order-id i {
+            color: var(--primary);
+        }
+
+        .order-date {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-color);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+
+        .product-list {
+            padding: 1.5rem;
+            background: white;
+        }
+
+        .product-item {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1.25rem;
+            background: var(--bg-color);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .product-item:hover {
+            transform: translateX(4px);
+        }
+
+        .product-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .product-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .product-name {
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .product-meta {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .product-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .order-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .order-footer-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .order-footer-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .status-badge {
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-pending {
+            background-color: #fef9c3;
+            color: #854d0e;
+        }
+
+        .status-dispatched {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .status-cancelled {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .total-amount {
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: var(--text-color);
+        }
+
+        .empty-state {
             text-align: center;
-            font-size: 1.2rem;
-            color: #7f8c8d;
-            padding: 50px;
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .empty-state i {
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            margin: auto;
+            border-radius: 8px;
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+            padding: 2rem;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: #666;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .tracking-container {
+            margin-top: 2rem;
+        }
+
+        .tracking-steps {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .tracking-line {
+            position: absolute;
+            top: 0;
+            left: 1.0rem;
+            width: 2px;
+            height: 100%;
+            background: #e2e8f0;
+            transform: translateX(-50%);
+        }
+
+        .tracking-line-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: #6366f1;
+            transition: height 1s ease;
+        }
+
+        .tracking-step {
+            position: relative;
+            padding: 1.5rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+
+        .tracking-icon {
+            width: 3rem;
+            height: 3rem;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: #94a3b8;
+            position: relative;
+            z-index: 2;
+            flex-shrink: 0;
+            margin-left: -2.5rem;
+        }
+
+        .tracking-step.active .tracking-icon {
+            border-color: #6366f1;
+            color: #6366f1;
+            background: #fff;
+        }
+
+        .tracking-step.completed .tracking-icon {
+            background: #6366f1;
+            border-color: #6366f1;
+            color: white;
+        }
+
+        .tracking-content {
+            padding-top: 0.5rem;
+        }
+
+        .tracking-label {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: #94a3b8;
+            margin-bottom: 0.25rem;
+        }
+
+        .tracking-step.active .tracking-label {
+            color: #6366f1;
+        }
+
+        .tracking-step.completed .tracking-label {
+            color: #1e293b;
+        }
+
+        .tracking-time {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-product-info {
+            flex: 1;
+        }
+
+        .modal-product-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-product-price {
+            font-size: 1.125rem;
+            color: #6366f1;
+            font-weight: 500;
+        }
+
+        .modal-product-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .modal-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="orders-section">
+    <div class="page-header">
         <div class="container">
-            <h2 class="section-title">Your Order History</h2>
-            {% if user_orders %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Status</th>
-                            <th>Total Amount</th>
-                            <th>Date</th>
-                            <th>Details</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for order in user_orders %}
-                        <tr>
-                            <td>{{ order.id }}</td>
-                            <td>{{ order.status }}</td>
-                            <td>₹{{ order.total_amount }}</td>
-                            <td>{{ order.created_at }}</td>
-                            <td><a href="{% url 'order_summary' order.id %}">View Details</a></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p class="no-orders">You have no orders.</p>
-            {% endif %}
-            <a href="{% url 'shop_index' %}">Continue Shopping</a>
+            <h1 class="page-title">Order History</h1>
+            <p class="page-subtitle">Track and manage your art purchases</p>
         </div>
     </div>
+
+    <div class="container mb-5">
+        {% if user_orders %}
+            {% for order in user_orders %}
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-id">
+                        <i class="fas fa-shopping-bag"></i>
+                        Order #{{ order.id }}
+                    </div>
+                    <div class="order-date">
+                        <i class="far fa-calendar-alt"></i>
+                        {{ order.created_at|date:"M d, Y" }}
+                    </div>
+                </div>
+
+                <div class="product-list">
+                    {% for item in order.orderitem_set.all %}
+                    <div class="product-item">
+                        <div class="product-image">
+                            {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                            {% else %}
+                                <div class="no-image">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="product-details">
+                            <h3 class="product-name">{{ item.product.name }}</h3>
+                            <div class="product-meta">
+                                <span>
+                                    <i class="fas fa-box"></i>
+                                    Quantity: {{ item.quantity }}
+                                </span>
+                                <span>
+                                    <i class="fas fa-rupee-sign"></i>
+                                    {{ item.price }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="order-footer">
+                    <div class="order-footer-left">
+                        <span class="status-badge {% if order.status == 'Dispatched' %}status-dispatched{% elif order.status == 'Pending' %}status-pending{% else %}status-cancelled{% endif %}">
+                            <i class="fas {% if order.status == 'Dispatched' %}fa-truck{% elif order.status == 'Pending' %}fa-clock{% else %}fa-times-circle{% endif %}"></i>
+                            {{ order.status }}
+                        </span>
+                        <div class="total-amount">Total: ₹{{ order.total_amount }}</div>
+                    </div>
+                    <div class="order-footer-right">
+                        <a href="{% url 'order_summary' order.id %}" class="btn btn-outline">
+                            <i class="fas fa-eye"></i>
+                            View Details
+                        </a>
+                        <a href="#" class="btn btn-primary" onclick="showTrackingModal('{{ order.id }}', '{{ order.orderitem_set.first.product.name }}', '{{ order.orderitem_set.first.product.image.url }}', {{ order.total_amount }}, '{{ order.status }}')">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Track Order
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-shopping-cart"></i>
+                <h2>No Orders Yet</h2>
+                <p>Start exploring our amazing collection of artworks and make your first purchase!</p>
+                <a href="{% url 'shop_index' %}" class="btn btn-primary">
+                    <i class="fas fa-paint-brush"></i>
+                    Explore Artworks
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Tracking Modal -->
+    <div class="modal" id="trackingModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeTrackingModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <div class="modal-product-info">
+                    <h2 class="modal-product-title"></h2>
+                    <div class="modal-product-price"></div>
+                </div>
+                <div class="modal-product-image">
+                    <img src="" alt="Product Image">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="tracking-container">
+                    <div class="tracking-steps">
+                        <div class="tracking-line">
+                            <div class="tracking-line-progress"></div>
+                        </div>
+                        <div class="tracking-step" data-step="picking_up">
+                            <div class="tracking-icon">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <div class="tracking-content">
+                                <div class="tracking-label">Picking Up</div>
+                                <div class="tracking-time">Preparing your order</div>
+                            </div>
+                        </div>
+                        <div class="tracking-step" data-step="picked_up">
+                            <div class="tracking-icon">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="tracking-content">
+                                <div class="tracking-label">Picked Up</div>
+                                <div class="tracking-time">Order has been picked up</div>
+                            </div>
+                        </div>
+                        <div class="tracking-step" data-step="in_transit">
+                            <div class="tracking-icon">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <div class="tracking-content">
+                                <div class="tracking-label">In Transit</div>
+                                <div class="tracking-time">Your order is on the way</div>
+                            </div>
+                        </div>
+                        <div class="tracking-step" data-step="delivered">
+                            <div class="tracking-icon">
+                                <i class="fas fa-home"></i>
+                            </div>
+                            <div class="tracking-content">
+                                <div class="tracking-label">Delivered</div>
+                                <div class="tracking-time">Package has been delivered</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTrackingModal(orderId, productName, productImage, productPrice, status) {
+            const modal = document.getElementById('trackingModal');
+            
+            // Set product details
+            modal.querySelector('.modal-product-title').textContent = productName;
+            modal.querySelector('.modal-product-price').textContent = '₹' + productPrice;
+            
+            const productImg = modal.querySelector('.modal-product-image img');
+            if (productImage) {
+                productImg.src = productImage;
+                productImg.style.display = 'block';
+            } else {
+                productImg.style.display = 'none';
+            }
+
+            // Reset all steps
+            const steps = modal.querySelectorAll('.tracking-step');
+            steps.forEach(step => {
+                step.classList.remove('active', 'completed');
+            });
+
+            // Set progress based on status
+            const statusMap = {
+                'Pending': 'picking_up',
+                'Picked Up': 'picked_up',
+                'In Transit': 'in_transit',
+                'Delivered': 'delivered'
+            };
+
+            const currentStatus = statusMap[status] || 'picking_up';
+            let progressHeight = 0;
+
+            steps.forEach(step => {
+                const stepName = step.dataset.step;
+                if (stepName === currentStatus) {
+                    step.classList.add('active');
+                } else if (Object.values(statusMap).indexOf(stepName) < Object.values(statusMap).indexOf(currentStatus)) {
+                    step.classList.add('completed');
+                    progressHeight += 33.33;
+                }
+            });
+
+            // Animate progress line
+            const progressLine = modal.querySelector('.tracking-line-progress');
+            progressLine.style.height = '0%';
+            modal.classList.add('show');
+            
+            // Trigger animation after a small delay
+            setTimeout(() => {
+                progressLine.style.height = progressHeight + '%';
+            }, 100);
+        }
+
+        function closeTrackingModal() {
+            const modal = document.getElementById('trackingModal');
+            modal.classList.remove('show');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('trackingModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeTrackingModal();
+            }
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,347 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Delivery Partners | ReArt Vault</title>
+    <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .delivery-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .delivery-table th,
+        .delivery-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .delivery-table th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+
+        .delivery-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .btn-approve {
+            background-color: #4CAF50;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            margin-right: 5px;
+        }
+
+        .btn-reject {
+            background-color: #f44336;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            margin-right: 5px;
+        }
+
+        .btn-details {
+            background-color: #2196F3;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            margin: 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .profile-details {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border-radius: 4px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            z-index: 1000;
+            min-width: 150px;
+        }
+
+        .dropdown-menu li {
+            padding: 10px 15px;
+        }
+
+        .dropdown-menu li:hover {
+            background-color: #f5f5f5;
+        }
+
+        .dropdown-menu a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+        }
+
+        .profile-details img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .show {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo-details">
+            <!-- <i class=''></i> -->
+            <span class="logo_name" style="font-size: 30px; text-align: center; font-weight: 700; color: #b5c8c1;">ReArt Vault</span>
+        </div>
+        <ul class="nav-links">
+            <li>
+                <a href="{% url 'admin_dashboard' %}" class="active">
+                    <i class='bx bx-grid-alt'></i>
+                    <span class="links_name">Admin Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'add_medium_of_waste' %}">
+                    <i class='bx bx-box'></i>
+                    <span class="links_name">Add Medium </span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'approve_artists' %}">
+                    <i class='bx bx-list-ul'></i>
+                    <span class="links_name">Manage Artists</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'donation_listview' %}">
+                    <i class='bx bx-pie-chart-alt-2'></i>
+                    <span class="links_name">Manage Donations</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'set_rates' %}">
+                    <i class='bx bx-message'></i>
+                    <span class="links_name">Set Pricing</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'add_category' %}">
+                    <i class='bx bx-box'></i>
+                    <span class="links_name">Add Category</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'manage_delivery_partners' %}">
+                  <i class='bx bx-pie-chart-alt-2'></i>
+                  <span class="links_name">Manage Del Partner</span>
+                </a>
+              </li>
+            <!-- <li>
+                <a href="#">
+                    <i class='bx bx-message'></i>
+                    <span class="links_name">Conatct</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class='bx bx-heart'></i>
+                    <span class="links_name">Favorites</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class='bx bx-cog'></i>
+                    <span class="links_name">Setting</span>
+                </a>
+            </li> -->
+            <li class="log_out">
+                <a href="{% url 'userlogout' %}">
+                    <i class='bx bx-log-out'></i>
+                    <span class="links_name">Log out</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <section class="home-section">
+        <nav>
+            <div class="sidebar-button">
+                <i class='bx bx-menu sidebarBtn'></i>
+                <span class="dashboard">  Dashboard</span>
+            </div>
+            <div class="search-box">
+                <input type="text" placeholder="Search...">
+                <i class='bx bx-search'></i>
+            </div>
+            <div class="profile-details">
+                <img src="{% static 'admin.jpg' %}" alt="Admin Profile">
+                <span class="admin_name" style="font-size: 25px; font-weight: 900; color: #010302;">Hi {{user.username}}</span>
+                <i class='bx bx-chevron-down'></i>
+                <ul class="dropdown-menu">
+                    <!-- <li><a href="{% url 'userprofileartist' %}">View Profile</a></li>
+                    <li><a href="{% url 'profile_update' %}">Edit Profile</a></li>
+                    <li><a href="#">Settings</a></li> -->
+                    <li><a href="{% url 'userlogout' %}">Logout</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="home-content">
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Pending Delivery Partners Section -->
+            <div class="sales-boxes">
+                <div class="recent-sales box" style="background-color: rgb(205, 231, 240); padding: 20px; border-radius: 10px;">
+                    <div class="title" style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">Pending Delivery Partners</div>
+                    <table class="delivery-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Aadhaar Number</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for partner in pending_partners %}
+                            <tr>
+                                <td>{{ partner.first_name }} {{ partner.last_name }}</td>
+                                <td>{{ partner.email }}</td>
+                                <td>{{ partner.phone }}</td>
+                                <td>{{ partner.aadhaar_number }}</td>
+                                <td>
+                                    <a href="{% url 'approve_delivery_partner' partner.id %}" class="btn-approve">Approve</a>
+                                    <a href="{% url 'reject_delivery_partner' partner.id %}" class="btn-reject">Reject</a>
+                                    <a href="{% url 'delivery_partner_details' partner.id %}" class="btn-details">Details</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" style="text-align: center;">No pending delivery partner requests</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Approved Delivery Partners Section -->
+            <div class="sales-boxes" style="margin-top: 20px;">
+                <div class="recent-sales box" style="background-color: rgb(205, 231, 240); padding: 20px; border-radius: 10px;">
+                    <div class="title" style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">Approved Delivery Partners</div>
+                    <table class="delivery-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Aadhaar Number</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for partner in approved_partners %}
+                            <tr>
+                                <td>{{ partner.first_name }} {{ partner.last_name }}</td>
+                                <td>{{ partner.email }}</td>
+                                <td>{{ partner.phone }}</td>
+                                <td>{{ partner.aadhaar_number }}</td>
+                                <td>
+                                    <a href="{% url 'delivery_partner_details' partner.id %}" class="btn-details">Details</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" style="text-align: center;">No approved delivery partners</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                {% for message in messages %}
+                Swal.fire({
+                    title: "{{ message.tags|title }}!",
+                    text: "{{ message }}",
+                    icon: "{{ message.tags }}",
+                    confirmButtonText: "OK"
+                });
+                {% endfor %}
+            });
+        </script>
+    </section>
+    <script>
+        let sidebar = document.querySelector(".sidebar");
+        let sidebarBtn = document.querySelector(".sidebarBtn");
+        sidebarBtn.onclick = function () {
+            sidebar.classList.toggle("active");
+            if (sidebar.classList.contains("active")) {
+                sidebarBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+            } else {
+                sidebarBtn.classList.replace("bx-menu-alt-right", "bx-menu");
+            }
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileDetails = document.querySelector('.profile-details');
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+
+            profileDetails.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!profileDetails.contains(e.target)) {
+                    dropdownMenu.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

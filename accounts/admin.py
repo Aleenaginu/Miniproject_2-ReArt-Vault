@@ -5,3 +5,4 @@ from .models import *  # Import your models
 admin.site.register(Donors)
 admin.site.register(Artist)
 admin.site.register(Adminclick)
+admin.site.register(ArtistAddress)

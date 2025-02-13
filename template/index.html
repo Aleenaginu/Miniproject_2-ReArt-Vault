@@ -71,8 +71,18 @@
             <ul>
               <li><a href="{% url 'donor_register' %}" style="font-size: 0.9rem;">Donor Registration</a></li>
               <li><a href="{% url 'artist_register' %}" style="font-size: 0.9rem;">Artist Registration</a></li>
+              
             </ul>
           </li>
+          <li class="dropdown"><a href="#" style="font-size:0.9rem;"><span>Delivery</span> <i class="bi bi-chevron-down"></i></a>
+            <ul>
+              
+              
+              <li><a href="{% url 'registerd' %}" style="font-size: 0.9rem;">Delivery Partner Registration</a></li>
+              <li><a href="{% url 'logind' %}" style="font-size: 0.9rem;">Delivery Partner Login</a></li>
+            </ul>
+          </li>
+        
           <li><a class="nav-link scrollto" href="{% url 'shop_index' %}" style="font-size: 0.9rem;">Shop</a></li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>

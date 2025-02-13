@@ -1,3 +1,4 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -9,488 +10,165 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
   <!-- Boxicons CDN Link -->
   <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
-  <script>
-    document.querySelector('.profile-details').addEventListener('click', function () {
-      this.querySelector('.dropdown-menu').classList.toggle('show');
-    });
-  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    .notification-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .notification-item {
+      background-color: #fff;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .notification-content {
+      margin-bottom: 10px;
+    }
+
+    .notification-text {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .notification-date {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .notification-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .status-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      color: white;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .status-btn:hover:not(:disabled) {
+      background-color: #0056b3;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .status-btn:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .status-btn:disabled {
+      background-color: #6c757d;
+      cursor: not-allowed;
+      opacity: 0.8;
+      box-shadow: none;
+    }
+
+    .status-btn.dispatch-btn {
+      background-color: #28a745;
+      padding: 12px 25px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .status-btn.dispatch-btn:hover {
+      background-color: #218838;
+    }
+
+    .status-badge {
+      padding: 8px 12px;
+      font-size: 14px;
+      margin-left: 10px;
+      border-radius: 5px;
+      font-weight: 500;
+      display: inline-block;
+    }
+
+    .status-badge.picking-up {
+      background-color: #17a2b8;
+      color: white;
+    }
+
+    .status-badge.picked-up {
+      background-color: #0d6efd;
+      color: white;
+    }
+
+    .status-badge.in-transit {
+      background-color: #ffc107;
+      color: #000;
+    }
+
+    .status-badge.delivered {
+      background-color: #198754;
+      color: white;
+    }
+  </style>
 </head>
-<style>
-  .profile-details .dropdown-menu {
-    display: none;
-  }
-
-  .profile-details .dropdown-menu.show {
-    display: block;
-  }
-
-
-  .profile-details {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .profile-details img {
-    height: 40px;
-    width: 40px;
-    border-radius: 50%;
-  }
-
-  .profile-details .admin_name {
-    margin-left: 10px;
-    font-size: 16px;
-    color: #333;
-  }
-
-  .profile-details .bx-chevron-down {
-    margin-left: 10px;
-    cursor: pointer;
-  }
-
-  .profile-details .dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 50px;
-    right: 0;
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-    border-radius: 5px;
-    overflow: hidden;
-  }
-
-  .profile-details .dropdown-menu li {
-    list-style: none;
-  }
-
-  .profile-details .dropdown-menu li a {
-    display: block;
-    padding: 10px 20px;
-    text-decoration: none;
-    color: #333;
-    border-bottom: 1px solid #f0f0f0;
-  }
-
-  .profile-details .dropdown-menu li a:hover {
-    background-color: #f0f0f0;
-  }
-
-  .profile-details:hover .dropdown-menu {
-    display: block;
-  }
-
-  .sales-details {
-    display: flex;
-    justify-content: space-around;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .details {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    /* Added gap between items */
-  }
-
-  .detail-item {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    /* Gap between image and text */
-  }
-
-  .item-pic {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 10px;
-    transition: transform 0.3s ease;
-  }
-
-  .item-pic:hover {
-    transform: scale(1.1);
-  }
-
-  .detail-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    /* Adjust the spacing between list items if needed */
-  }
-
-  .item-pic {
-    width: 150px;
-    /* Adjust size as needed */
-    height: auto;
-    margin-right: 20px;
-    /* Adjust spacing between image and text */
-  }
-
-  .item-text {
-    font-weight: bold;
-    font-size: 1.2em;
-    /* Adjust the size as needed */
-    margin-bottom: 5px;
-    /* Space between heading and description */
-  }
-  .badge {
-    background-color: red;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 50%;
-    font-size: 12px;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
-
-
-
-
-.sales-boxes {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    width: 80%; /* Adjust the width as needed */
-    max-width: 1200px; /* Optional: limit the maximum width */
-    margin: 0 auto; /* Center the container if width is less than 100% */
-}
-
-        .recent-sales {
-            background-color: rgb(205, 231, 240);
-            padding: 20px;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 1000px;
-        }
-
-        .sales-boxes {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .recent-sales.box {
-    width: 100%;
-    max-width: 1000px;
-  }
-  .title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #333;
-        }
-
-        .artist-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    font-family: Arial, sans-serif;
-    background-color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-
-  .artist-table th, .artist-table td {
-    border: none;
-    padding: 15px 20px;
-    text-align: left;
-  }
-
-  .artist-table th {
-    background-color: #f7f9fa;
-    color: #333;
-    font-weight: bold;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-
-  .artist-table tbody tr {
-    transition: background-color 0.3s;
-  }
-
-  .artist-table tbody tr:nth-child(even) {
-    background-color: #f7f9fa;
-  }
-
-  .artist-table tbody tr:hover {
-    background-color: #e9eff4;
-  }
-
-  .artist-table img {
-    border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-
-  .action-buttons {
-    display: flex;
-    gap: 10px;
-  }
-
-  .button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s;
-  }
-
-  .button:hover {
-    transform: translateY(-2px);
-  }
-
-  .button-express {
-    background-color: #4CAF50;
-    color: white;
-  }
-
-  .button-express:hover {
-    background-color: #45a049;
-  }
-
-  .button-view {
-    background-color: #008CBA;
-    color: white;
-  }
-
-  .button-view:hover {
-    background-color: #007aa3;
-  }
-
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
-    animation: fadeIn 0.3s ease-out;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    animation: slideIn 0.3s ease-out;
-  }
-
-  @keyframes slideIn {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-
-  .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    transition: color 0.3s;
-  }
-
-  .close:hover,
-  .close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  .donation-card {
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .donation-image {
-    width: 100%;
-    max-height: 400px;
-    overflow: hidden;
-  }
-
-  .carousel {
-    position: relative;
-    width: 100%;
-    height: 400px;
-    overflow: hidden;
-  }
-
-  .carousel-container {
-    display: flex;
-    transition: transform 0.5s ease-in-out;
-    height: 100%;
-  }
-
-  .carousel-slide {
-    min-width: 100%;
-    height: 100%;
-  }
-
-  .carousel-slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .carousel-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    z-index: 10;
-  }
-
-  .carousel-button.prev { left: 10px; }
-  .carousel-button.next { right: 10px; }
-
-  .donation-details {
-    padding: 20px;
-  }
-
-  .donation-details h2 {
-    margin-top: 0;
-    color: #333;
-    font-size: 24px;
-    margin-bottom: 15px;
-  }
-
-  .donation-details p {
-    margin: 10px 0;
-    font-size: 16px;
-    color: #666;
-  }
-
-  .donation-details strong {
-    color: #333;
-  }
-
-  @media (min-width: 768px) {
-    .donation-card {
-      flex-direction: row;
-    }
-
-    .donation-image {
-      width: 50%;
-    }
-
-    .donation-details {
-      width: 50%;
-    }
-  }
-</style>
 
 <body>
   <div class="sidebar">
     <div class="logo-details">
-      <!-- <i class=''></i> -->
-      <span class="logo_name" style="font-size: 30px; text-align: center; font-weight: 700; color: #b5c8c1;">ReArt Vault</span>
+      <span class="logo_name" style="font-size: 30px; text-align: center; font-weight: 700; color: #b5c8c1;">ReArt Vault:Shop</span>
     </div>
     <ul class="nav-links">
-        <li>
-            <a href="{% url 'shopdash' %}" class="active">
-              <i class='bx bx-grid-alt'></i>
-              <span class="links_name">Artist Dashboard</span>
-            </a>
-          </li>
-       
-          <li>
-            <a href="{% url 'artist_shop' %}">
-              <i class='bx bx-message'></i>
-              <span class="links_name">Shop Overview</span>
-            
-            </a>
-          </li>
-          <li>
-            <a href="{% url 'add_product' %}">
-              <i class='bx bx-list-ul'></i>
-              <span class="links_name">Add Product</span>
-            </a>
-          </li>
-          <li>
-            <a href="{% url 'order_notifications' %}">
-              <i class='bx bx-message'></i>
-              <span class="links_name">Order Notifications</span>
-              {% if unread_notifications_count > 0 %}
-              <span class="badge">{{ unread_notifications_count }}</span>
-              {% endif %}
-            </a>
-          </li>
-          <!-- <li>
-            <a href="{% url 'view_ratesartist' %}">
-              <i class='bx bx-pie-chart-alt-2'></i>
-              <span class="links_name">Price Listings</span>
-            </a>
-          </li>
-          <li>
-            <a href="{% url 'artist_interest_status' %}">
-              <i class='bx bx-list-ul'></i>
-              <span class="links_name">Interest Status</span>
-            </a>
-          </li> -->
-      
-          <!-- <li>
-            <a href="#">
-              <i class='bx bx-message'></i>
-              <span class="links_name">Messages</span>
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <i class='bx bx-message'></i>
-              <span class="links_name">Conatct</span>
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <i class='bx bx-heart'></i>
-              <span class="links_name">Favorites</span>
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <i class='bx bx-cog'></i>
-              <span class="links_name">Setting</span>
-            </a>
-          </li> -->
-          <li class="log_out">
-            <a href="{% url 'userlogout' %}">
-              <i class='bx bx-log-out'></i>
-              <span class="links_name">Log out</span>
-            </a>
-          </li>
+      <li>
+        <a href="{% url 'shopdash' %}">
+          <i class='bx bx-grid-alt'></i>
+          <span class="links_name">Artist Dashboard</span>
+        </a>
+      </li>
+   
+      <li>
+        <a href="{% url 'artist_shop' %}">
+          <i class='bx bx-message'></i>
+          <span class="links_name">Shop Overview</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'add_product' %}">
+          <i class='bx bx-list-ul'></i>
+          <span class="links_name">Add Product</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'order_notifications' %}" class="active">
+          <i class='bx bx-message'></i>
+          <span class="links_name">Order Notifications</span>
+          {% if unread_notifications_count > 0 %}
+          <span class="badge">{{ unread_notifications_count }}</span>
+          {% endif %}
+        </a>
+      </li>
+      <li class="log_out">
+        <a href="{% url 'userlogout' %}">
+          <i class='bx bx-log-out'></i>
+          <span class="links_name">Log out</span>
+        </a>
+      </li>
     </ul>
   </div>
+
   <section class="home-section">
     <nav>
       <div class="sidebar-button">
@@ -506,15 +184,14 @@
         <span class="admin_name" style="font-size: 25px; font-weight: 900; color: #010302;">SHOP</span>
       </div></a>
       <div class="profile-details">
-        {% if artist.profile_pic %}
-         <img src="{{artist.profile_pic.url}}" alt="">
+        {% if request.user.artist.profile_pic %}
+          <img src="{{ request.user.artist.profile_pic.url }}" alt="">
         {% endif %}
-        <span class="admin_name" style="font-size: 25px; font-weight: 900; color: #010302;">Hi {{user.username}}</span>
+        <span class="admin_name" style="font-size: 25px; font-weight: 900; color: #010302;">Hi {{ request.user.username }}</span>
         <i class='bx bx-chevron-down'></i>
         <ul class="dropdown-menu">
           <li><a href="{% url 'userprofileartist' %}">View Profile</a></li>
           <li><a href="{% url 'profile_update' %}">Edit Profile</a></li>
-          <!-- <li><a href="#">Settings</a></li> -->
           <li><a href="{% url 'userlogout' %}">Logout</a></li>
         </ul>
       </div>
@@ -525,183 +202,100 @@
         <div class="box" style="background-color:rgb(243, 212, 200);">
           <div class="right-side">
             <div class="box-topic">Expressed Interest</div>
-            <div class="number">8</div>
+            <div class="number">{{ interest_count }}</div>
             <div class="indicator">
-         
+              <i class='bx bx-up-arrow-alt'></i>
+              <span class="text">Up from yesterday</span>
             </div>
           </div>
+          <i class='bx bx-cart-alt cart'></i>
         </div>
         <div class="box" style="background-color:rgb(188, 233, 188);">
           <div class="right-side">
-            <div class="box-topic">Accepted Interests</div>
-            <div class="number">5</div>
+            <div class="box-topic">Accepted Interest</div>
+            <div class="number">{{ accepted_count }}</div>
             <div class="indicator">
-      
+              <i class='bx bx-up-arrow-alt'></i>
+              <span class="text">Up from yesterday</span>
             </div>
           </div>
+          <i class='bx bxs-cart-add cart two'></i>
         </div>
         <div class="box" style="background-color:rgb(240, 240, 205);">
           <div class="right-side">
-            <div class="box-topic">Added Categories</div>
-            <div class="number"> 0</div>
+            <div class="box-topic">Rejected Interest</div>
+            <div class="number">{{ rejected_count }}</div>
             <div class="indicator">
-         
+              <i class='bx bx-up-arrow-alt'></i>
+              <span class="text">Up from yesterday</span>
             </div>
           </div>
-        </div>
-        <div class="box" style="background-color:rgb(240, 205, 228);">
-          <div class="right-side">
-            <div class="box-topic">Sold Items</div>
-            <div class="number">0</div>
-            <div class="indicator">
-        
-            </div>
-          </div>
+          <i class='bx bx-cart cart three'></i>
         </div>
       </div>
 
       <div class="sales-boxes">
         <div class="recent-sales box" style="background-color: rgb(205, 231, 240); padding: 20px; border-radius: 10px;">
-            <div class="title" style="font-size: 24px; font-weight: bold;margin-bottom: 20px;">Your Notifications</div>
-            <table style="width: 100%; border-collapse: collapse;">
-            
-                <tbody>
-                    <div class="notification-container">
-                        <h2 class="notification-header">Order Notifications</h2>
-                        <ul class="notification-list">
-                            {% for notif in notif %}
-                                <li class="notification-item">
-                                    <div class="notification-content">
-                                        <div class="notification-text">{{ notif.message }}</div>
-                                        <div class="notification-date">{{ notif.created_at|date:"M d, Y" }}</div>
-                                    </div>
-                                    <div class="notification-actions">
-                                        <a href="{% url 'update_order_status' notif.order.id %}" class="status-btn" style="display: inline-block; padding: 10px 15px; background-color: #4CAF50; color: white; border-radius: 5px; text-decoration: none; transition: background-color 0.3s;">Update Status</a>
-                                    </div>
-                                </li>
-                            {% empty %}
-                                <li>No notifications found.</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            {% for message in messages %}
-            Swal.fire({
-                icon: '{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}', 
-                title: '{{ message }}',
-                showConfirmButton: false,
-                timer: 3000
-            });
-            {% endfor %}
-        });
-    </script>
-
-    <div id="donationModal" class="modal">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <div class="donation-card">
-          <div class="donation-image">
-            <div id="imageCarousel" class="carousel">
-              <button class="carousel-button prev">&lt;</button>
-              <button class="carousel-button next">&gt;</button>
-              <div class="carousel-container">
-                <!-- Images will be dynamically added here -->
-              </div>
-            </div>
-          </div>
-          <div class="donation-details">
-            <h2>Donation Details</h2>
-            <p><strong>Medium of Waste:</strong> <span id="donationMedium"></span></p>
-            <p><strong>Quantity:</strong> <span id="donationQuantity"></span></p>
-            <p><strong>Price:</strong> <span id="donationPrice"></span></p>
-            <p><strong>Location:</strong> <span id="donationLocation"></span></p>
+          <div class="title" style="font-size: 24px; font-weight: bold;margin-bottom: 20px;">Your Notifications</div>
+          <div class="notification-container">
+            <ul class="notification-list">
+              {% for notification in notifications %}
+                <li class="notification-item">
+                  <div class="notification-content">
+                    <div class="notification-text">{{ notification.message }}</div>
+                    <div class="notification-date">{{ notification.created_at|date:"M d, Y" }}</div>
+                  </div>
+                  <div class="notification-actions">
+                    {% if notification.order.delivery_orders.exists %}
+                      <div class="d-flex align-items-center gap-2">
+                        <button class="status-btn" disabled>Dispatched</button>
+                        {% with delivery_order=notification.order.delivery_orders.first %}
+                          {% if delivery_order.status != 'ASSIGNED' %}
+                            <span class="status-badge {% if delivery_order.status == 'PICKING_UP' %}picking-up{% elif delivery_order.status == 'PICKED_UP' %}picked-up{% elif delivery_order.status == 'IN_TRANSIT' %}in-transit{% elif delivery_order.status == 'DELIVERED' %}delivered{% endif %}">
+                              {% if delivery_order.status == 'PICKING_UP' %}
+                                Delivery Partner on the way
+                              {% elif delivery_order.status == 'PICKED_UP' %}
+                                Product Picked Up
+                              {% elif delivery_order.status == 'IN_TRANSIT' %}
+                                In Transit
+                              {% elif delivery_order.status == 'DELIVERED' %}
+                                Delivered
+                              {% endif %}
+                            </span>
+                          {% endif %}
+                        {% endwith %}
+                      </div>
+                    {% else %}
+                      <a href="{% url 'update_order_status' notification.order.id %}" class="status-btn dispatch-btn">
+                        <i class="fas fa-truck me-2"></i>Dispatch
+                      </a>
+                    {% endif %}
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
           </div>
         </div>
       </div>
     </div>
+  </section>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var modal = document.getElementById('donationModal');
-      var closeBtn = modal.querySelector('.close');
-      var viewButtons = document.querySelectorAll('.button-view');
-      var carousel = document.getElementById('imageCarousel');
-      var carouselContainer = carousel.querySelector('.carousel-container');
-      var prevButton = carousel.querySelector('.prev');
-      var nextButton = carousel.querySelector('.next');
-      var currentSlide = 0;
+  <script>
+    let sidebar = document.querySelector(".sidebar");
+    let sidebarBtn = document.querySelector(".sidebarBtn");
+    sidebarBtn.onclick = function () {
+      sidebar.classList.toggle("active");
+      if (sidebar.classList.contains("active")) {
+        sidebarBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+      } else
+        sidebarBtn.classList.replace("bx-menu-alt-right", "bx-menu");
+    }
 
-      function showSlide(index) {
-        var slides = carouselContainer.children;
-        if (index >= slides.length) index = 0;
-        if (index < 0) index = slides.length - 1;
-        carouselContainer.style.transform = translateX(-${index * 100}%);
-        currentSlide = index;
-      }
-
-      prevButton.addEventListener('click', () => showSlide(currentSlide - 1));
-      nextButton.addEventListener('click', () => showSlide(currentSlide + 1));
-
-      viewButtons.forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-          e.preventDefault();
-          console.log('View button clicked');
-          var donationId = this.getAttribute('data-donation-id');
-          fetch(/artist/get-donation-details/${donationId}/)
-            .then(response => {
-              if (!response.ok) {
-                throw new Error(HTTP error! status: ${response.status});
-              }
-              return response.json();
-            })
-            .then(data => {
-              console.log("Received data:", data);
-              document.getElementById('donationMedium').textContent = data.medium_of_waste;
-              document.getElementById('donationQuantity').textContent = data.quantity;
-              document.getElementById('donationPrice').textContent = $${data.price};
-              document.getElementById('donationLocation').textContent = data.location;
-
-              carouselContainer.innerHTML = '';
-
-              data.images.forEach((imageUrl, index) => {
-                var slide = document.createElement('div');
-                slide.className = 'carousel-slide';
-                slide.innerHTML = <img src="${imageUrl}" alt="Donation Image">;
-                carouselContainer.appendChild(slide);
-              });
-
-              modal.style.display = 'block';
-              document.body.style.overflow = 'hidden';
-              currentSlide = 0;
-              showSlide(0);
-            })
-            .catch(error => {
-              console.error('Error:', error);
-              alert(Failed to load donation details. Error: ${error.message});
-            });
-        });
-      });
-
-      closeBtn.addEventListener('click', function() {
-        console.log('Close button clicked');
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-      });
-
-      window.addEventListener('click', function(event) {
-        if (event.target == modal) {
-          console.log('Clicked outside modal');
-          modal.style.display = 'none';
-          document.body.style.overflow = 'auto';
-        }
-      });
+    document.querySelector('.profile-details').addEventListener('click', function () {
+      this.querySelector('.dropdown-menu').classList.toggle('show');
     });
-    </script>
-    </body>
-    </html>
+  </script>
+
+</body>
+
+</html>

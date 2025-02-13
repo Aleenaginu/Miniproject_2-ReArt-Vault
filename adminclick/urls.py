@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path,include
 from . import views
+from delivery.views import manage_delivery_partners
+
 urlpatterns = [
      path('userloginadmin/',views.UserLoginadmin,name='userloginadmin'),
         path('admin_dashboard',views.admin_dashboard,name='admin_dashboard'),
@@ -17,5 +19,6 @@ urlpatterns = [
          path('set_rates', views.set_rates, name='set_rates'),
          path('add_category/', views.add_category, name='add_category'),
         # path('artist_list/', views.artist_list, name='artist_list'),
-
+     path('manage_delivery/', manage_delivery_partners, name='manage_delivery_partners'),
+     
 ]

@@ -1,11 +1,11 @@
 from django.http import HttpResponseBadRequest, JsonResponse
-from django.shortcuts import render,redirect,get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from . forms import *
 from .models import *
 from django.contrib.auth.decorators import login_required
 from adminclick.models import *
 from donors.models import *
-from django.core.mail import send_mail
+from accounts.models import ArtistAddress
 from django.contrib import messages
 from django.views.decorators.cache import never_cache
 from django.http import HttpResponseForbidden
@@ -292,6 +292,36 @@ def add_mediums(request):
     return render(request, 'artist/add_mediums.html',context)
 
 import razorpay
+from delivery.models import DeliveryOrder
+
+@login_required
+def update_order_status(request, order_id):
+    """Update order status and create delivery order"""
+    order = get_object_or_404(Order, id=order_id)
+    
+    # Check if a delivery order already exists for this order
+    existing_delivery = DeliveryOrder.objects.filter(order=order).exists()
+    if existing_delivery:
+        messages.warning(request, f'Order #{order.id} has already been dispatched')
+        return redirect('order_notifications')
+    
+    # When artist clicks dispatch, automatically set status to Processing
+    order.status = 'Processing'  # This indicates the order is being prepared for delivery
+    order.save()
+    
+    # Create a delivery order
+    delivery_order = DeliveryOrder.objects.create(
+        order=order,
+        status='AVAILABLE',  # Initially available for delivery partners
+        customer_address=order.shipping_address,
+        customer_pincode=order.shipping_pincode,
+        artist_address=order.product.artist.address,
+        artist_pincode=order.product.artist.pincode
+    )
+    
+    messages.success(request, f'Order #{order.id} has been dispatched for delivery')
+    return redirect('order_notifications')
+
 def create_payment(request, interest_id):
     logger.debug(f"create_payment called with interest_id: {interest_id}")
     
@@ -492,6 +522,119 @@ def shopdash(request):
 
 
 
+from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404
+from donors.models import Donation
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+def get_donation_details(request, donation_id):
+    logger.debug(f"get_donation_details called with donation_id: {donation_id}")
+    try:
+        donation = get_object_or_404(Donation, id=donation_id)
+        logger.debug(f"Donation found: {donation}")
+        images = [img.image.url for img in donation.images.all()]
+        data = {
+            'id': donation.id,
+            'medium_of_waste': donation.medium_of_waste.name if donation.medium_of_waste else 'N/A',
+            'quantity': donation.quantity,
+            'price': donation.medium_of_waste.rate if donation.medium_of_waste else 'N/A',
+            'location': donation.location,
+            'images': images,
+        }
+        logger.debug(f"Donation data: {data}")
+        return JsonResponse(data)
+    except Donation.DoesNotExist:
+        logger.error(f"Donation not found with id: {donation_id}")
+        return JsonResponse({'error': 'Donation not found'}, status=404)
+    except Exception as e:
+        logger.error(f"Error in get_donation_details: {str(e)}", exc_info=True)
+        return JsonResponse({'error': 'An unexpected error occurred'}, status=500)
+
+@login_required
+def order_notifications(request):
+
+    notifications = ProNotification.objects.filter(
+        artist=request.user.artist, 
+        order__isnull=False
+    ).select_related('order').prefetch_related('order__delivery_orders').order_by('-created_at')
+    
+    # Get interest counts
+    interest_count = InterestRequest.objects.filter(artist=request.user.artist).count()
+    accepted_count = InterestRequest.objects.filter(artist=request.user.artist, status='accepted').count()
+    rejected_count = InterestRequest.objects.filter(artist=request.user.artist, status='rejected').count()
+    
+    context = {
+        'notifications': notifications,
+        'interest_count': interest_count,
+        'accepted_count': accepted_count,
+        'rejected_count': rejected_count,
+    }
+    
+    return render(request, 'artist/ordernotifications.html', context)
+
+from shop.models import Order
+
+def update_order_status(request, order_id):
+    """Update order status and create delivery order"""
+    order = get_object_or_404(Order, id=order_id)
+    
+    # Check if a delivery order already exists for this order
+    existing_delivery = DeliveryOrder.objects.filter(order=order).exists()
+    if existing_delivery:
+        messages.warning(request, f'Order #{order.id} has already been dispatched')
+        return redirect('order_notifications')
+    
+    # When artist clicks dispatch, automatically set status to Processing
+    order.status = 'Processing'  # This indicates the order is being prepared for delivery
+    order.save()
+    
+    # Create a delivery order
+    delivery_order = DeliveryOrder.objects.create(
+        order=order,
+        status='AVAILABLE',  # Initially available for delivery partners
+        customer_address=order.shipping_address,
+        customer_pincode=order.shipping_pincode,
+        artist_address=order.product.artist.address,
+        artist_pincode=order.product.artist.pincode
+    )
+    
+    messages.success(request, f'Order #{order.id} has been dispatched for delivery')
+    return redirect('order_notifications')
+
+def update_artist_address(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+    
+    try:
+        data = json.loads(request.body)
+        address = data.get('address')
+        pincode = data.get('pincode')
+
+        if not address or not pincode:
+            return JsonResponse({'success': False, 'message': 'Address and pincode are required'})
+
+        if not pincode.isdigit() or len(pincode) != 6:
+            return JsonResponse({'success': False, 'message': 'Invalid pincode format'})
+
+        artist = request.user.artist
+        
+        # Create or update address
+        address_obj, created = ArtistAddress.objects.update_or_create(
+            artist=artist,
+            defaults={
+                'address': address,
+                'pincode': pincode
+            }
+        )
+
+        return JsonResponse({'success': True, 'message': 'Address updated successfully'})
+    except Exception as e:
+        logger.error(f"Error updating artist address: {str(e)}")
+        return JsonResponse({'success': False, 'message': 'An error occurred while updating address'})
+
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render,redirect,get_object_or_404
 from . forms import *
@@ -633,19 +776,21 @@ def get_donation_details(request, donation_id):
 @login_required
 def order_notifications(request):
 
-    notif = ProNotification.objects.filter(artist=request.user.artist, order__isnull=False).order_by('-created_at')
-    return render(request, 'artist/ordernotifications.html', {'notif': notif})
-
-from shop.models import Order
-def update_order_status(request, order_id):
-   
-
-    order = get_object_or_404(Order, id=order_id)
-    if request.method == 'POST':
-        new_status = request.POST.get('status')
-        order.status = new_status
-        order.save()
-        return redirect('order_notifications')
-       
-    return render(request,'artist/statusupdate.html', {'order': order})
+    notifications = ProNotification.objects.filter(
+        artist=request.user.artist, 
+        order__isnull=False
+    ).select_related('order').prefetch_related('order__delivery_orders').order_by('-created_at')
     
+    # Get interest counts
+    interest_count = InterestRequest.objects.filter(artist=request.user.artist).count()
+    accepted_count = InterestRequest.objects.filter(artist=request.user.artist, status='accepted').count()
+    rejected_count = InterestRequest.objects.filter(artist=request.user.artist, status='rejected').count()
+    
+    context = {
+        'notifications': notifications,
+        'interest_count': interest_count,
+        'accepted_count': accepted_count,
+        'rejected_count': rejected_count,
+    }
+    
+    return render(request, 'artist/ordernotifications.html', context)
