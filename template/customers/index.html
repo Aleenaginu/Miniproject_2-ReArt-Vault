@@ -460,7 +460,7 @@
                     <ul class="dropdown-menu" style="display: none; position: absolute; background-color: #fff; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);">
                         <li><a class="dropdown-item" href="{% url 'customerprofile' %}" style="padding: 10px 20px; text-decoration: none; color: #333;">Profile</a></li>
                         <li><a class="dropdown-item" href="{% url 'order_history' %}" style="padding: 10px 20px; text-decoration: none; color: #333;">View Orders</a></li>
-                        <li><a class="dropdown-item" href="{% url 'track_order_status' %}" style="padding: 10px 20px; text-decoration: none; color: #333;">Track Orders</a></li>
+                        <!-- <li><a class="dropdown-item" href="{% url 'track_order_status' %}" style="padding: 10px 20px; text-decoration: none; color: #333;">Track Orders</a></li> -->
                         <li><a class="dropdown-item" href="{% url 'add_address' %}" style="padding: 10px 20px; text-decoration: none; color: #333;">Add Address</a></li>
                         <li><a class="dropdown-item" href="{% url 'customerlogout' %}" style="padding: 10px 20px; text-decoration: none; color: #333;">Logout</a></li>
                     </ul>
@@ -1080,54 +1080,62 @@
 <script>
     // Voice Search Functionality
     document.addEventListener('DOMContentLoaded', function() {
-        const voiceBtn = document.getElementById('voiceSearchBtn');
-        const searchInput = document.getElementById('searchInput');
-        let recognition = null;
+        // Initialize Web Speech API
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            console.error('Speech recognition not supported');
+            return;
+        }
+        
+        const recognition = new SpeechRecognition();
+        const voiceBtn = document.querySelector('.voice-btn');
+        const searchInput = document.querySelector('.search-input');
+        
+        recognition.continuous = false;
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
 
-        // Check if browser supports speech recognition
-        if ('webkitSpeechRecognition' in window) {
-            recognition = new webkitSpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.lang = 'en-US';
+        recognition.onstart = function() {
+            voiceBtn.classList.add('recording');
+            console.log('Speech recognition started');
+        };
 
-            // Configure recognition
-            recognition.onstart = function() {
-                voiceBtn.classList.add('recording');
-                searchInput.placeholder = 'Listening...';
-            };
+        recognition.onend = function() {
+            voiceBtn.classList.remove('recording');
+            console.log('Speech recognition ended');
+        };
 
-            recognition.onend = function() {
-                voiceBtn.classList.remove('recording');
-                searchInput.placeholder = 'Search products...';
-            };
+        recognition.onresult = function(event) {
+            const text = event.results[0][0].transcript;
+            searchInput.value = text;
+            console.log('Recognized text:', text);
+        };
 
-            recognition.onresult = function(event) {
-                const result = event.results[0][0].transcript;
-                searchInput.value = result;
-                // Optional: Auto-submit the form after recognition
-                searchInput.form.submit();
-            };
+        recognition.onerror = function(event) {
+            console.error('Speech recognition error:', event.error);
+            voiceBtn.classList.remove('recording');
+        };
 
-            recognition.onerror = function(event) {
-                voiceBtn.classList.remove('recording');
-                searchInput.placeholder = 'Search products...';
-                if (event.error === 'not-allowed') {
-                    alert('Please allow microphone access to use voice search.');
-                }
-            };
+        // Add click handler for voice search button
+        voiceBtn.addEventListener('click', function() {
+            if (voiceBtn.classList.contains('recording')) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        });
 
-            // Add click handler for voice search button
-            voiceBtn.addEventListener('click', function() {
-                if (voiceBtn.classList.contains('recording')) {
-                    recognition.stop();
-                } else {
-                    recognition.start();
+        // Handle search form submission
+        const searchForm = document.getElementById('searchForm');
+        if (searchForm) {
+            searchForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const searchQuery = searchInput.value.trim();
+                if (searchQuery) {
+                    this.submit();
                 }
             });
-        } else {
-            // Hide voice search button if not supported
-            voiceBtn.style.display = 'none';
         }
     });
 </script>

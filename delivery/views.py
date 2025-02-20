@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.db import IntegrityError
+from shop.tracking_ws import tracking_handler
 
 # Create your views here.
 
@@ -262,14 +263,14 @@ def reject_delivery_partner(request, partner_id):
     messages.success(request, f'Delivery Partner registration has been rejected and removed.')
     return redirect('manage_delivery_partners')
 
-@login_required
-@user_passes_test(is_admin)
-def delivery_partner_details(request, partner_id):
-    partner = get_object_or_404(DeliveryPartner, id=partner_id)
-    context = {
-        'partner': partner
-    }
-    return render(request, 'delivery/delivery_partner_details.html', context)
+# @login_required
+# @user_passes_test(is_admin)
+# def delivery_partner_details(request, partner_id):
+#     partner = get_object_or_404(DeliveryPartner, id=partner_id)
+#     context = {
+#         'partner': partner
+#     }
+#     return render(request, 'delivery/delivery_partner_details.html', context)
 
 @login_required
 @user_passes_test(is_delivery_partner)
@@ -537,6 +538,14 @@ def update_delivery_status(request, order_id):
                 location=data.get('location', ''),
                 updated_by=request.user
             )
+
+            try:
+                # Get the order ID from the delivery order
+                shop_order_id = order.order.id
+                # Notify tracking clients about the status update
+                tracking_handler.notify_status_update(shop_order_id, new_status)
+            except Exception as e:
+                print(f"Error notifying tracking clients: {str(e)}")
             
             # Get the display version of the status
             status_display = dict(DeliveryOrder.ORDER_STATUS).get(new_status, new_status)

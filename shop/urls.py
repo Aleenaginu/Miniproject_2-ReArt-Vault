@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import tracking_ws
 
 urlpatterns = [
     path('', views.shop_index, name='shop_index'),
@@ -14,6 +15,7 @@ urlpatterns = [
     path('order-summary/<int:order_id>/', views.order_summary, name='order_summary'),
     path('order/<int:order_id>/items/', views.view_order_items, name='view_order_items'),
     path('order/<int:order_id>/update-status/', views.update_order_status, name='update_order_status'),
+    path('order/<int:order_id>/status/', views.get_order_status, name='order_status'),
     path('payment-success/<int:order_id>/', views.payment_success, name='payment_success'),
     path('razorpay-callback/', views.razorpay_callback, name='razorpay_callback'),
 
@@ -35,7 +37,10 @@ urlpatterns = [
     path('wishlist/add_to_cart/<int:product_id>/', views.add_to_cart_from_wishlist, name='add_to_cart_from_wishlist'),
     path('track-orders/',views.track_order_status,name='track_order_status'),
     path('search/', views.search_products, name='search_products'),
-
+    path('face_auth/verify/', views.verify_face, name='verify_face'),
+    path('face_auth/register/', views.register_face, name='register_face'),
+    path('validate-aadhaar/', views.validate_aadhaar, name='validate_aadhaar'),
     path('<slug:category_slug>/', views.shop_index, name='product_by_category'),
     path('<slug:category_slug>/<slug:product_slug>/', views.product_detail, name='product_detail'),
+    path('ws/track/<int:order_id>/', tracking_ws.tracking_handler.handle_request, name='order_tracking_ws'),
 ]

@@ -28,6 +28,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 
 import logging
+import json
+import cv2
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +39,7 @@ def donorRegister(request):
         username = request.POST.get('username')
         email = request.POST.get('email')
         phone = request.POST.get('phone')
-        profile_pic = request.FILES.get('profile_pic')
+        face_data = request.POST.get('face_data')  # Get face data from form
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
         
@@ -50,10 +52,50 @@ def donorRegister(request):
                 messages.error(request, 'Phone already registered')
             else:
                 with transaction.atomic():
-                    user = User.objects.create_user(username=username, email=email, password=password)
-                    Donors.objects.create(user=user, phone=phone, profile_pic=profile_pic)
-                messages.success(request, 'Registered successfully')
-                return redirect('userlogin')
+                    try:
+                        # Create user and donor
+                        user = User.objects.create_user(username=username, email=email, password=password)
+                        Donors.objects.create(user=user, phone=phone)
+                        
+                        # Store face encoding if provided
+                        if face_data:
+                            from face_auth.views import base64_to_image, get_face_encoding
+                            
+                            # Convert base64 to image
+                            image = base64_to_image(face_data)
+                            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+                            
+                            # Detect face
+                            cascade_path = cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+                            face_cascade = cv2.CascadeClassifier(cascade_path)
+                            faces = face_cascade.detectMultiScale(
+                                gray,
+                                scaleFactor=1.1,
+                                minNeighbors=6,
+                                minSize=(100, 100),
+                                maxSize=(500, 500)
+                            )
+                            
+                            if len(faces) == 1:
+                                # Get face encoding
+                                face_encoding = get_face_encoding(image, faces[0])
+                                
+                                # Store in FaceEncoding model
+                                from face_auth.models import FaceEncoding
+                                face_record = FaceEncoding.objects.create(
+                                    user=user,
+                                    encoding=json.dumps(face_encoding.tolist())
+                                )
+                                logger.info(f"Face encoding stored for user: {username}")
+                            else:
+                                logger.warning(f"Face detection failed during registration for user: {username}")
+                                
+                        messages.success(request, 'Registered successfully')
+                        return redirect('userlogin')
+                    except Exception as e:
+                        logger.error(f"Error during registration: {str(e)}")
+                        messages.error(request, 'Registration failed. Please try again.')
+                        # Rollback will happen automatically due to transaction.atomic()
         else:
             messages.error(request, 'Passwords do not match')
         return redirect('donor_register')

@@ -8,7 +8,8 @@ class Customers(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.IntegerField(default=9999999999)
     profile_pic = models.ImageField(upload_to='picture/customer', null =True, default='picture/customer/hi.jpg')
-    
+    face_encoding = models.BinaryField(null=True, blank=True)
+    face_registered = models.BooleanField(default=False)
     
     def __str__(self):
         return self.user.username
@@ -112,5 +113,3 @@ class SavedAddress(models.Model):
 
     def __str__(self):
         return f"{self.address_type} - {self.full_name}"
-
-    

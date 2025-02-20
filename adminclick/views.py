@@ -1,4 +1,7 @@
 from django.shortcuts import render,redirect, get_object_or_404
+
+from delivery.models import DeliveryPartner
+from delivery.views import is_admin
 from .models import MediumOfWaste
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -28,8 +31,15 @@ def UserLoginadmin(request):
             messages.error(request, 'Invalid credentials')
             return render(request, 'admin/adminlogin.html')
     return render(request, 'admin/adminlogin.html')
-
-
+from django.contrib.auth.decorators import login_required, user_passes_test
+@login_required
+@user_passes_test(is_admin)
+def delivery_partner_details(request, partner_id):
+    partner = get_object_or_404(DeliveryPartner, id=partner_id)
+    context = {
+        'partner': partner
+    }
+    return render(request, 'admin/delivery_partner_details.html', context)
 
 from django.db.models import Count
 @login_required

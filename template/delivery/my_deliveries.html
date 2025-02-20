@@ -159,7 +159,8 @@
                                     <h5 class="modal-title">Update Delivery Status</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <form id="updateStatusForm{{ delivery.id }}" onsubmit="return updateDeliveryStatus(event, {{ delivery.id }})">
+                                <form id="updateStatusForm{{ delivery.id }}" onsubmit="updateDeliveryStatus(event, {{ delivery.id }})">
+                                    {% csrf_token %}
                                     <div class="modal-body">
                                         <div class="mb-3">
                                             <label for="status{{ delivery.id }}" class="form-label">New Status</label>
@@ -382,84 +383,156 @@
     function updateDeliveryStatus(event, deliveryId) {
         event.preventDefault();
         
-        const form = document.getElementById(`updateStatusForm${deliveryId}`);
-        const statusSelect = form.querySelector('select[name="status"]');
-        const notes = form.querySelector('textarea[name="notes"]').value;
-        const currentStatus = statusSelect.dataset.currentStatus;
-        const newStatus = statusSelect.value;
+        const form = event.target;
+        const formData = new FormData(form);
+        const status = formData.get('status');
+        const notes = formData.get('notes');
         
-        // Validate status transition
-        const validTransitions = {
-            'ASSIGNED': ['PICKING_UP'],
-            'PICKING_UP': ['PICKED_UP'],
-            'PICKED_UP': ['IN_TRANSIT'],
-            'IN_TRANSIT': ['DELIVERED'],
-            'DELIVERED': []
-        };
+        // Get CSRF token
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         
-        if (!validTransitions[currentStatus] || !validTransitions[currentStatus].includes(newStatus)) {
-            alert('Invalid status transition. Please follow the correct order.');
-            return false;
+        // Show loading state on the button
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton.innerHTML;
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+        
+        // Update the status badge to loading state
+        const statusBadge = document.querySelector(`#delivery-${deliveryId} .status-badge`);
+        const originalBadgeContent = statusBadge ? statusBadge.innerHTML : '';
+        if (statusBadge) {
+            statusBadge.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
         }
         
         fetch(`/delivery/order/${deliveryId}/update-status/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken(),
+                'X-CSRFToken': csrftoken
             },
             body: JSON.stringify({
-                status: newStatus,
+                status: status,
                 notes: notes
             })
         })
         .then(response => {
             if (!response.ok) {
-                return response.json().then(data => Promise.reject(data));
+                return response.json().then(data => {
+                    throw new Error(data.message || 'Failed to update status');
+                });
             }
             return response.json();
         })
         .then(data => {
             if (data.success) {
-                // Update the UI to show new status
-                const statusBadge = document.querySelector(`#delivery${deliveryId}Status`);
+                // Update status badge
                 if (statusBadge) {
-                    statusBadge.textContent = data.status_display;
-                    statusBadge.className = `badge bg-${data.status_color}`;
+                    statusBadge.innerHTML = `
+                        <span class="badge bg-${data.status_color}">
+                            ${data.status_display}
+                        </span>
+                    `;
                 }
                 
-                // Update current status for next transition
-                statusSelect.dataset.currentStatus = newStatus;
+                // Show success message
+                showToast('Success', 'Status updated successfully', 'success');
                 
-                // Update options availability based on new status
-                const options = statusSelect.options;
-                for (let option of options) {
-                    if (option.value) {
-                        if (newStatus === 'DELIVERED') {
-                            option.disabled = true;  // Disable all options after delivery
-                        } else {
-                            option.disabled = !validTransitions[newStatus]?.includes(option.value);
-                        }
-                    }
-                }
+                // Update tracking steps
+                updateTrackingSteps(status);
                 
-                // Close modal
+                // Close the modal
                 const modal = bootstrap.Modal.getInstance(document.getElementById(`updateStatusModal${deliveryId}`));
                 modal.hide();
                 
-                // Show success message
-                alert('Status updated successfully!');
-                location.reload(); // Refresh to show updated status
+                // Refresh the page after a short delay to show updated status
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
             } else {
-                alert('Error updating status: ' + data.message);
+                throw new Error(data.message || 'Failed to update status');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error updating status: ' + (error.message || 'Please try again.'));
+            // Restore original status badge
+            if (statusBadge) {
+                statusBadge.innerHTML = originalBadgeContent;
+            }
+            showToast('Error', error.message || 'Failed to update status', 'error');
+        })
+        .finally(() => {
+            // Restore button state
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
         });
         
-        return false;
+        return false; // Prevent form submission
+    }
+
+    function updateTrackingSteps(status) {
+        const steps = ['PICKING_UP', 'PICKED_UP', 'IN_TRANSIT', 'DELIVERED'];
+        const currentStepIndex = steps.indexOf(status);
+        
+        // Update each step's status
+        steps.forEach((step, index) => {
+            const stepElement = document.querySelector(`.track .step[data-status="${step}"]`);
+            if (stepElement) {
+                if (index <= currentStepIndex) {
+                    stepElement.classList.add('active');
+                    const icon = stepElement.querySelector('.icon');
+                    if (icon) {
+                        icon.style.background = '#28a745';
+                        icon.style.color = '#fff';
+                    }
+                } else {
+                    stepElement.classList.remove('active');
+                    const icon = stepElement.querySelector('.icon');
+                    if (icon) {
+                        icon.style.background = '#e9ecef';
+                        icon.style.color = '#6c757d';
+                    }
+                }
+            }
+        });
+    }
+
+    function updateCustomerTrackingModal(orderId, status) {
+        // Broadcast the status update to the customer's page
+        if (typeof EventSource !== 'undefined') {
+            const event = new CustomEvent('orderStatusUpdate', {
+                detail: {
+                    orderId: orderId,
+                    status: status
+                }
+            });
+            window.dispatchEvent(event);
+        }
+    }
+
+    function showToast(title, message, type) {
+        // Implementation of showing toast messages
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0 position-fixed bottom-0 end-0 m-3`;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+        
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    <strong>${title}:</strong> ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+        
+        document.body.appendChild(toast);
+        const bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+        
+        toast.addEventListener('hidden.bs.toast', () => {
+            toast.remove();
+        });
     }
 
     function getCSRFToken() {

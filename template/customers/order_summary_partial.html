@@ -1,65 +1,236 @@
-<h2 class="section-title">Order Summary</h2>
+{% load static %}
 
-<div class="order-summary">
-    <h3>Order ID: {{ order.id }}</h3>
-    <p>Status: <span class="status-{{ order.status|lower }}">{{ order.status }}</span></p>
-    <p>Total Amount: ₹{{ order.total_amount }}</p>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Animate.css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    <h3>Order Items</h3>
-    <ul class="order-items">
-        {% for item in order_items %}
-            <li class="order-item">
-                {{ item.product.name }} ({{ item.quantity }}) - ₹{{ item.price }} (Subtotal: ₹{{ item.subtotal }})
-            </li>
-        {% endfor %}
-    </ul>
+<div class="container py-5">
+    <h2 class="section-title animate__animated animate__fadeInDown">
+        <i class="fas fa-clipboard-list me-2"></i>Order Summary
+    </h2>
 
-    {% if shipping_address %}
-        <h3>Shipping Address</h3>
-        <p>{{ shipping_address.address }}</p>
-        <p>{{ shipping_address.city }}, {{ shipping_address.state }}</p>
-        <p>{{ shipping_address.zip_code }}, {{ shipping_address.country }}</p>
-    {% else %}
-        <p>No shipping address available for this order.</p>
-    {% endif %}
+    <div class="order-summary animate__animated animate__fadeIn">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Order #{{ order.id }}</h3>
+                    <span class="badge status-badge status-{{ order.status|lower }}">
+                        {{ order.status }}
+                    </span>
+                </div>
+            </div>
 
-    <a href="{% url 'shop_index' %}" class="btn" style="background-color: #3498db; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none;">Back to Home</a>
+            <div class="card-body">
+                <div class="total-amount mb-4">
+                    <h4 class="text-primary">Total Amount</h4>
+                    <div class="amount-display">
+                        <span class="currency">₹</span>
+                        <span class="amount">{{ order.total_amount }}</span>
+                    </div>
+                </div>
 
+                <div class="order-items-section mb-4">
+                    <h4 class="text-primary mb-3">
+                        <i class="fas fa-shopping-cart me-2"></i>Order Items
+                    </h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order_items %}
+                                <tr class="order-item">
+                                    <td>{{ item.product.name }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>₹{{ item.price }}</td>
+                                    <td>₹{{ item.subtotal }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {% if shipping_address %}
+                <div class="shipping-address-section">
+                    <h4 class="text-primary mb-3">
+                        <i class="fas fa-shipping-fast me-2"></i>Shipping Address
+                    </h4>
+                    <div class="address-card">
+                        <p class="mb-1"><i class="fas fa-map-marker-alt me-2"></i>{{ shipping_address.address }}</p>
+                        <p class="mb-1"><i class="fas fa-city me-2"></i>{{ shipping_address.city }}, {{ shipping_address.state }}</p>
+                        <p class="mb-1"><i class="fas fa-envelope me-2"></i>{{ shipping_address.zip_code }}, {{ shipping_address.country }}</p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>No shipping address available for this order.
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="card-footer">
+                <a href="{% url 'shop_index' %}" class="btn btn-primary btn-hover">
+                    <i class="fas fa-home me-2"></i>Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
-    body {
-        background-color: #dbf8d0; /* Light pastel background color */
-    }
-    .section-title {
-        text-align: center;
-        margin-bottom: 40px;
-        color: #2c3e50;
-        font-size: 2.5rem;
-        font-weight: 300;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-    }
-    .order-summary {
-        background-color: #dcf4f3; /* White container for order summary */
-        border-radius: 15px;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        padding: 25px;
-        margin: 20px auto;
-        max-width: 800px;
-    }
-    .order-items {
-        list-style-type: none;
-        padding: 0;
-    }
-    .order-item {
-        padding: 10px;
-        border-bottom: 1px solid #f0f0f0;
-    }
-    .order-item:last-child {
-        border-bottom: none;
-    }
-    .status-paid { color: #2ecc71; }
-    .status-pending { color: #f1c40f; }
-    .status-cancelled { color: #e74c3c; }
+:root {
+    --primary-color: #4e73df;
+    --secondary-color: #858796;
+    --success-color: #1cc88a;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+}
+
+body {
+    background-color: #f8f9fc;
+    font-family: 'Nunito', sans-serif;
+}
+
+.section-title {
+    text-align: center;
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.order-summary {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.status-paid {
+    background-color: var(--success-color);
+}
+
+.status-pending {
+    background-color: var(--warning-color);
+}
+
+.status-cancelled {
+    background-color: var(--danger-color);
+}
+
+.amount-display {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-align: center;
+    padding: 1rem;
+    background: linear-gradient(to right, #f8f9fc, #ffffff);
+    border-radius: 10px;
+}
+
+.order-item {
+    transition: background-color 0.3s ease;
+}
+
+.order-item:hover {
+    background-color: #f8f9fc;
+}
+
+.address-card {
+    padding: 1rem;
+    background-color: #f8f9fc;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.btn-hover {
+    transition: all 0.3s ease;
+}
+
+.btn-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease forwards;
+}
 </style>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add animation to order items
+    const orderItems = document.querySelectorAll('.order-item');
+    orderItems.forEach((item, index) => {
+        item.style.animation = `fadeIn 0.5s ease forwards ${index * 0.1}s`;
+        item.style.opacity = '0';
+    });
+
+    // Animate amount number
+    const amountElement = document.querySelector('.amount');
+    const finalAmount = parseFloat(amountElement.textContent);
+    let currentAmount = 0;
+    const duration = 1000; // 1 second
+    const steps = 60;
+    const increment = finalAmount / steps;
+
+    const animator = setInterval(() => {
+        currentAmount += increment;
+        if (currentAmount >= finalAmount) {
+            currentAmount = finalAmount;
+            clearInterval(animator);
+        }
+        amountElement.textContent = currentAmount.toFixed(2);
+    }, duration / steps);
+
+    // Add hover effect to address card
+    const addressCard = document.querySelector('.address-card');
+    if (addressCard) {
+        addressCard.addEventListener('mouseover', function() {
+            this.style.transform = 'scale(1.02)';
+            this.style.transition = 'transform 0.3s ease';
+        });
+
+        addressCard.addEventListener('mouseout', function() {
+            this.style.transform = 'scale(1)';
+        });
+    }
+});
+</script>

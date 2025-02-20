@@ -78,12 +78,12 @@ def customerRegister(request):
     request.session['user_role']='customer'
     if request.method=='POST':
         username=request.POST.get('username')
-        
         email=request.POST.get('email')
         phone=request.POST.get('phone')
-        profile_pic=request.FILES.get('profile_pic')
+        profile_pic_data=request.POST.get('profile_pic')  # Get base64 image data
         password=request.POST.get('password')
         confirm_password=request.POST.get('confirm_password')
+        
         if password==confirm_password:
             if User.objects.filter(username=username).exists():
                 messages.error(request,'Username already exists')
@@ -92,15 +92,51 @@ def customerRegister(request):
             elif Customers.objects.filter(phone=phone).exists():
                 messages.error(request,'Phone number already exists')
             else:
-                with transaction.atomic():
-                    user=User.objects.create_user(username=username,email=email,password=password)
-                    Customers.objects.create(user=user,phone=phone,profile_pic=profile_pic)
-                messages.success(request,'Registration successfully')
-                return redirect('customerlogin')
+                try:
+                    with transaction.atomic():
+                        # Create user
+                        user = User.objects.create_user(username=username, email=email, password=password)
+                        
+                        # Handle profile picture
+                        if profile_pic_data and ',' in profile_pic_data:
+                            import base64
+                            from django.core.files.base import ContentFile
+                            
+                            # Remove data URL prefix and get the base64 data
+                            format, imgstr = profile_pic_data.split(';base64,')
+                            ext = format.split('/')[-1]
+                            
+                            # Convert base64 to file
+                            decoded_file = base64.b64decode(imgstr)
+                            profile_pic = ContentFile(decoded_file, name=f'{username}_profile.{ext}')
+                            
+                            # Create customer with profile picture
+                            customer = Customers.objects.create(
+                                user=user,
+                                phone=phone,
+                                profile_pic=profile_pic
+                            )
+                        else:
+                            # Create customer without profile picture (will use default)
+                            customer = Customers.objects.create(
+                                user=user,
+                                phone=phone
+                            )
+                        
+                        messages.success(request, 'Registration successful')
+                        return redirect('customerlogin')
+                        
+                except Exception as e:
+                    # Log the error for debugging
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    logger.error(f'Registration error: {str(e)}')
+                    messages.error(request, 'Registration failed. Please try again.')
+                    return redirect('customer_register')
         else:
-            messages.error(request,'Password do not match')
+            messages.error(request,'Passwords do not match')
         return redirect('customer_register')
-    return render(request, 'Customers/Register.html')
+    return render(request,'customers/Register.html')
 
 
 def customerLogin(request):
@@ -114,8 +150,8 @@ def customerLogin(request):
             return redirect('shop_index')
         else:
             messages.error(request,'Invalid username or password')
-            return render(request, 'Customers/login.html')
-    return render(request, 'Customers/login.html')
+            return render(request, 'customers/login.html')
+    return render(request, 'customers/login.html')
 
 def customerLogout(request):
     logout(request)
@@ -345,9 +381,7 @@ def checkout(request):
                 'currency': 'INR',
                 'payment_capture': '1'
             })
-            logger.info(f"Razorpay order created: {razorpay_order['id']}")
 
-            # Create order in database
             order = Order.objects.create(
                 customer=request.user,
                 total_amount=grand_total,
@@ -1057,3 +1091,233 @@ def update_order_status(request, order_id):
     
     messages.success(request, 'Order has been dispatched successfully')
     return redirect('order_notifications')
+
+@login_required
+def get_order_status(request, order_id):
+    try:
+        order = Order.objects.get(id=order_id)
+        if order.customer != request.user:
+            return JsonResponse({'error': 'Not authorized'}, status=403)
+            
+        # Get the delivery order associated with this order
+        delivery_order = DeliveryOrder.objects.filter(order=order).first()
+        if delivery_order:
+            return JsonResponse({
+                'status': delivery_order.status,
+                'updated_at': delivery_order.updated_at.isoformat() if delivery_order.updated_at else None
+            })
+        return JsonResponse({'error': 'No delivery order found'}, status=404)
+    except Order.DoesNotExist:
+        return JsonResponse({'error': 'Order not found'}, status=404)
+
+import cv2
+import numpy as np
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.core.files.storage import default_storage
+import base64
+import io
+from PIL import Image
+from .models import Customers
+from django.contrib.auth import login
+import logging
+
+logger = logging.getLogger(__name__)
+
+@csrf_exempt
+def register_face(request):
+    if request.method == 'POST':
+        logger.info("=== Face Registration Started ===")
+        logger.info(f"Content-Type: {request.headers.get('Content-Type')}")
+        
+        try:
+            # Parse JSON data
+            data = json.loads(request.body.decode('utf-8'))
+            face_data = data.get('face_data')
+            
+            if not face_data:
+                logger.error("No face data provided in request")
+                return JsonResponse({'success': False, 'error': 'No image data provided in request'})
+            
+            # Process base64 image
+            try:
+                # Remove data URL prefix if present
+                if 'base64,' in face_data:
+                    face_data = face_data.split('base64,')[1]
+                
+                # Decode base64 to bytes
+                image_bytes = base64.b64decode(face_data)
+                
+                # Convert to numpy array for OpenCV processing
+                nparr = np.frombuffer(image_bytes, np.uint8)
+                img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+                
+                if img is None:
+                    raise ValueError("Failed to decode image")
+                
+                # Convert to grayscale for face detection
+                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                
+                # Load face cascade classifier
+                face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+                
+                # Detect faces
+                faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+                
+                if len(faces) == 0:
+                    logger.warning("No face detected in the image")
+                    return JsonResponse({'success': False, 'error': 'No face detected in the image'})
+                
+                if len(faces) > 1:
+                    logger.warning("Multiple faces detected in the image")
+                    return JsonResponse({'success': False, 'error': 'Multiple faces detected. Please ensure only one face is visible'})
+                
+                # Get the largest face
+                x, y, w, h = max(faces, key=lambda f: f[2] * f[3])
+                face_img = gray[y:y+h, x:x+w]
+                
+                # TODO: Generate face encoding using a face recognition library
+                # For now, just store the face image itself
+                success, face_bytes = cv2.imencode('.jpg', face_img)
+                if not success:
+                    raise ValueError("Failed to encode face image")
+                
+                # Save face encoding to customer
+                try:
+                    customer = Customers.objects.get(user=request.user)
+                    customer.face_encoding = face_bytes.tobytes()
+                    customer.face_registered = True
+                    customer.save()
+                    
+                    logger.info("Face registration successful")
+                    return JsonResponse({
+                        'success': True,
+                        'message': 'Face registered successfully'
+                    })
+                    
+                except Customers.DoesNotExist:
+                    logger.error("Customer not found")
+                    return JsonResponse({'success': False, 'error': 'Customer not found'})
+                
+            except Exception as e:
+                logger.error(f"Image processing error: {str(e)}")
+                return JsonResponse({'success': False, 'error': f'Image processing failed: {str(e)}'})
+                
+        except json.JSONDecodeError as e:
+            logger.error(f"JSON decode error: {str(e)}")
+            return JsonResponse({'success': False, 'error': 'Invalid JSON format'})
+        except Exception as e:
+            logger.error(f"General error: {str(e)}")
+            return JsonResponse({'success': False, 'error': str(e)})
+            
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+@csrf_exempt
+def verify_face(request):
+    if request.method == 'POST':
+        logger.info("=== Face Verification Started ===")
+        logger.info(f"Content-Type: {request.headers.get('Content-Type')}")
+        logger.info(f"Request body size: {len(request.body)}")
+        
+        try:
+            # Handle both JSON and form-data requests
+            if request.headers.get('Content-Type', '').startswith('application/json'):
+                try:
+                    data = json.loads(request.body.decode('utf-8'))
+                    face_data = data.get('face_data')
+                except json.JSONDecodeError as e:
+                    logger.error(f"JSON decode error: {str(e)}")
+                    return JsonResponse({
+                        'success': False,
+                        'error': 'Invalid JSON format',
+                        'status': 'error'
+                    })
+            else:
+                face_data = request.POST.get('face_data')
+                if not face_data and request.FILES:
+                    face_data = request.FILES.get('face_data')
+            
+            if not face_data:
+                logger.error("No face data provided")
+                logger.error(f"Request method: {request.method}")
+                logger.error(f"Content type: {request.headers.get('Content-Type')}")
+                logger.error(f"POST data keys: {list(request.POST.keys())}")
+                logger.error(f"FILES keys: {list(request.FILES.keys())}")
+                return JsonResponse({
+                    'success': False,
+                    'error': 'No image data provided',
+                    'status': 'error'
+                })
+
+            # Convert file upload to base64 if needed
+            if hasattr(face_data, 'read'):
+                face_data = base64.b64encode(face_data.read()).decode('utf-8')
+
+            # Ensure face_data is a string
+            if not isinstance(face_data, str):
+                logger.error(f"Invalid face_data type: {type(face_data)}")
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Invalid image data format',
+                    'status': 'error'
+                })
+
+            # Add data URL prefix if missing
+            if not face_data.startswith('data:image'):
+                face_data = f'data:image/jpeg;base64,{face_data}'
+
+            # Rest of your existing code starting from base64 processing
+            try:
+                face_data = face_data.split('base64,')[1]
+                image_bytes = base64.b64decode(face_data)
+                
+                # Process image with OpenCV
+                nparr = np.frombuffer(image_bytes, np.uint8)
+                img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+                
+                if img is None:
+                    raise ValueError("Failed to decode image")
+                
+                # Your existing face detection and verification code
+                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+                faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+                
+                # Rest of your existing code remains the same
+                # ... (face detection, comparison, etc.)
+
+            except Exception as e:
+                logger.error(f"Image processing error: {str(e)}")
+                return JsonResponse({
+                    'success': False,
+                    'error': f'Image processing failed: {str(e)}',
+                    'status': 'error'
+                })
+
+        except Exception as e:
+            logger.error(f"General error: {str(e)}")
+            return JsonResponse({
+                'success': False,
+                'error': str(e),
+                'status': 'error'
+            })
+
+    return JsonResponse({
+        'success': False,
+        'error': 'Invalid request method',
+        'status': 'error'
+    })
+
+@csrf_exempt
+def validate_aadhaar(request):
+    if request.method == 'POST':
+        aadhaar_number = request.POST.get('aadhaar_number')
+        try:
+            # Check if the Aadhaar number already exists in the database
+            existing_delivery = DeliveryOrder.objects.filter(aadhaar_number=aadhaar_number).exists()
+            if existing_delivery:
+                return JsonResponse({'valid': False, 'message': 'This Aadhaar number is already registered'})
+            return JsonResponse({'valid': True})
+        except Exception as e:
+            return JsonResponse({'valid': False, 'message': str(e)})
+    return JsonResponse({'valid': False, 'message': 'Invalid request method'})

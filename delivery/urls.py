@@ -9,7 +9,7 @@ urlpatterns = [
     path('manage-delivery-partners/', views.manage_delivery_partners, name='manage_delivery_partners'),
     path('approve-delivery-partner/<int:partner_id>/', views.approve_delivery_partner, name='approve_delivery_partner'),
     path('reject-delivery-partner/<int:partner_id>/', views.reject_delivery_partner, name='reject_delivery_partner'),
-    path('delivery-partner-details/<int:partner_id>/', views.delivery_partner_details, name='delivery_partner_details'),
+    # path('delivery-partner-details/<int:partner_id>/', views.delivery_partner_details, name='delivery_partner_details'),
     # Delivery process URLs
     path('available-orders/', views.available_orders, name='available_orders'),
     path('order/<int:order_id>/lock/', views.lock_order, name='lock_order'),

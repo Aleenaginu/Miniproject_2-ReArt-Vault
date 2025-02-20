@@ -30,6 +30,7 @@ urlpatterns = [
     path('shop/',include('shop.urls')),
     path('cart/',include('cart.urls')),
     path('delivery/',include('delivery.urls')),
+    path('face_auth/',include('face_auth.urls')),
 
     # path('category/',include('category.urls')),
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

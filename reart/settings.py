@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'category',
     'cart',
     'delivery',
+    'face_auth',
 ]
 
 MIDDLEWARE = [
@@ -190,7 +191,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 LOGIN_URL = 'userlogin'
 LOGOUT_URL = 'userlogout'
-LOGIN_REDIRECT_URL = 'login_redirect'
+LOGIN_REDIRECT_URL = 'shop_index'
 LOGOUT_REDIRECT_URL = '/'
 
 # Add Social Auth pipeline (optional)

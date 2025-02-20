@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ReArt | Order History</title>
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts -->   
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Icons -->
@@ -294,31 +294,21 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal.show {
-            display: flex;
-            opacity: 1;
+            padding: 20px;
+            overflow-y: auto;
         }
 
         .modal-content {
-            background: white;
-            width: 90%;
-            max-width: 500px;
-            margin: auto;
-            border-radius: 8px;
-            position: relative;
-            transform: translateY(-20px);
-            transition: transform 0.3s ease;
+            background-color: white;
+            border-radius: 12px;
             padding: 2rem;
-        }
-
-        .modal.show .modal-content {
-            transform: translateY(0);
+            position: relative;
+            width: 90%;
+            max-width: 600px;
+            margin: 40px auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
 
         .modal-close {
@@ -327,10 +317,62 @@
             right: 1rem;
             background: none;
             border: none;
-            font-size: 1.25rem;
-            color: #666;
+            font-size: 1.5rem;
+            color: #64748b;
             cursor: pointer;
             padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #1e293b;
+        }
+
+        .modal.show {
+            display: block;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-product-info {
+            flex: 1;
+        }
+
+        .modal-product-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-product-price {
+            font-size: 1.125rem;
+            color: #6366f1;
+            font-weight: 500;
+        }
+
+        .modal-product-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .modal-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .tracking-container {
@@ -344,10 +386,10 @@
 
         .tracking-line {
             position: absolute;
-            top: 0;
+            top: 2.5rem;
             left: 1.0rem;
             width: 2px;
-            height: 100%;
+            height: calc(100% - 5rem);
             background: #e2e8f0;
             transform: translateX(-50%);
         }
@@ -356,10 +398,47 @@
             position: absolute;
             top: 0;
             left: 0;
+            height: 100%;
+            background: var(--primary);
+            width: 0;
+            transition: width 0.8s ease-in-out;
+        }
+
+        .tracking-step {
+            position: relative;
+            z-index: 1;
+            transition: all 0.4s ease-in-out;
+        }
+
+        .tracking-icon {
+            transition: all 0.4s ease-in-out;
+        }
+
+        .tracking-step.active .tracking-icon {
+            background: var(--primary);
+            color: white;
+            animation: iconGlow 1.5s infinite;
+        }
+
+        .tracking-step.completed .tracking-icon {
+            background: var(--primary);
+            color: white;
+        }
+
+        @keyframes iconGlow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+            }
+        }
+
+        .tracking-step.completed .tracking-line-progress {
             width: 100%;
-            height: 0;
-            background: #6366f1;
-            transition: height 1s ease;
         }
 
         .tracking-step {
@@ -423,51 +502,226 @@
             color: #94a3b8;
         }
 
-        .modal-header {
-            display: flex;
-            align-items: flex-start;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .modal-product-info {
-            flex: 1;
-        }
-
-        .modal-product-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 0.5rem;
-        }
-
-        .modal-product-price {
-            font-size: 1.125rem;
-            color: #6366f1;
-            font-weight: 500;
-        }
-
-        .modal-product-image {
-            width: 100px;
-            height: 100px;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
-        }
-
-        .modal-product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
         @media (max-width: 768px) {
             .modal-content {
                 width: 95%;
                 padding: 1.5rem;
             }
+        }
+
+        .tracking-modal .modal-content {
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .tracking-modal .modal-header {
+            border-bottom: 1px solid #eee;
+            padding: 1.5rem;
+        }
+
+        .tracking-modal .modal-body {
+            padding: 2rem;
+        }
+
+        .tracking-progress {
+            margin-top: 2rem;
+        }
+
+        .track {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            padding: 20px 0;
+        }
+
+        .track .step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .track .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 40px;
+            top: 50px;
+            width: 3px;
+            height: 50px;
+            background-color: #e9ecef;
+            transition: background-color 0.3s ease;
+        }
+
+        .track .step.active:not(:last-child)::after {
+            background-color: #28a745;
+        }
+
+        .track .step .icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #6c757d;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .track .step.active .icon {
+            background: #28a745;
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+        }
+
+        .track .step .text {
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .track .step.active .text {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .track .step {
+            animation: slideInRight 0.5s ease forwards;
+        }
+
+        .track .step.active {
+            animation: fadeInScale 0.5s ease forwards;
+        }
+
+        .status-text {
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            color: #28a745;
+            font-weight: 500;
+        }
+
+        .product-info {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .product-info img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .product-info .details {
+            margin-left: 1rem;
+        }
+
+        .product-info .name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .product-info .price {
+            color: #6c757d;
+        }
+
+        .modal-backdrop {
+            z-index: 1040;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .tracking-modal {
+            z-index: 1050;
+        }
+
+        .tracking-modal .modal-content {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1051;
+        }
+
+        .tracking-modal .btn-close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            z-index: 1052;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .tracking-modal .btn-close:hover {
+            opacity: 1;
+        }
+
+        /* Update product info styles */
+        .product-info {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .product-info .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .product-info .details {
+            margin-left: 1.5rem;
+            flex: 1;
+        }
+
+        .product-info .name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-info .price {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #48bb78;
         }
     </style>
 </head>
@@ -483,7 +737,7 @@
     <div class="container mb-5">
         {% if user_orders %}
             {% for order in user_orders %}
-            <div class="order-card">
+            <div class="order-card" data-order-id="{{ order.id }}">
                 <div class="order-header">
                     <div class="order-id">
                         <i class="fas fa-shopping-bag"></i>
@@ -537,7 +791,7 @@
                             <i class="fas fa-eye"></i>
                             View Details
                         </a>
-                        <a href="#" class="btn btn-primary" onclick="showTrackingModal('{{ order.id }}', '{{ order.orderitem_set.first.product.name }}', '{{ order.orderitem_set.first.product.image.url }}', {{ order.total_amount }}, '{{ order.status }}')">
+                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#trackingModal{{ order.id }}" data-order-id="{{ order.id }}" data-current-status="{{ order.status }}">
                             <i class="fas fa-map-marker-alt"></i>
                             Track Order
                         </a>
@@ -558,133 +812,203 @@
         {% endif %}
     </div>
 
+    {% for order in user_orders %}
     <!-- Tracking Modal -->
-    <div class="modal" id="trackingModal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeTrackingModal()">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="modal-header">
-                <div class="modal-product-info">
-                    <h2 class="modal-product-title"></h2>
-                    <div class="modal-product-price"></div>
+    <div class="modal fade tracking-modal" id="trackingModal{{ order.id }}" tabindex="-1" role="dialog" aria-labelledby="trackingModalLabel{{ order.id }}" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title fw-bold" id="trackingModalLabel{{ order.id }}">Track Order #{{ order.id }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-product-image">
-                    <img src="" alt="Product Image">
-                </div>
-            </div>
-            <div class="modal-body">
-                <div class="tracking-container">
-                    <div class="tracking-steps">
-                        <div class="tracking-line">
-                            <div class="tracking-line-progress"></div>
+                <div class="modal-body">
+                    <div class="product-info">
+                        {% with first_item=order.orderitem_set.first %}
+                        <img src="{{ first_item.product.image.url }}" alt="{{ first_item.product.name }}" class="product-image">
+                        <div class="details">
+                            <div class="name">{{ first_item.product.name }}</div>
+                            <div class="price">₹{{ order.total_amount }}</div>
                         </div>
-                        <div class="tracking-step" data-step="picking_up">
-                            <div class="tracking-icon">
-                                <i class="fas fa-box"></i>
+                        {% endwith %}
+                    </div>
+
+                    <div class="tracking-progress">
+                        <div class="track">
+                            <div class="step" data-status="PICKING_UP">
+                                <div class="icon">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                <div class="text">Picking Up</div>
                             </div>
-                            <div class="tracking-content">
-                                <div class="tracking-label">Picking Up</div>
-                                <div class="tracking-time">Preparing your order</div>
+                            
+                            <div class="step" data-status="PICKED_UP">
+                                <div class="icon">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="text">Picked Up</div>
                             </div>
-                        </div>
-                        <div class="tracking-step" data-step="picked_up">
-                            <div class="tracking-icon">
-                                <i class="fas fa-check"></i>
+                            
+                            <div class="step" data-status="IN_TRANSIT">
+                                <div class="icon">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                                <div class="text">In Transit</div>
                             </div>
-                            <div class="tracking-content">
-                                <div class="tracking-label">Picked Up</div>
-                                <div class="tracking-time">Order has been picked up</div>
-                            </div>
-                        </div>
-                        <div class="tracking-step" data-step="in_transit">
-                            <div class="tracking-icon">
-                                <i class="fas fa-truck"></i>
-                            </div>
-                            <div class="tracking-content">
-                                <div class="tracking-label">In Transit</div>
-                                <div class="tracking-time">Your order is on the way</div>
-                            </div>
-                        </div>
-                        <div class="tracking-step" data-step="delivered">
-                            <div class="tracking-icon">
-                                <i class="fas fa-home"></i>
-                            </div>
-                            <div class="tracking-content">
-                                <div class="tracking-label">Delivered</div>
-                                <div class="tracking-time">Package has been delivered</div>
+                            
+                            <div class="step" data-status="DELIVERED">
+                                <div class="icon">
+                                    <i class="fas fa-home"></i>
+                                </div>
+                                <div class="text">Delivered</div>
                             </div>
                         </div>
+                        <div class="status-text text-center"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {% endfor %}
 
     <script>
-        function showTrackingModal(orderId, productName, productImage, productPrice, status) {
-            const modal = document.getElementById('trackingModal');
-            
-            // Set product details
-            modal.querySelector('.modal-product-title').textContent = productName;
-            modal.querySelector('.modal-product-price').textContent = '₹' + productPrice;
-            
-            const productImg = modal.querySelector('.modal-product-image img');
-            if (productImage) {
-                productImg.src = productImage;
-                productImg.style.display = 'block';
-            } else {
-                productImg.style.display = 'none';
-            }
+        let activeSocket = null;
+        let activeOrderId = null;
 
-            // Reset all steps
-            const steps = modal.querySelectorAll('.tracking-step');
-            steps.forEach(step => {
+        function updateTrackingUI(status, animate = true) {
+            console.log('Updating tracking UI with status:', status);
+            const steps = document.querySelectorAll('.track .step');
+            const statusOrder = ['PICKING_UP', 'PICKED_UP', 'IN_TRANSIT', 'DELIVERED'];
+            const currentIndex = statusOrder.indexOf(status);
+            
+            steps.forEach((step, index) => {
+                const stepStatus = step.getAttribute('data-status');
+                const stepIndex = statusOrder.indexOf(stepStatus);
+                
+                // Remove existing classes first
                 step.classList.remove('active', 'completed');
-            });
-
-            // Set progress based on status
-            const statusMap = {
-                'Pending': 'picking_up',
-                'Picked Up': 'picked_up',
-                'In Transit': 'in_transit',
-                'Delivered': 'delivered'
-            };
-
-            const currentStatus = statusMap[status] || 'picking_up';
-            let progressHeight = 0;
-
-            steps.forEach(step => {
-                const stepName = step.dataset.step;
-                if (stepName === currentStatus) {
-                    step.classList.add('active');
-                } else if (Object.values(statusMap).indexOf(stepName) < Object.values(statusMap).indexOf(currentStatus)) {
-                    step.classList.add('completed');
-                    progressHeight += 33.33;
+                
+                if (stepIndex <= currentIndex) {
+                    if (animate) {
+                        setTimeout(() => {
+                            step.classList.add('active');
+                            if (stepIndex < currentIndex) {
+                                step.classList.add('completed');
+                            }
+                        }, index * 200);
+                    } else {
+                        step.classList.add('active');
+                        if (stepIndex < currentIndex) {
+                            step.classList.add('completed');
+                        }
+                    }
                 }
             });
 
-            // Animate progress line
-            const progressLine = modal.querySelector('.tracking-line-progress');
-            progressLine.style.height = '0%';
-            modal.classList.add('show');
-            
-            // Trigger animation after a small delay
-            setTimeout(() => {
-                progressLine.style.height = progressHeight + '%';
-            }, 100);
-        }
-
-        function closeTrackingModal() {
-            const modal = document.getElementById('trackingModal');
-            modal.classList.remove('show');
-        }
-
-        // Close modal when clicking outside
-        document.getElementById('trackingModal').addEventListener('click', function(event) {
-            if (event.target === this) {
-                closeTrackingModal();
+            // Update status text
+            const statusText = document.querySelector('.status-text');
+            if (statusText) {
+                const statusMessages = {
+                    'PICKING_UP': 'Preparing your order',
+                    'PICKED_UP': 'Order has been picked up',
+                    'IN_TRANSIT': 'Your order is on the way',
+                    'DELIVERED': 'Package has been delivered'
+                };
+                
+                if (animate) {
+                    statusText.style.opacity = '0';
+                    setTimeout(() => {
+                        statusText.textContent = statusMessages[status] || status;
+                        statusText.style.opacity = '1';
+                    }, 300);
+                } else {
+                    statusText.textContent = statusMessages[status] || status;
+                    statusText.style.opacity = '1';
+                }
             }
+        }
+
+        function closeWebSocket() {
+            if (activeSocket) {
+                activeSocket.close();
+                activeSocket = null;
+            }
+            activeOrderId = null;
+        }
+
+        function initializeTracking(orderId) {
+            // Don't reinitialize if already tracking this order
+            if (activeOrderId === orderId) {
+                return;
+            }
+
+            // Close existing WebSocket if any
+            closeWebSocket();
+            
+            activeOrderId = orderId;
+            console.log('Initializing tracking for order:', orderId);
+            
+            // Get current status from delivery order
+            fetch(`/shop/order/${orderId}/status/`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Received status data:', data);
+                    if (data.status) {
+                        updateTrackingUI(data.status, false);  // Don't animate initial state
+                    }
+                })
+                .catch(error => console.error('Error fetching status:', error));
+
+            // Create WebSocket connection
+            const wsScheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
+            activeSocket = new WebSocket(`${wsScheme}://${window.location.host}/ws/track/${orderId}/`);
+            
+            activeSocket.onmessage = function(event) {
+                console.log('Received WebSocket message:', event.data);
+                const data = JSON.parse(event.data);
+                if (data.type === 'status_update') {
+                    updateTrackingUI(data.status, true);  // Animate updates
+                }
+            };
+            
+            activeSocket.onclose = function(event) {
+                console.log('WebSocket connection closed');
+                if (activeOrderId === orderId) {  // Only reconnect if this is still the active order
+                    setTimeout(() => initializeTracking(orderId), 5000);
+                }
+            };
+            
+            activeSocket.onerror = function(error) {
+                console.error('WebSocket error:', error);
+            };
+        }
+
+        // Initialize modal events
+        document.addEventListener('DOMContentLoaded', function() {
+            const modals = document.querySelectorAll('.tracking-modal');
+            
+            modals.forEach(modal => {
+                // Handle modal close
+                modal.addEventListener('hidden.bs.modal', function() {
+                    closeWebSocket();
+                });
+            });
+
+            // Handle track order button clicks
+            const trackButtons = document.querySelectorAll('[data-bs-toggle="modal"][data-bs-target^="#trackingModal"]');
+            trackButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const orderId = this.getAttribute('data-order-id');
+                    const currentStatus = this.getAttribute('data-current-status');
+                    console.log('Opening modal for order:', orderId, 'with status:', currentStatus);
+                    
+                    if (orderId) {
+                        if (currentStatus) {
+                            updateTrackingUI(currentStatus, false);  // Don't animate initial state
+                        }
+                        initializeTracking(orderId);
+                    }
+                });
+            });
         });
     </script>
 

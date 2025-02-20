@@ -441,6 +441,225 @@
                 window.location.href = "{% url 'logind' %}";
             }, 3000);
         {% endif %}
+
+        // Real-time validation for First Name
+        document.getElementById('firstName').addEventListener('input', function() {
+            const value = this.value.trim();
+            const isValid = value.match(/^[a-zA-Z]{2,50}$/);
+            
+            clearError(this);
+            if (!isValid) {
+                showError('firstName', 'First name should contain only letters and be 2-50 characters long');
+            }
+        });
+
+        // Real-time validation for Last Name
+        document.getElementById('lastName').addEventListener('input', function() {
+            const value = this.value.trim();
+            const isValid = value.match(/^[a-zA-Z]{2,50}$/);
+            
+            clearError(this);
+            if (!isValid) {
+                showError('lastName', 'Last name should contain only letters and be 2-50 characters long');
+            }
+        });
+
+        // Real-time validation for Email
+        document.getElementById('email').addEventListener('input', function() {
+            const value = this.value.trim();
+            const isValid = value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+            
+            clearError(this);
+            if (!isValid) {
+                showError('email', 'Please enter a valid email address');
+            }
+        });
+
+        // Real-time validation for Phone
+        document.getElementById('phone').addEventListener('input', function() {
+            const value = this.value.trim();
+            const isValid = value.match(/^[6-9]\d{9}$/);
+            
+            clearError(this);
+            if (!isValid) {
+                showError('phone', 'Please enter a valid 10-digit Indian mobile number');
+            }
+        });
+
+        // Real-time validation for Date of Birth
+        document.getElementById('dateOfBirth').addEventListener('change', function() {
+            const dob = new Date(this.value);
+            const today = new Date();
+            const age = today.getFullYear() - dob.getFullYear();
+            const isValid = dob < today && age >= 18;
+            
+            clearError(this);
+            if (!isValid) {
+                showError('dateOfBirth', 'You must be at least 18 years old');
+            }
+        });
+
+        // Real-time validation for Address
+        document.getElementById('address').addEventListener('input', function() {
+            const value = this.value.trim();
+            const isValid = value.length >= 10 && value.length <= 200;
+            
+            clearError(this);
+            if (!isValid) {
+                showError('address', 'Address must be between 10 and 200 characters');
+            }
+        });
+
+        // Real-time validation for Password
+        document.getElementById('password').addEventListener('input', function() {
+            const value = this.value;
+            const isValid = value.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/);
+            
+            clearError(this);
+            if (!isValid) {
+                showError('password', 'Password must contain at least 8 characters, including uppercase, lowercase, number and special character');
+            }
+            updatePasswordStrength(value);
+        });
+
+        // Real-time validation for Confirm Password
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const isValid = this.value === password;
+            
+            clearError(this);
+            if (!isValid) {
+                showError('confirmPassword', 'Passwords do not match');
+            }
+        });
+
+        // Real-time validation for PIN Code
+        document.getElementById('pinnumber').addEventListener('input', function() {
+            const value = this.value.trim();
+            const isValid = value.match(/^\d{6}$/);
+            
+            clearError(this);
+            if (!isValid) {
+                showError('pinnumber', 'Please enter a valid 6-digit PIN code');
+            }
+        });
+
+        // Real-time validation for Driving License
+        document.getElementById('drivingLicense').addEventListener('input', function() {
+            const value = this.value.trim().toUpperCase();
+            const isValid = value.match(/^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$/);
+            
+            clearError(this);
+            if (!isValid) {
+                showError('drivingLicense', 'Please enter a valid driving license number (Format: XX99XX9999)');
+            }
+        });
+
+        // Real-time validation for Aadhaar
+        document.getElementById('aadhaarNumber').addEventListener('input', function() {
+            const value = this.value.trim();
+            const isValid = value.match(/^\d{12}$/);
+            
+            clearError(this);
+            if (!isValid) {
+                showError('aadhaarNumber', 'Please enter a valid 12-digit Aadhaar number');
+            }
+        });
+
+        // File validation for Aadhaar front
+        document.getElementById('aadhaarImage').addEventListener('change', function() {
+            const isValid = validateFile(this);
+            
+            clearError(this);
+            if (!isValid) {
+                showError('aadhaarImage', 'Please upload a valid image/PDF file (max 5MB)');
+            }
+        });
+
+        // File validation for Aadhaar back
+        document.getElementById('aadhaarImage_back').addEventListener('change', function() {
+            const isValid = validateFile(this);
+            
+            clearError(this);
+            if (!isValid) {
+                showError('aadhaarImage_back', 'Please upload a valid image/PDF file (max 5MB)');
+            }
+        });
+
+        // Terms checkbox validation
+        document.getElementById('termsCheck').addEventListener('change', function() {
+            clearError(this);
+            if (!this.checked) {
+                showError('termsCheck', 'You must accept the terms and conditions');
+            }
+        });
+
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            clearError(field);
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'invalid-feedback d-block';
+            errorDiv.style.color = '#ff4444';
+            errorDiv.style.fontSize = '0.875rem';
+            errorDiv.style.marginTop = '0.25rem';
+            errorDiv.textContent = message;
+            field.classList.add('is-invalid');
+            field.parentNode.appendChild(errorDiv);
+        }
+
+        function clearError(field) {
+            const parent = field.parentNode;
+            const existingError = parent.querySelector('.invalid-feedback');
+            if (existingError) {
+                existingError.remove();
+            }
+            field.classList.remove('is-invalid');
+        }
+
+        function validateFile(fileInput) {
+            if (fileInput.files.length === 0) return false;
+            
+            const file = fileInput.files[0];
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+
+            return validTypes.includes(file.type) && file.size <= maxSize;
+        }
+
+        function updatePasswordStrength(password) {
+            let strength = 0;
+            if (password.match(/[a-z]/)) strength++;
+            if (password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+            
+            const strengthDiv = document.createElement('div');
+            strengthDiv.className = 'password-strength';
+            strengthDiv.style.marginTop = '0.25rem';
+            
+            const existingStrength = document.querySelector('.password-strength');
+            if (existingStrength) existingStrength.remove();
+            
+            switch(strength) {
+                case 0:
+                case 1:
+                    strengthDiv.style.color = '#ff4444';
+                    strengthDiv.textContent = 'Weak password';
+                    break;
+                case 2:
+                case 3:
+                    strengthDiv.style.color = '#ffa000';
+                    strengthDiv.textContent = 'Medium password';
+                    break;
+                case 4:
+                    strengthDiv.style.color = '#00C851';
+                    strengthDiv.textContent = 'Strong password';
+                    break;
+            }
+            
+            document.getElementById('password').parentNode.appendChild(strengthDiv);
+        }
     </script>
 </body>
 </html>

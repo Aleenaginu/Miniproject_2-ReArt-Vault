@@ -20,5 +20,6 @@ urlpatterns = [
          path('add_category/', views.add_category, name='add_category'),
         # path('artist_list/', views.artist_list, name='artist_list'),
      path('manage_delivery/', manage_delivery_partners, name='manage_delivery_partners'),
+     path('delivery-partner-details/<int:partner_id>/', views.delivery_partner_details, name='delivery_partner_details'),
      
 ]
