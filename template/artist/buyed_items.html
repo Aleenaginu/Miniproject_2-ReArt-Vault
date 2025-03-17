@@ -259,6 +259,63 @@
   background-color: #218838;
 }
 
+.btn-review {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-review:hover {
+  background-color: #5a6268;
+}
+
+.rating-container {
+  margin-bottom: 20px;
+}
+
+.star-rating {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+.star-rating input {
+  display: none;
+}
+
+.star-rating label {
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="%23d3d3d3"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+}
+
+.star-rating input:checked ~ label {
+  background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="%23ffc107"/></svg>');
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+  background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="%23ffc107"/></svg>');
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
 .modal {
   display: none;
   position: fixed;
@@ -388,7 +445,7 @@
           <i class='bx bx-list-ul'></i>
           <span class="links_name">Buyed Items</span>
         </a>
-          </li>
+      </li>
       <li class="log_out">
         <a href="{% url 'userlogout' %}">
           <i class='bx bx-log-out'></i>
@@ -410,7 +467,7 @@
       <a href="{% url 'shopdash' %}" style="text-decoration:none;"><div class="profile-details">
         <i class='bx bx-shopping-bag'></i>
         <span class="admin_name" style="font-size: 25px; font-weight: 900; color: #010302;">SHOP</span>
-      </div></a>
+      </div></a>
       <div class="profile-details">
         {% if artist.profile_pic %}
          <img src="{{artist.profile_pic.url}}" alt="">
@@ -500,6 +557,22 @@
           </tbody>
         </table>
 
+        <h3>Your Reviews</h3>
+        <table class="product-table" id="reviewsTable">
+          <thead>
+            <tr>
+              <th>Donation</th>
+              <th>Rating</th>
+              <th>Title</th>
+              <th>Review</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Reviews will be loaded here -->
+          </tbody>
+        </table>
+
         <h3>Donation Details</h3>
         <table class="product-table">
           <thead>
@@ -511,6 +584,7 @@
               <th>Amount</th>
               <th>Date</th>
               <th>Action</th>
+              <th>Review</th>
             </tr>
           </thead>
           <tbody>
@@ -531,10 +605,13 @@
                 <td>
                   <button class="btn-recommend" onclick="viewRecommendations({{ donation.id }})">View Recommendations</button>
                 </td>
+                <td>
+                  <button class="btn-review" onclick="openReviewModal({{ donation.id }}, '{{ donation.description }}')">Add Review</button>
+                </td>
               </tr>
             {% empty %}
               <tr>
-                <td colspan="7">No completed donations found.</td>
+                <td colspan="8">No completed donations found.</td>
               </tr>
             {% endfor %}
           </tbody>
@@ -548,6 +625,39 @@
         <h2>Recommendations</h2>
         <div id="imageCarousel" class="carousel-container"></div>
         <div id="recommendationContent"></div>
+      </div>
+    </div>
+
+    <div id="reviewModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeReviewModal">&times;</span>
+        <h2>Write a Review for <span id="reviewDonationName"></span></h2>
+        <form id="reviewForm" class="form-container">
+          <input type="hidden" id="reviewDonationId" name="donationId">
+          <input type="hidden" id="reviewDonationDesc" name="donationDesc">
+          <div class="form-group">
+            <label for="reviewRating">Rating (1-5):</label>
+            <div class="rating-container">
+              <div class="star-rating">
+                <input type="radio" id="star5" name="rating" value="5"><label for="star5"></label>
+                <input type="radio" id="star4" name="rating" value="4"><label for="star4"></label>
+                <input type="radio" id="star3" name="rating" value="3"><label for="star3"></label>
+                <input type="radio" id="star2" name="rating" value="2"><label for="star2"></label>
+                <input type="radio" id="star1" name="rating" value="1"><label for="star1"></label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="reviewTitle">Review Title:</label>
+            <input type="text" id="reviewTitle" name="title" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="reviewContent">Your Review:</label>
+            <textarea id="reviewContent" name="content" rows="5" class="form-control" required></textarea>
+          </div>
+          <div class="error-message" id="reviewError">Please fill out all fields</div>
+          <button type="submit" class="btn btn-primary">Submit Review</button>
+        </form>
       </div>
     </div>
 
@@ -634,6 +744,148 @@
           modal.style.display = "none";
         }
       }
+    </script>
+
+    <script>
+      // Review Modal Functionality
+      var reviewModal = document.getElementById("reviewModal");
+      var closeReviewBtn = document.getElementById("closeReviewModal");
+      
+      // Load existing reviews into the table
+      function loadReviewsTable() {
+        // Fetch reviews from the server
+        fetch('{% url "get_artist_reviews" %}')
+          .then(response => response.json())
+          .then(data => {
+            var tableBody = document.querySelector('#reviewsTable tbody');
+            var reviewsHTML = '';
+            
+            if (data.success && data.reviews && data.reviews.length > 0) {
+              data.reviews.forEach(function(review) {
+                var stars = '';
+                for (var i = 0; i < 5; i++) {
+                  if (i < review.rating) {
+                    stars += '★';
+                  } else {
+                    stars += '☆';
+                  }
+                }
+                
+                reviewsHTML += `
+                  <tr>
+                    <td>${review.donation_description}</td>
+                    <td>${stars} (${review.rating}/5)</td>
+                    <td>${review.title}</td>
+                    <td>${review.content}</td>
+                    <td>${review.created_at}</td>
+                  </tr>
+                `;
+              });
+            } else {
+              reviewsHTML = '<tr><td colspan="5">No reviews submitted yet.</td></tr>';
+            }
+            
+            tableBody.innerHTML = reviewsHTML;
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            var tableBody = document.querySelector('#reviewsTable tbody');
+            tableBody.innerHTML = '<tr><td colspan="5">Error loading reviews. Please try again later.</td></tr>';
+          });
+      }
+      
+      // Call this function when the page loads
+      document.addEventListener('DOMContentLoaded', function() {
+        loadReviewsTable();
+      });
+      
+      function openReviewModal(donationId, donationDesc) {
+        document.getElementById("reviewDonationId").value = donationId;
+        document.getElementById("reviewDonationDesc").value = donationDesc;
+        document.getElementById("reviewDonationName").textContent = donationDesc || 'Donation #' + donationId;
+        reviewModal.style.display = "block";
+        
+        // Reset form
+        document.getElementById("reviewForm").reset();
+        document.getElementById("reviewError").style.display = "none";
+      }
+      
+      closeReviewBtn.onclick = function() {
+        reviewModal.style.display = "none";
+      }
+      
+      // Handle review form submission
+      document.getElementById("reviewForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        var donationId = document.getElementById("reviewDonationId").value;
+        var rating = document.querySelector('input[name="rating"]:checked');
+        var title = document.getElementById("reviewTitle").value;
+        var content = document.getElementById("reviewContent").value;
+        
+        if (!rating || !title || !content) {
+          document.getElementById("reviewError").style.display = "block";
+          return;
+        }
+        
+        // Create form data for submission
+        var formData = new FormData();
+        formData.append('donationId', donationId);
+        formData.append('rating', rating.value);
+        formData.append('title', title);
+        formData.append('content', content);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        
+        // Submit the review to the server
+        fetch('{% url "submit_donation_review" %}', {
+          method: 'POST',
+          body: formData,
+          credentials: 'same-origin'
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Show success message
+            Swal.fire({
+              icon: 'success',
+              title: 'Review Submitted',
+              text: data.message,
+              showConfirmButton: false,
+              timer: 2000
+            });
+            
+            // Close modal
+            reviewModal.style.display = "none";
+            
+            // Reload reviews table
+            loadReviewsTable();
+          } else {
+            // Show error message
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: data.message,
+              showConfirmButton: true
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while submitting your review. Please try again.',
+            showConfirmButton: true
+          });
+        });
+      });
+      
+      // Close review modal when clicking outside
+      window.addEventListener("click", function(event) {
+        if (event.target == reviewModal) {
+          reviewModal.style.display = "none";
+        }
+      });
     </script>
 
     <script>

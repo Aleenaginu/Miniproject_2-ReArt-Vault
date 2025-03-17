@@ -11,4 +11,5 @@ urlpatterns = [
     path('handle-interest/<int:notification_id>/', views.handle_interest_request, name='handle_interest_request'),
     path('donation/edit/<int:donation_id>/', views.edit_donation, name='edit_donation'),
     path('donation/delete/<int:donation_id>/', views.delete_donation, name='delete_donation'),
+    
 ]

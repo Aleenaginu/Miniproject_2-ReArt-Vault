@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path,include
 from . import views
+from django.urls import path
+from . import views
 urlpatterns = [
    
     path('artist_dashboard',views.artist_dashboard,name='artist_dashboard'),
@@ -34,4 +36,10 @@ urlpatterns = [
     path('order_notifications/',views.order_notifications, name='order_notifications'), 
     path('order/<int:order_id>/update_order_status/', views.update_order_status, name='update_order_status'),
     path('update-artist-address/', views.update_artist_address, name='update_artist_address'),
+   
+     path('submit-review/', views.submit_donation_review, name='submit_donation_review'),
+    path('get-reviews/', views.get_artist_reviews, name='get_artist_reviews'),
+    path('get-donation-reviews/', views.get_donation_reviews, name='get_donation_reviews'),
+    path('get-review-count/', views.get_review_count, name='get_review_count'),
+
 ]

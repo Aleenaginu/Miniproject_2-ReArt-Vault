@@ -233,3 +233,5 @@ def handle_interest_request(request, notification_id):
         notification.is_read = True
         notification.save()
     return redirect('donor_notifications')
+
+

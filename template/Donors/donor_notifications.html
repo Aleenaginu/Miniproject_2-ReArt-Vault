@@ -268,6 +268,256 @@
             width: 100%;
         } */
   
+    /* Add these styles to the existing style section */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      right: 20px;
+      top: 10px;
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+    }
+    
+    .reviews-container {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+    
+    .review-item {
+      border-bottom: 1px solid #eee;
+      padding: 20px;
+      margin-bottom: 15px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      transition: transform 0.2s ease;
+    }
+    
+    .review-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .review-title {
+      font-weight: bold;
+      font-size: 18px;
+      color: #333;
+    }
+    
+    .review-meta {
+      color: #666;
+      font-size: 14px;
+      font-style: italic;
+    }
+    
+    .review-rating {
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+    
+    .star {
+      color: #ffc107;
+      font-size: 20px;
+      margin-right: 2px;
+    }
+    
+    .review-content {
+      line-height: 1.6;
+      color: #444;
+      font-size: 16px;
+      background-color: #fff;
+      padding: 15px;
+      border-radius: 5px;
+      border-left: 3px solid #17a2b8;
+    }
+    
+    .no-reviews {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+      font-style: italic;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    
+    .modal-content h2 {
+      color: #333;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #17a2b8;
+      text-align: center;
+    }
+    
+    /* Modal animation */
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .modal-content {
+      animation: modalFadeIn 0.3s ease-out;
+    }
+
+    /* Update styles for donation info */
+    .donation-info {
+        background-color: #e9f7fb;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border-left: 4px solid #17a2b8;
+    }
+    
+    .donation-summary h3 {
+        margin-top: 0;
+        color: #17a2b8;
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+    
+    .donation-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .donation-details p {
+        margin: 5px 0;
+        color: #555;
+    }
+    
+    .donation-rating {
+        background-color: #f8f9fa;
+        padding: 10px 15px;
+        border-radius: 5px;
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .donation-rating p {
+        margin: 5px 0;
+        font-size: 16px;
+    }
+    
+    .star.half {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .star.half:after {
+        content: '★';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 50%;
+        overflow: hidden;
+        color: #ffc107;
+    }
+
+    /* Additional styles for reviews */
+    .modal-content h3 {
+        color: #333;
+        margin: 20px 0 15px 0;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .review-item {
+        border: 1px solid #eee;
+        padding: 20px;
+        margin-bottom: 15px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: transform 0.2s ease;
+    }
+    
+    .review-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+    
+    .review-title {
+        font-weight: bold;
+        font-size: 18px;
+        color: #333;
+    }
+    
+    .review-meta {
+        color: #666;
+        font-size: 14px;
+        font-style: italic;
+    }
+    
+    .review-rating {
+        margin-bottom: 12px;
+        font-size: 16px;
+        background-color: #f0f8ff;
+        padding: 5px 10px;
+        border-radius: 5px;
+        display: inline-block;
+    }
+    
+    .review-content {
+        line-height: 1.6;
+        color: #444;
+        font-size: 16px;
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 5px;
+        border-left: 3px solid #17a2b8;
+    }
   </style>
   
 </head>
@@ -433,6 +683,7 @@
                     <th style="padding: 10px; border-bottom: 1px solid #ddd;">Notification</th>
                     <th style="padding: 10px; border-bottom: 1px solid #ddd;">Status</th>
                     <th style="padding: 10px; border-bottom: 1px solid #ddd;">Action</th>
+                    <th style="padding: 10px; border-bottom: 1px solid #ddd;">Reviews</th>
                 </tr>
             </thead>
             <tbody>
@@ -468,6 +719,15 @@
                                 </form>
                             {% endif %}
                         </td>
+                        
+                        <!-- Reviews Button -->
+                        <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                            {% if notification.interest_request and notification.interest_request.status == 'accepted' %}
+                                <button onclick="viewReviews({{ notification.interest_request.donation.id }})" class="btn-view-reviews" style="background-color: #17a2b8; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">
+                                    <i class='bx bx-star'></i> Artist Reviews <span id="review-count-{{ notification.interest_request.donation.id }}" class="review-count"></span>
+                                </button>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -475,6 +735,21 @@
     </div>
 </div>
 
+<div id="reviewsModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="closeReviewsModal">&times;</span>
+    <h2>Artist Reviews for Your Donation</h2>
+    <div id="donationInfo" class="donation-info">
+      <!-- Donation info will be loaded here -->
+    </div>
+    <h3>Reviews from Artists</h3>
+    <div id="reviewsContainer" class="reviews-container">
+      <!-- Reviews will be loaded here -->
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         {% for message in messages %}
@@ -485,5 +760,181 @@
                 timer: 3000
             });
         {% endfor %}
+        
+        // Set up reviews modal
+        var reviewsModal = document.getElementById("reviewsModal");
+        var closeReviewsModal = document.getElementById("closeReviewsModal");
+        
+        closeReviewsModal.onclick = function() {
+            reviewsModal.style.display = "none";
+        }
+        
+        window.onclick = function(event) {
+            if (event.target == reviewsModal) {
+                reviewsModal.style.display = "none";
+            }
+        }
+        
+        // Debug localStorage on page load
+        debugLocalStorage();
     });
+    
+    function viewReviews(donationId) {
+        console.log("Viewing reviews for donation ID:", donationId);
+        
+        // Fetch reviews from the server
+        fetch(`{% url "get_donation_reviews" %}?donation_id=${donationId}`)
+          .then(response => response.json())
+          .then(data => {
+            var reviewsContainer = document.getElementById("reviewsContainer");
+            var donationInfo = document.getElementById("donationInfo");
+            var reviewsModal = document.getElementById("reviewsModal");
+            
+            if (data.success) {
+              // Display donation information
+              donationInfo.innerHTML = `
+                <div class="donation-summary">
+                  <h3>${data.donation.description || 'Donation #' + donationId}</h3>
+                  <div class="donation-details">
+                    <p><strong>Medium of Waste:</strong> ${data.donation.medium_name}</p>
+                    <p><strong>Quantity:</strong> ${data.donation.quantity}</p>
+                    <p><strong>Date:</strong> ${data.donation.date}</p>
+                  </div>
+                  <div class="donation-rating">
+                    <p><strong>Overall Rating:</strong> ${data.average_rating}/5 
+                    ${getStarRating(data.average_rating)}</p>
+                    <p><strong>Total Reviews:</strong> ${data.reviews.length}</p>
+                  </div>
+                </div>
+              `;
+              
+              // Display reviews
+              if (data.reviews && data.reviews.length > 0) {
+                var reviewsHTML = '';
+                
+                data.reviews.forEach(function(review) {
+                  var stars = getStarRating(review.rating);
+                  
+                  reviewsHTML += `
+                    <div class="review-item">
+                      <div class="review-header">
+                        <div class="review-title">${review.title}</div>
+                        <div class="review-meta">By ${review.artist_name} on ${review.created_at}</div>
+                      </div>
+                      <div class="review-rating">${stars} ${review.rating}/5</div>
+                      <div class="review-content">${review.content}</div>
+                    </div>
+                  `;
+                });
+                
+                reviewsContainer.innerHTML = reviewsHTML;
+              } else {
+                reviewsContainer.innerHTML = '<div class="no-reviews">No reviews yet for this donation. Artists will submit reviews after using your donated materials.</div>';
+              }
+            } else {
+              // Display error message
+              donationInfo.innerHTML = `
+                <div class="donation-summary">
+                  <h3>Error</h3>
+                  <p>${data.message || 'An error occurred while loading the donation information.'}</p>
+                </div>
+              `;
+              reviewsContainer.innerHTML = '<div class="no-reviews">Unable to load reviews. Please try again later.</div>';
+            }
+            
+            reviewsModal.style.display = "block";
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            var reviewsContainer = document.getElementById("reviewsContainer");
+            var donationInfo = document.getElementById("donationInfo");
+            var reviewsModal = document.getElementById("reviewsModal");
+            
+            donationInfo.innerHTML = `
+              <div class="donation-summary">
+                <h3>Error</h3>
+                <p>An error occurred while loading the donation information.</p>
+              </div>
+            `;
+            reviewsContainer.innerHTML = '<div class="no-reviews">Unable to load reviews. Please try again later.</div>';
+            
+            reviewsModal.style.display = "block";
+          });
+    }
+    
+    // Debug function to check localStorage
+    function debugLocalStorage() {
+        console.log("All localStorage data:");
+        for (var i = 0; i < localStorage.length; i++) {
+            var key = localStorage.key(i);
+            var value = localStorage.getItem(key);
+            console.log(key, ":", value);
+        }
+        
+        var donationReviews = JSON.parse(localStorage.getItem('donationReviews') || '{}');
+        console.log("Donation reviews:", donationReviews);
+        
+        // Log all donation IDs that have reviews
+        console.log("Donation IDs with reviews:");
+        for (var id in donationReviews) {
+            console.log("- Donation ID:", id, "has", donationReviews[id].length, "reviews");
+        }
+    }
+
+    // Update review counts on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateReviewCounts();
+    });
+
+    function updateReviewCounts() {
+        var reviewButtons = document.querySelectorAll('.btn-view-reviews');
+        reviewButtons.forEach(function(button) {
+            var match = button.getAttribute('onclick').match(/viewReviews\((\d+)\)/);
+            if (match && match[1]) {
+                var donationId = match[1];
+                fetch(`{% url "get_review_count" %}?donation_id=${donationId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.count > 0) {
+                            var countElement = document.getElementById('review-count-' + donationId);
+                            if (countElement) {
+                                countElement.textContent = '(' + data.count + ')';
+                                countElement.style.backgroundColor = '#28a745';
+                                countElement.style.color = 'white';
+                                countElement.style.padding = '2px 6px';
+                                countElement.style.borderRadius = '10px';
+                                countElement.style.marginLeft = '5px';
+                                countElement.style.fontSize = '12px';
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        });
+    }
+
+    // Helper function to generate star rating HTML
+    function getStarRating(rating) {
+        var stars = '';
+        var fullStars = Math.floor(rating);
+        var halfStar = rating % 1 >= 0.5;
+        var emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+        
+        // Add full stars
+        for (var i = 0; i < fullStars; i++) {
+            stars += '<span class="star">★</span>';
+        }
+        
+        // Add half star if needed
+        if (halfStar) {
+            stars += '<span class="star half">★</span>';
+        }
+        
+        // Add empty stars
+        for (var i = 0; i < emptyStars; i++) {
+            stars += '<span class="star" style="color: #ccc;">★</span>';
+        }
+        
+        return stars;
+    }
 </script>

@@ -794,3 +794,223 @@ def order_notifications(request):
     }
     
     return render(request, 'artist/ordernotifications.html', context)
+
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from .models import ArtistReviewForDonation
+from donors.models import Donation, InterestRequest
+
+@login_required
+@require_POST
+def submit_donation_review(request):
+    try:
+        donation_id = request.POST.get('donationId')
+        rating = request.POST.get('rating')
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        
+        # Validate input
+        if not all([donation_id, rating, title, content]):
+            return JsonResponse({'success': False, 'message': 'All fields are required'})
+        
+        # Get the donation
+        try:
+            donation = Donation.objects.get(id=donation_id)
+        except Donation.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Donation not found'})
+        
+        # Get the interest request
+        try:
+            interest_request = InterestRequest.objects.get(
+                artist=request.user.artist,
+                donation=donation,
+                status='accepted'
+            )
+        except InterestRequest.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'You do not have permission to review this donation'})
+        
+        # Check if a review already exists
+        existing_review = ArtistReviewForDonation.objects.filter(
+            artist=request.user.artist,
+            donation=donation
+        ).first()
+        
+        if existing_review:
+            # Update existing review
+            existing_review.rating = rating
+            existing_review.title = title
+            existing_review.content = content
+            existing_review.save()
+            message = 'Review updated successfully'
+        else:
+            # Create new review
+            ArtistReviewForDonation.objects.create(
+                artist=request.user.artist,
+                donation=donation,
+                donor=donation.donor,
+                interest_request=interest_request,
+                rating=rating,
+                title=title,
+                content=content
+            )
+            message = 'Review submitted successfully'
+        
+        return JsonResponse({'success': True, 'message': message})
+    
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}) 
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.db.models import Avg
+
+@login_required
+@require_POST
+def submit_donation_review(request):
+    try:
+        donation_id = request.POST.get('donationId')
+        rating = request.POST.get('rating')
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        
+        # Validate input
+        if not all([donation_id, rating, title, content]):
+            return JsonResponse({'success': False, 'message': 'All fields are required'})
+        
+        # Get the donation
+        try:
+            donation = Donation.objects.get(id=donation_id)
+        except Donation.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Donation not found'})
+        
+        # Get the interest request
+        try:
+            interest_request = InterestRequest.objects.get(
+                artist=request.user.artist,
+                donation=donation,
+                status='accepted'
+            )
+        except InterestRequest.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'You do not have permission to review this donation'})
+        
+        # Check if a review already exists
+        existing_review = ArtistReviewForDonation.objects.filter(
+            artist=request.user.artist,
+            donation=donation
+        ).first()
+        
+        if existing_review:
+            # Update existing review
+            existing_review.rating = rating
+            existing_review.title = title
+            existing_review.content = content
+            existing_review.save()
+            message = 'Review updated successfully'
+        else:
+            # Create new review
+            ArtistReviewForDonation.objects.create(
+                artist=request.user.artist,
+                donation=donation,
+                donor=donation.donor,
+                interest_request=interest_request,
+                rating=rating,
+                title=title,
+                content=content
+            )
+            message = 'Review submitted successfully'
+        
+        return JsonResponse({'success': True, 'message': message})
+    
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+@login_required
+def get_artist_reviews(request):
+    try:
+        reviews = ArtistReviewForDonation.objects.filter(artist=request.user.artist)
+        reviews_data = []
+        
+        for review in reviews:
+            reviews_data.append({
+                'id': review.id,
+                'donation_id': review.donation.id,
+                'donation_description': str(review.donation),
+                'rating': review.rating,
+                'title': review.title,
+                'content': review.content,
+                'created_at': review.created_at.strftime('%Y-%m-%d %H:%M'),
+                'donor_name': review.donor.user.username
+            })
+        
+        return JsonResponse({'success': True, 'reviews': reviews_data})
+    
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+@login_required
+def get_donation_reviews(request):
+    try:
+        donation_id = request.GET.get('donation_id')
+        if not donation_id:
+            return JsonResponse({'success': False, 'message': 'Donation ID is required'})
+        
+        # Get reviews for this donation
+        reviews = ArtistReviewForDonation.objects.filter(donation_id=donation_id)
+        reviews_data = []
+        
+        for review in reviews:
+            reviews_data.append({
+                'id': review.id,
+                'artist_name': review.artist.user.username,
+                'rating': review.rating,
+                'title': review.title,
+                'content': review.content,
+                'created_at': review.created_at.strftime('%Y-%m-%d %H:%M')
+            })
+        
+        # Calculate average rating
+        average_rating = 0
+        if reviews.exists():
+            average_rating = sum(review.rating for review in reviews) / reviews.count()
+            average_rating = round(average_rating, 1)
+        
+        # Get donation details
+        donation = Donation.objects.get(id=donation_id)
+        donation_data = {
+            'id': donation.id,
+            'description': str(donation),
+            'medium_name': donation.medium_of_waste.name,
+            'quantity': str(donation.quantity),
+            'date': donation.date_donated.strftime('%Y-%m-%d')
+        }
+        
+        return JsonResponse({
+            'success': True,
+            'donation': donation_data,
+            'reviews': reviews_data,
+            'average_rating': average_rating
+        })
+    
+    except Donation.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Donation not found'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+@login_required
+def get_review_count(request):
+    try:
+        donation_id = request.GET.get('donation_id')
+        if not donation_id:
+            return JsonResponse({'success': False, 'message': 'Donation ID is required'})
+        
+        count = ArtistReviewForDonation.objects.filter(donation_id=donation_id).count()
+        
+        return JsonResponse({
+            'success': True,
+            'count': count
+        })
+    
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})       
