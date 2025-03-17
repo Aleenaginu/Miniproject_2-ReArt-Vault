@@ -15,6 +15,19 @@ from category.models import *
 from django.utils.text import slugify
 from django.db.models import Count
 
+# Report Generation Imports
+import csv
+import xlsxwriter
+from io import BytesIO
+from django.http import HttpResponse, FileResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+from datetime import datetime
+
+from django.db import models
 
 # Create your views here.
 def UserLoginadmin(request):
@@ -357,3 +370,207 @@ def admin_search(request):
 # def artist_list(request):
 #     artists = Artist.objects.all()
 #     return render(request, 'admin/artist_list.html', {'artists': artists})
+
+@login_required
+@user_passes_test(is_admin)
+def generate_report(request):
+    if request.method == 'POST':
+        report_type = request.POST.get('report_type')
+        report_format = request.POST.get('report_format')
+        
+        # Get data based on report type
+        data = []
+        headers = []
+        filename = f"{report_type}_report"
+        
+        if report_type == 'artist_approved':
+            queryset = Artist.objects.filter(is_approved=True)
+            headers = ['ID', 'Username', 'Email', 'Date Joined', 'Phone', 'Approved']
+            data = [
+                [artist.id, artist.user.username, artist.user.email, 
+                 artist.user.date_joined.strftime('%Y-%m-%d'), 
+                 artist.phone, 'Yes'] 
+                for artist in queryset
+            ]
+            title = "Approved Artists Report"
+            
+        elif report_type == 'artist_pending':
+            queryset = Artist.objects.filter(is_approved=False)
+            headers = ['ID', 'Username', 'Email', 'Date Joined', 'Phone', 'Approved']
+            data = [
+                [artist.id, artist.user.username, artist.user.email, 
+                 artist.user.date_joined.strftime('%Y-%m-%d'), 
+                 artist.phone, 'No'] 
+                for artist in queryset
+            ]
+            title = "Pending Artists Report"
+            
+        elif report_type == 'donation_all':
+            queryset = Donation.objects.all()
+            headers = ['ID', 'Donor', 'Medium', 'Status', 'Date', 'Location', 'Quantity']
+            data = [
+                [donation.id, donation.donor.user.username, donation.medium_of_waste.name, 
+                 donation.status, donation.date_donated.strftime('%Y-%m-%d'), 
+                 donation.location, donation.quantity] 
+                for donation in queryset
+            ]
+            title = "All Donations Report"
+            
+        elif report_type == 'donation_accepted':
+            queryset = Donation.objects.filter(status='accepted')
+            headers = ['ID', 'Donor', 'Medium', 'Date', 'Location', 'Quantity']
+            data = [
+                [donation.id, donation.donor.user.username, donation.medium_of_waste.name, 
+                 donation.date_donated.strftime('%Y-%m-%d'), 
+                 donation.location, donation.quantity] 
+                for donation in queryset
+            ]
+            title = "Accepted Donations Report"
+            
+        elif report_type == 'donation_rejected':
+            queryset = Donation.objects.filter(status='rejected')
+            headers = ['ID', 'Donor', 'Medium', 'Date', 'Location', 'Quantity']
+            data = [
+                [donation.id, donation.donor.user.username, donation.medium_of_waste.name, 
+                 donation.date_donated.strftime('%Y-%m-%d'), 
+                 donation.location, donation.quantity] 
+                for donation in queryset
+            ]
+            title = "Rejected Donations Report"
+            
+        elif report_type == 'donation_pending':
+            queryset = Donation.objects.filter(status='pending')
+            headers = ['ID', 'Donor', 'Medium', 'Date', 'Location', 'Quantity']
+            data = [
+                [donation.id, donation.donor.user.username, donation.medium_of_waste.name, 
+                 donation.date_donated.strftime('%Y-%m-%d'), 
+                 donation.location, donation.quantity] 
+                for donation in queryset
+            ]
+            title = "Pending Donations Report"
+            
+        elif report_type == 'medium_waste':
+            queryset = MediumOfWaste.objects.all()
+            headers = ['ID', 'Name', 'Description', 'Rate']
+            data = [
+                [medium.id, medium.name, medium.description, medium.rate] 
+                for medium in queryset
+            ]
+            title = "Medium of Waste Report"
+            
+        elif report_type == 'delivery_partners':
+            queryset = DeliveryPartner.objects.all()
+            headers = ['ID', 'Name', 'Contact', 'Vehicle Number', 'Location']
+            data = [
+                [partner.id, partner.user.username, partner.contact_number, 
+                 partner.vehicle_number, partner.location] 
+                for partner in queryset
+            ]
+            title = "Delivery Partners Report"
+        
+        # Generate report based on format
+        if report_format == 'pdf':
+            return generate_pdf_report(title, headers, data, filename)
+        elif report_format == 'csv':
+            return generate_csv_report(headers, data, filename)
+        elif report_format == 'excel':
+            return generate_excel_report(headers, data, filename)
+    
+    # If something goes wrong, redirect back to dashboard
+    messages.error(request, 'Failed to generate report. Please try again.')
+    return redirect('admin_dashboard')
+
+
+def generate_pdf_report(title, headers, data, filename):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{filename}.pdf"'
+    
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    elements = []
+    
+    # Add title
+    styles = getSampleStyleSheet()
+    elements.append(Paragraph(title, styles['Title']))
+    elements.append(Paragraph(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", styles['Normal']))
+    
+    # Add table
+    table_data = [headers] + data
+    table = Table(table_data)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+    
+    elements.append(table)
+    doc.build(elements)
+    
+    pdf = buffer.getvalue()
+    buffer.close()
+    response.write(pdf)
+    
+    return response
+
+
+def generate_csv_report(headers, data, filename):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="{filename}.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow(headers)
+    for row in data:
+        writer.writerow(row)
+    
+    return response
+
+
+def generate_excel_report(headers, data, filename):
+    output = BytesIO()
+    workbook = xlsxwriter.Workbook(output)
+    worksheet = workbook.add_worksheet()
+    
+    # Define formats
+    header_format = workbook.add_format({
+        'bold': True,
+        'bg_color': '#4B5320',
+        'color': 'white',
+        'align': 'center',
+        'valign': 'vcenter',
+        'border': 1
+    })
+    
+    cell_format = workbook.add_format({
+        'align': 'left',
+        'valign': 'vcenter',
+        'border': 1
+    })
+    
+    # Write headers
+    for col_num, header in enumerate(headers):
+        worksheet.write(0, col_num, header, header_format)
+    
+    # Write data rows
+    for row_num, row_data in enumerate(data):
+        for col_num, cell_data in enumerate(row_data):
+            worksheet.write(row_num + 1, col_num, cell_data, cell_format)
+    
+    # Auto-fit columns
+    for i, _ in enumerate(headers):
+        worksheet.set_column(i, i, 15)
+    
+    workbook.close()
+    
+    # Prepare the response
+    output.seek(0)
+    response = HttpResponse(
+        output.read(),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = f'attachment; filename="{filename}.xlsx"'
+    
+    return response

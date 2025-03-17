@@ -1,0 +1,556 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReArt Delivery</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #ff8787;
+            --accent-color: #fa5252;
+            --success-color: #51cf66;
+            --light-bg: #f8f9fa;
+            --dark-text: #343a40;
+            --muted-text: #868e96;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 1rem 0;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: white !important;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-link {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.9) !important;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #fff !important;
+            transform: translateY(-2px);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #fff;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .dropdown-item {
+            padding: 0.7rem 1.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .btn {
+            border-radius: 10px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #40c057, #51cf66);
+            border: none;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(45deg, #51cf66, #40c057);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(81, 207, 102, 0.3);
+        }
+
+        .alert {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        /* Modern Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        /* Loading Animation */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid var(--primary-color);
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% { transform: rotate(0deg) }
+            100% { transform: rotate(360deg) }
+        }
+
+        .fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Card Colors */
+        .bg-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .border-primary {
+            border-color: var(--primary-color) !important;
+        }
+
+        .bg-success {
+            background: linear-gradient(135deg, #40c057, #51cf66) !important;
+        }
+
+        .text-success {
+            color: #40c057 !important;
+        }
+
+        .border-success {
+            border-color: #40c057 !important;
+        }
+
+        .bg-info {
+            background: linear-gradient(135deg, #339af0, #4dabf7) !important;
+        }
+
+        .text-info {
+            color: #339af0 !important;
+        }
+
+        .border-info {
+            border-color: #339af0 !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/delivery/homed/">ReArt Delivery</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/delivery/available-orders/">
+                            <i class="fas fa-list-ul"></i> Available Orders
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/delivery/my-deliveries/">
+                            <i class="fas fa-truck"></i> My Deliveries
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> Jagan
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/delivery/homed/">Dashboard</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/delivery/logoutd/">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    
+    <div class="container mt-3">
+        
+        <div class="alert alert-success alert-dismissible fade show">
+            Login successful!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+    </div>
+    
+
+    <!-- Main Content -->
+    
+<div class="container py-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4" data-aos="fade-up">
+        <div class="col-md-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="display-icon me-4">
+                            <i class="fas fa-user-circle fa-3x"></i>
+                        </div>
+                        <div>
+                            <h2 class="mb-1">Welcome back, Jagan!</h2>
+                            <p class="mb-0 opacity-75">Here's your delivery dashboard for today</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Section -->
+    <div class="row mb-4">
+        <!-- Active Deliveries -->
+        <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="stats-icon me-3">
+                            <div class="icon-circle bg-primary-light">
+                                <i class="fas fa-route text-primary"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">5</h3>
+                            <p class="text-muted mb-0">Active Deliveries</p>
+                            <small class="text-muted">Orders in progress</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed Today -->
+        <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="stats-icon me-3">
+                            <div class="icon-circle bg-success-light">
+                                <i class="fas fa-check text-success"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">4</h3>
+                            <p class="text-muted mb-0">Completed Today</p>
+                            <small class="text-muted">Successfully delivered orders</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Available Orders -->
+        <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="stats-icon me-3">
+                            <div class="icon-circle bg-info-light">
+                                <i class="fas fa-box text-info"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">0</h3>
+                            <p class="text-muted mb-0">Available Orders</p>
+                            <small class="text-muted">Orders in your area</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Cards -->
+    <div class="row mb-4">
+        <!-- Available Orders Card -->
+        <div class="col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
+            <div class="card h-100">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <div class="action-icon bg-primary-light mb-4">
+                            <i class="fas fa-list-ul text-primary"></i>
+                        </div>
+                        <h3 class="card-title">Available Orders</h3>
+                        <p class="text-muted mb-4">View and accept new delivery orders in your area</p>
+                        <a href="/delivery/available-orders/" class="btn btn-primary btn-lg">
+                            View Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Deliveries Card -->
+        <div class="col-md-6 mb-4" data-aos="fade-up" data-aos-delay="500">
+            <div class="card h-100">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <div class="action-icon bg-success-light mb-4">
+                            <i class="fas fa-truck text-success"></i>
+                        </div>
+                        <h3 class="card-title">My Deliveries</h3>
+                        <p class="text-muted mb-4">Manage your active and completed deliveries</p>
+                        <a href="/delivery/my-deliveries/" class="btn btn-success btn-lg">
+                            View Deliveries
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="row" data-aos="fade-up" data-aos-delay="600">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h4 class="card-title mb-4">
+                        <i class="fas fa-id-card me-2 text-primary"></i>Profile Information
+                    </h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="text-muted mb-1">Full Name</label>
+                                <p class="h5">Jagan Raj</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted mb-1">Email Address</label>
+                                <p class="h5">jagan@gmail.com</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="text-muted mb-1">Phone Number</label>
+                                <p class="h5">9856363526</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="text-muted mb-1">Service Area</label>
+                                <p class="h5">
+                                    <span class="badge bg-primary">682018</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .icon-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .icon-circle i {
+        font-size: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .action-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        transition: all 0.3s ease;
+    }
+
+    .action-icon i {
+        font-size: 32px;
+        transition: all 0.3s ease;
+    }
+
+    .bg-primary-light {
+        background-color: rgba(255, 107, 107, 0.1);
+    }
+
+    .bg-success-light {
+        background-color: rgba(81, 207, 102, 0.1);
+    }
+
+    .bg-info-light {
+        background-color: rgba(51, 154, 240, 0.1);
+    }
+
+    .card {
+        background: white;
+    }
+
+    .stats-icon {
+        flex-shrink: 0;
+    }
+
+    /* Hover Animations */
+    .card:hover .icon-circle {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .card:hover .icon-circle i {
+        transform: scale(1.2);
+    }
+
+    .card:hover .action-icon {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    .card:hover .action-icon i {
+        transform: scale(1.2);
+    }
+
+    /* Pulse Animation for Stats Icons */
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .stats-icon .icon-circle {
+        animation: pulse 2s infinite;
+    }
+
+    .card:hover .stats-icon .icon-circle {
+        animation: none;
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    /* Floating Animation for Action Icons */
+    @keyframes floating {
+        0% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-8px);
+        }
+        100% {
+            transform: translateY(0px);
+        }
+    }
+
+    .action-icon {
+        animation: floating 3s ease-in-out infinite;
+    }
+
+    .card:hover .action-icon {
+        animation: none;
+        transform: scale(1.1) rotate(5deg);
+    }
+</style>
+
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    
+    
+    
+
+
+</body></html>

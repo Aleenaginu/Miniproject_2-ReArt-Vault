@@ -152,63 +152,50 @@
         .camera-container {
             position: relative;
             width: 100%;
-            height: 300px;
-            margin-bottom: 20px;
+            max-width: 400px;
+            margin: 0 auto;
         }
-        .camera-feed {
+        
+        #camera {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 8px;
+            max-width: 400px;
+            height: auto;
             transform: scaleX(-1);
+            border-radius: 8px;
         }
-        .face-guide {
+        
+        .camera-overlay {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .face-guide {
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
             width: 200px;
             height: 200px;
-            border: 2px solid #4285F4;
-            border-radius: 50%;
-            pointer-events: none;
-            transition: border-color 0.3s ease;
+            position: relative;
         }
-        .face-guide.active {
-            border-color: #34A853;
+        
+        .modal-dialog {
+            max-width: 450px;
         }
-        .face-guide.error {
-            border-color: #EA4335;
+        
+        .modal-body {
+            padding: 1rem;
         }
+        
         .camera-instructions {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
             font-size: 14px;
-            z-index: 10;
-            transition: opacity 0.3s ease;
-        }
-        .enrollment-status {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            z-index: 10;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .enrollment-status.show {
-            opacity: 1;
         }
     </style>
 </head>
@@ -224,138 +211,178 @@
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="username">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
+                        <input type="text" class="form-control" id="username" name="username" required onblur="validateName()">
+                        <small id="usernameError" class="text-danger"></small>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mt-2">
                         <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+                        <input type="email" class="form-control" id="email" name="email" required onblur="validateEmail()">
+                        <small id="emailError" class="text-danger"></small>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mt-2">
                         <label for="phone">Phone</label>
-                        <input type="tel" class="form-control" id="phone" name="phone" required>
+                        <input type="tel" class="form-control" id="phone" name="phone" required onblur="validatePhoneNumber()">
+                        <small id="phoneError" class="text-danger"></small>
                     </div>
-                    <div class="form-group">
-                        <label for="profile_pic">Profile Picture</label>
-                        <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#faceEnrollModal">
-                            <i class="fas fa-camera"></i> Take Photo
-                        </button>
-                        <input type="hidden" id="profile_pic" name="profile_pic">
-                        <div class="alert alert-success mt-2" style="display: none;" id="photoStatus">
-                            Photo captured successfully! 
-                        </div>
-                    </div>
-                    <div class="form-group">
+                    <div class="form-group mt-2">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                        <input type="password" class="form-control" id="password" name="password" required onblur="validatePassword()">
+                        <small id="passwordError" class="text-danger"></small>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mt-2">
                         <label for="confirm_password">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required onblur="validateConfirmPassword()">
+                        <small id="confirmPasswordError" class="text-danger"></small>
                     </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                    
+                    <!-- Hidden inputs for face and profile data -->
+                    <input type="hidden" name="face_data" id="face_data">
+                    <input type="hidden" name="profile_pic" id="profile_pic">
+                    
+                    <!-- Camera capture button -->
+                    <div class="form-group mt-3">
+                        <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#faceEnrollModal">
+                            <i class="fas fa-camera"></i> Capture Photo
+                        </button>
+                        <small id="photoStatus" class="text-success" style="display: none;">Photo captured successfully!</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3 w-100">Register</button>
+                    <div class="signin mt-3">
+                        <span>Already have an account? <a href="{% url 'customerlogin' %}">Login here</a></span>
                     </div>
                 </form>
-
-                <!-- Camera Modal -->
-                <div class="modal fade" id="faceEnrollModal" tabindex="-1">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Take Profile Picture</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body text-center">
-                                <video id="camera" autoplay playsinline style="width: 100%; max-width: 400px;"></video>
-                                <div class="mt-3">
-                                    <button type="button" class="btn btn-primary" id="captureBtn">
-                                        <i class="fas fa-camera"></i> Capture
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        let stream = null;
-                        const modal = document.getElementById('faceEnrollModal');
-                        const video = document.getElementById('camera');
-                        const captureBtn = document.getElementById('captureBtn');
-                        const photoStatus = document.getElementById('photoStatus');
-
-                        // Initialize camera when modal opens
-                        modal.addEventListener('show.bs.modal', async () => {
-                            try {
-                                stream = await navigator.mediaDevices.getUserMedia({ 
-                                    video: { 
-                                        width: { ideal: 1280 },
-                                        height: { ideal: 720 },
-                                        facingMode: "user"
-                                    } 
-                                });
-                                video.srcObject = stream;
-                            } catch (err) {
-                                console.error('Camera error:', err);
-                                alert('Unable to access camera. Please make sure you have granted camera permissions.');
-                            }
-                        });
-
-                        // Stop camera when modal closes
-                        modal.addEventListener('hidden.bs.modal', () => {
-                            if (stream) {
-                                stream.getTracks().forEach(track => track.stop());
-                            }
-                        });
-
-                        // Handle photo capture
-                        captureBtn.addEventListener('click', () => {
-                            const canvas = document.createElement('canvas');
-                            canvas.width = video.videoWidth;
-                            canvas.height = video.videoHeight;
-                            const ctx = canvas.getContext('2d');
-                            
-                            // Flip horizontally for selfie mode
-                            ctx.scale(-1, 1);
-                            ctx.translate(-canvas.width, 0);
-                            ctx.drawImage(video, 0, 0);
-                            ctx.setTransform(1, 0, 0, 1, 0, 0);
-                            
-                            // Convert to base64 and store
-                            const imageData = canvas.toDataURL('image/jpeg', 0.8);
-                            document.getElementById('profile_pic').value = imageData;
-                            
-                            // Show success message
-                            photoStatus.style.display = 'block';
-                            
-                            // Close modal after short delay
-                            setTimeout(() => {
-                                const modalInstance = bootstrap.Modal.getInstance(modal);
-                                modalInstance.hide();
-                            }, 1000);
-                        });
-
-                        // Form validation
-                        document.getElementById('registrationForm').addEventListener('submit', function(e) {
-                            const profilePic = document.getElementById('profile_pic').value;
-                            if (!profilePic) {
-                                e.preventDefault();
-                                alert('Please capture your profile picture before registering.');
-                            }
-                        });
-                    });
-                </script>
             </div>
         </div>
     </div>
+
+    <!-- Face Enrollment Modal -->
+    <div class="modal fade" id="faceEnrollModal" tabindex="-1" aria-labelledby="faceEnrollModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="faceEnrollModalLabel">Capture Your Photo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="camera-container">
+                        <video id="camera" autoplay playsinline></video>
+                        <div class="camera-overlay">
+                            <div class="face-guide"></div>
+                        </div>
+                    </div>
+                    <div class="camera-instructions">
+                        Position your face within the circle and look straight at the camera
+                    </div>
+                    <div class="text-center mt-3">
+                        <button type="button" class="btn btn-primary" id="captureBtn">
+                            <i class="fas fa-camera"></i> Capture
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let stream = null;
+        const modal = document.getElementById('faceEnrollModal');
+        const video = document.getElementById('camera');
+        const captureBtn = document.getElementById('captureBtn');
+        const photoStatus = document.getElementById('photoStatus');
+
+        // Initialize camera when modal opens
+        modal.addEventListener('show.bs.modal', async () => {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 640 },  
+                        height: { ideal: 480 }, 
+                        facingMode: "user"
+                    } 
+                });
+                video.srcObject = stream;
+            } catch (err) {
+                console.error('Camera error:', err);
+                alert('Unable to access camera. Please make sure you have granted camera permissions.');
+            }
+        });
+
+        // Stop camera when modal closes
+        modal.addEventListener('hidden.bs.modal', () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        });
+
+        // Handle photo capture
+        captureBtn.addEventListener('click', async () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            
+            // Flip horizontally for selfie mode
+            ctx.scale(-1, 1);
+            ctx.translate(-canvas.width, 0);
+            ctx.drawImage(video, 0, 0);
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            
+            // Convert to base64 with proper data URL format
+            const imageData = canvas.toDataURL('image/jpeg', 0.8);
+            document.getElementById('profile_pic').value = imageData;
+            document.getElementById('face_data').value = imageData;
+            
+            // Show success message
+            photoStatus.style.display = 'block';
+            photoStatus.textContent = 'Photo captured successfully!';
+            
+            // Close modal after short delay
+            setTimeout(() => {
+                const modalInstance = bootstrap.Modal.getInstance(modal);
+                modalInstance.hide();
+            }, 1000);
+        });
+
+        // Form validation with improved error handling
+        const form = document.getElementById('registrationForm');
+        form.addEventListener('submit', function(e) {
+            const profilePic = document.getElementById('profile_pic').value;
+            const faceData = document.getElementById('face_data').value;
+            
+            if (!profilePic || !faceData) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Photo Required',
+                    text: 'Please capture your photo before registering.',
+                    confirmButtonText: 'OK'
+                });
+                return false;
+            }
+
+            // Check if the image data is in the correct format
+            if (!faceData.startsWith('data:image')) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Photo Format',
+                    text: 'Please capture your photo again.',
+                    confirmButtonText: 'OK'
+                });
+                return false;
+            }
+        });
+    });
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-detection"></script>
     <script>
         function validateName() {
             var username = document.getElementById("username").value;
-            var usernameError = document.getElementById("name-error");
+            var usernameError = document.getElementById("usernameError");
             var submitBtn = document.getElementById("submit-btn");
             const pattern = /^[^\s][a-zA-Z0-9\s!@#$&*_\[\]"'<>,.?/-]*$/
             var res = pattern.test(username);
@@ -370,7 +397,7 @@
 
         function validatePhoneNumber() {
             var phone = document.getElementById("phone").value;
-            var phoneError = document.getElementById("phone-error");
+            var phoneError = document.getElementById("phoneError");
             var submitBtn = document.getElementById("submit-btn");
             const pattern = /^[6789][0-9]{9}$/;
             var res = pattern.test(phone);
@@ -385,7 +412,7 @@
 
         function validateEmail() {
             var email = document.getElementById("email").value;
-            var emailError = document.getElementById("email-error");
+            var emailError = document.getElementById("emailError");
             var submitBtn = document.getElementById("submit-btn");
             const pattern = /[a-z0-9._%+-]+@[a-z0-9.-]+\.(com|in)$/;
             var res = pattern.test(email);
@@ -400,7 +427,7 @@
 
         function validatePassword() {
             var password = document.getElementById("password").value;
-            var passwordError = document.getElementById("password-error");
+            var passwordError = document.getElementById("passwordError");
             var submitBtn = document.getElementById("submit-btn");
             const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
             var res = pattern.test(password);
@@ -416,7 +443,7 @@
         function validateConfirmPassword() {
             var password = document.getElementById("password").value;
             var confirmPassword = document.getElementById("confirm_password").value;
-            var confirmPasswordError = document.getElementById("confirm-password-error");
+            var confirmPasswordError = document.getElementById("confirmPasswordError");
             var submitBtn = document.getElementById("submit-btn");
             if (password === confirmPassword) {
                 confirmPasswordError.style.display = "none";
@@ -426,16 +453,38 @@
                 submitBtn.disabled = true;
             }
         }
-        document.addEventListener("DOMContentLoaded", function () {
-    {% for message in messages %}
-        Swal.fire({
-            icon: '{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}', 
-            title: '{{ message }}',
-            showConfirmButton: false,
-            timer: 3000
+    </script>
+
+    <!-- Add this hidden div to store messages -->
+    <div id="django-messages" style="display: none;" 
+        data-messages="[{% if messages %}{% for message in messages %}{'tag':'{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}','text':'{{ message|escapejs }}'}{% if not forloop.last %},{% endif %}{% endfor %}{% endif %}]">
+    </div>
+
+    <!-- Django messages handling -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const messages = [
+                {% if messages %}
+                    {% for message in messages %}
+                        {
+                            "tag": "{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}",
+                            "text": "{{ message|escapejs }}"
+                        }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                {% endif %}
+            ];
+
+            if (messages.length > 0) {
+                messages.forEach(function(message) {
+                    Swal.fire({
+                        icon: message.tag,
+                        title: message.text,
+                        showConfirmButton: true,
+                        timer: 3000
+                    });
+                });
+            }
         });
-    {% endfor %}
-});
     </script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </body>

@@ -3,110 +3,653 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ user.username }}'s Profile</title>
-    <link rel="stylesheet" href="{% static 'assets/css/profile.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.username }}'s Profile | Reart Vault</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
     <style>
+        :root {
+            --primary-color: #6a3093;
+            --primary-gradient: linear-gradient(135deg, #6a3093 0%, #a044ff 100%);
+            --secondary-color: #333;
+            --text-color: #555;
+            --light-color: #f9f9f9;
+            --border-color: #eaeaea;
+            --card-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 20px 40px rgba(106, 48, 147, 0.2);
+            --border-radius: 16px;
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Arial', sans-serif;
-            background: url("{% static 'profile.webp' %}") no-repeat center center fixed;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            background-color: #f8f9fc;
+            background-image: url("{% static 'profile.webp' %}");
             background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            color: #120952; /* Set a default text color */
+            padding: 2rem 0;
+            position: relative;
         }
-        .container {
-            display: flex;
-            max-width: 800px;
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(106, 48, 147, 0.8) 0%, rgba(160, 68, 255, 0.7) 100%);
+            z-index: -1;
+        }
+        
+        .dashboard-container {
+            max-width: 1200px;
             width: 90%;
-            height: auto;
-            overflow: hidden;
-            background: rgba(255, 255, 255, 0.8); /* Increased opacity for better readability */
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Enhanced shadow for depth */
-        }
-        .profile-pic {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            position: relative;
-        }
-        .profile-pic img {
-            border-radius: 10px;
-            width: 100%; /* Make image responsive */
-            height: auto; /* Maintain aspect ratio */
-            max-width: 250px; /* Limit max width */
-            object-fit: cover;
-            position: relative;
+            margin: 0 auto;
             z-index: 1;
         }
-        .profile-details {
-            flex: 2;
-            padding: 20px;
+        
+        .profile-card {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+        
+        .profile-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 2.5rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(30deg);
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: white;
             display: flex;
-            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0.9); /* Slightly more opaque for readability */
-            border-radius: 0 10px 10px 0;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            position: relative;
         }
-        .profile-details h2 {
-            font-family: 'Times New Roman', serif;
-            font-size: 32px; /* Slightly reduced size for better hierarchy */
-            font-weight: bold;
-            color: #120952;
-            margin: 0;
-            margin-bottom: 15px; /* Increased margin for spacing */
+        
+        .profile-avatar .avatar-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
         }
-        .profile-details p {
-            font-family: 'Times New Roman', serif;
-            font-size: 16px; /* Reduced size for better readability */
-            color: #120952;
-            margin: 0;
-            margin-bottom: 15px; /* Increased margin for spacing */
-        }
-        .profile-details h1 {
-            font-family: 'Times New Roman', serif;
-            font-size: 28px; /* Slightly reduced size */
-            color: #120952;
-            margin: 0;
-            margin-bottom: 15px; /* Increased margin for spacing */
-        }
-        .btn {
-            display: inline-block;
-            background-color: #82b4eb;
-            color: #ffffff;
-            padding: 0.75rem 1.5rem;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: 500;
-            width: 150px;
+        
+        .profile-title {
             text-align: center;
-            transition: background-color 0.3s ease;
-            margin-top: 10px; /* Added margin for spacing between buttons */
+            margin-bottom: 0.5rem;
         }
-        .btn:hover {
-            background-color: #0056b3;
+        
+        .profile-title h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-subtitle {
+            text-align: center;
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+        
+        .profile-body {
+            padding: 2.5rem;
+        }
+        
+        .welcome-message {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        .welcome-message h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .welcome-message h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--primary-gradient);
+            border-radius: 3px;
+        }
+        
+        .welcome-message p {
+            color: var(--text-color);
+            font-size: 1.1rem;
+            max-width: 80%;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .profile-info {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+            margin-bottom: 2rem;
+        }
+        
+        .profile-info:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .info-header {
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.8rem;
+        }
+        
+        .info-header h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin: 0;
+        }
+        
+        .info-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+        
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: rgba(106, 48, 147, 0.1);
+            border-radius: 50%;
+            margin-right: 1rem;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+        
+        .info-item:hover .info-icon {
+            background: var(--primary-gradient);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(106, 48, 147, 0.3);
+        }
+        
+        .info-content {
+            flex-grow: 1;
+        }
+        
+        .info-label {
+            font-size: 0.85rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            margin-bottom: 0.2rem;
+        }
+        
+        .info-value {
+            font-weight: 600;
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 180px;
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            box-shadow: 0 5px 15px rgba(106, 48, 147, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(106, 48, 147, 0.4);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(106, 48, 147, 0.2);
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: rgba(106, 48, 147, 0.1);
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            transition: var(--transition);
+        }
+        
+        .stat-card:hover .stat-icon {
+            background: var(--primary-gradient);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(106, 48, 147, 0.3);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.8s ease forwards;
+        }
+        
+        .slide-in-up {
+            animation: slideInUp 0.8s ease forwards;
+        }
+        
+        .slide-in-right {
+            animation: slideInRight 0.8s ease forwards;
+        }
+        
+        .zoom-in {
+            animation: zoomIn 0.8s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .profile-body {
+                padding: 2rem;
+            }
+            
+            .welcome-message p {
+                max-width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .profile-header {
+                padding: 2rem 1.5rem;
+            }
+            
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .profile-title h1 {
+                font-size: 2rem;
+            }
+            
+            .profile-body {
+                padding: 1.5rem;
+            }
+            
+            .welcome-message h2 {
+                font-size: 1.8rem;
+            }
+            
+            .info-header h3 {
+                font-size: 1.3rem;
+            }
+            
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="profile-pic">
-        </div>
-        <div class="profile-details">
-            <h2>Welcome to Reart Vault!</h2>
-            <p>Every contribution helps make a difference—thank you for being a vital part of our community!</p>
-            <h1>Hi {{ user.username }}</h1>
-            <p>Email: {{ user.email }}</p>
-            <!-- <p>Phone: {{customer.phone }}</p> -->
-            <!-- <a href="{% url 'order_history' %}" class="btn">Orders</a> -->
-            <a href="{% url 'shop_index' %}" class="btn">Back to Home</a>
+    <div class="dashboard-container">
+        <div class="profile-card" data-aos="fade-up" data-aos-duration="1000">
+            <div class="profile-header">
+                <div class="profile-avatar" data-aos="zoom-in" data-aos-delay="300">
+                    <i class="avatar-icon fas fa-user"></i>
+                </div>
+                <div class="profile-title" data-aos="fade-up" data-aos-delay="400">
+                    <h1>{{ user.username }}</h1>
+                </div>
+                <div class="profile-subtitle" data-aos="fade-up" data-aos-delay="500">
+                    <p>Reart Vault Member</p>
+                </div>
+            </div>
+            
+            <div class="profile-body">
+                <div class="welcome-message" data-aos="fade-up" data-aos-delay="600">
+                    <h2>Welcome to Reart Vault!</h2>
+                    <p>Every contribution helps make a difference—thank you for being a vital part of our community!</p>
+                </div>
+                
+                <div class="stats-container">
+                    <div class="stat-card" data-aos="fade-up" data-aos-delay="700">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-value count-up" data-value="0">0</div>
+                        <div class="stat-label">Orders</div>
+                    </div>
+                    
+                    <div class="stat-card" data-aos="fade-up" data-aos-delay="800">
+                        <div class="stat-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="stat-value count-up" data-value="0">0</div>
+                        <div class="stat-label">Wishlist</div>
+                    </div>
+                    
+                    <div class="stat-card" data-aos="fade-up" data-aos-delay="900">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-value count-up" data-value="0">0</div>
+                        <div class="stat-label">Reviews</div>
+                    </div>
+                </div>
+                
+                <div class="profile-info" data-aos="fade-up" data-aos-delay="1000">
+                    <div class="info-header">
+                        <h3>Personal Information</h3>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Username</div>
+                            <div class="info-value">{{ user.username }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Email Address</div>
+                            <div class="info-value">{{ user.email }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Member Since</div>
+                            <div class="info-value">{{ user.date_joined|date:"F d, Y" }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons" data-aos="fade-up" data-aos-delay="1100">
+                    <a href="{% url 'shop_index' %}" class="btn btn-primary">
+                        <i class="fas fa-home"></i>Back to Home
+                    </a>
+                    <a href="#" class="btn btn-outline edit-profile-btn">
+                        <i class="fas fa-user-edit"></i>Edit Profile
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
+    
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize AOS animation library
+            AOS.init({
+                once: true,
+                duration: 800,
+                easing: 'ease-out-cubic'
+            });
+            
+            // Animate profile avatar with floating effect
+            const avatar = document.querySelector('.profile-avatar');
+            if (avatar) {
+                setInterval(() => {
+                    avatar.style.animation = 'float 3s ease-in-out infinite';
+                }, 1000);
+            }
+            
+            // Animate count up for stat values
+            const countElements = document.querySelectorAll('.count-up');
+            countElements.forEach((element, index) => {
+                const finalValue = parseInt(element.getAttribute('data-value'));
+                let currentValue = 0;
+                const duration = 2000; // 2 seconds
+                const steps = 60;
+                const increment = finalValue / steps;
+                
+                setTimeout(() => {
+                    const animator = setInterval(() => {
+                        currentValue += increment;
+                        if (currentValue >= finalValue) {
+                            currentValue = finalValue;
+                            clearInterval(animator);
+                            
+                            // Add pulse animation after counting is complete
+                            setTimeout(() => {
+                                element.style.animation = 'pulse 0.8s ease';
+                            }, 300);
+                        }
+                        element.textContent = Math.floor(currentValue);
+                    }, duration / steps);
+                }, 1000 + (index * 200));
+            });
+            
+            // Add hover effect to info items
+            const infoItems = document.querySelectorAll('.info-item');
+            infoItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(10px)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+            
+            // Add click effect to buttons
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                button.addEventListener('mousedown', function() {
+                    this.style.transform = 'scale(0.95)';
+                });
+                
+                button.addEventListener('mouseup', function() {
+                    this.style.transform = '';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = '';
+                });
+            });
+            
+            // Edit profile button functionality (placeholder)
+            const editProfileBtn = document.querySelector('.edit-profile-btn');
+            if (editProfileBtn) {
+                editProfileBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('Edit profile functionality would go here!');
+                });
+            }
+            
+            // Add subtle animation to stat cards
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 1000 + (index * 200));
+            });
+        });
+    </script>
 </body>
 </html>

@@ -156,7 +156,7 @@
         <div class="right">
             <div class="input-box">
                 <header>Registration</header>
-                <form method="POST" enctype="multipart/form-data">
+                <form id="registrationForm" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="username">Username</label>
@@ -170,10 +170,13 @@
                     </div>
                     <div class="form-group">
                         <label for="profile_pic">Profile Picture</label>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input"   accept="image/*" id="profile_pic" name="profile_pic" required>
-                            <label class="custom-file-label" for="profile_pic"></label>
-                            <span id="error-message" style="color: red;"></span>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#cameraModal">
+                            Take Photo
+                        </button>
+                        <input type="hidden" id="profile_pic" name="profile_pic">
+                        <input type="hidden" id="face_data" name="face_data">
+                        <div id="photoStatus" style="display: none; margin-top: 10px;" class="alert alert-success">
+                            Photo captured successfully!
                         </div>
                     </div>
                     <div class="form-group">
@@ -204,93 +207,169 @@
         </div>
     </div>
 
-    <script>
-          const profile_pic = document.getElementById("profile_pic");
-const errorMessage = document.getElementById("error-message");
+    <!-- Camera Modal -->
+    <div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cameraModalLabel">Take Photo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <video id="video" width="100%" autoplay playsinline></video>
+                    <div id="error-message" class="alert alert-danger" style="display: none;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="captureBtn">Capture</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-profile_pic.addEventListener("change", function(event) {
-    const file = event.target.files[0];
-    const fileType = file.type.toLowerCase();
-    if (!fileType.startsWith("image/")) {
-        errorMessage.textContent = "Please upload an image file.";
-        image.value = "";
-    } else {
-        errorMessage.textContent = "";
-    }
-});
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Camera handling
+        const video = document.getElementById('video');
+        const captureBtn = document.getElementById('captureBtn');
+        const photoStatus = document.getElementById('photoStatus');
+        const modal = document.getElementById('cameraModal');
+        const errorMessage = document.getElementById('error-message');
+
+        // Initialize camera when modal opens
+        modal.addEventListener('shown.bs.modal', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 640 },
+                        height: { ideal: 480 },
+                        facingMode: 'user'
+                    } 
+                });
+                video.srcObject = stream;
+                errorMessage.style.display = 'none';
+            } catch (err) {
+                errorMessage.textContent = 'Error accessing camera: ' + err.message;
+                errorMessage.style.display = 'block';
+            }
+        });
+
+        // Stop camera when modal closes
+        modal.addEventListener('hidden.bs.modal', () => {
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+        });
+
+        // Handle photo capture
+        captureBtn.addEventListener('click', () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            
+            // Flip horizontally for selfie mode
+            ctx.scale(-1, 1);
+            ctx.translate(-canvas.width, 0);
+            ctx.drawImage(video, 0, 0);
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            
+            // Convert to base64 and store both profile pic and face data
+            const imageData = canvas.toDataURL('image/jpeg', 0.8);
+            document.getElementById('profile_pic').value = imageData;
+            document.getElementById('face_data').value = imageData;
+            
+            // Show success message
+            photoStatus.style.display = 'block';
+            
+            // Close modal after short delay
+            setTimeout(() => {
+                const modalInstance = bootstrap.Modal.getInstance(modal);
+                modalInstance.hide();
+            }, 1000);
+        });
+
+        // Form validation
+        const form = document.getElementById('registrationForm');
+        form.addEventListener('submit', function(e) {
+            const profilePic = document.getElementById('profile_pic').value;
+            const faceData = document.getElementById('face_data').value;
+            
+            if (!profilePic || !faceData) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Photo Required',
+                    text: 'Please capture your photo before registering.',
+                    confirmButtonText: 'OK'
+                });
+                return false;
+            }
+        });
 
         function validateName() {
-            var username = document.getElementById("username").value;
-            var usernameError = document.getElementById("username-error");
-            var submitBtn = document.getElementById("submit-btn");
-            const pattern =  /^[^\s][a-zA-Z0-9\s!@#$&*_\[\]"'<>,.?/-]*$/
-            var res = pattern.test(username);
-            if (res) {
-                usernameError.style.display = "none";
-                submitBtn.disabled = false;
-            } else {
+            const username = document.getElementById("username").value;
+            const usernameError = document.getElementById("username-error");
+            const regex = /^[a-zA-Z0-9_]{3,20}$/;
+            
+            if (!regex.test(username)) {
                 usernameError.style.display = "block";
-                submitBtn.disabled = true;
+                return false;
             }
+            usernameError.style.display = "none";
+            return true;
         }
 
         function validatePhoneNumber() {
-            var phone = document.getElementById("phone").value;
-            var phoneError = document.getElementById("phone-error");
-            var submitBtn = document.getElementById("submit-btn");
-            const pattern = /^[6789][0-9]{9}$/;
-            var res = pattern.test(phone);
-            if (res) {
-                phoneError.style.display = "none";
-                submitBtn.disabled = false;
-            } else {
+            const phone = document.getElementById("phone").value;
+            const phoneError = document.getElementById("phone-error");
+            const regex = /^[0-9]{10}$/;
+            
+            if (!regex.test(phone)) {
                 phoneError.style.display = "block";
-                submitBtn.disabled = true;
+                return false;
             }
+            phoneError.style.display = "none";
+            return true;
         }
 
         function validatePassword() {
-            var password = document.getElementById("password").value;
-            var passwordError = document.getElementById("password-error");
-            var submitBtn = document.getElementById("submit-btn");
-            const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-            var res = pattern.test(password);
-            if (res) {
-                passwordError.style.display = "none";
-                submitBtn.disabled = false;
-            } else {
+            const password = document.getElementById("password").value;
+            const passwordError = document.getElementById("password-error");
+            const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+            
+            if (!regex.test(password)) {
                 passwordError.style.display = "block";
-                submitBtn.disabled = true;
+                return false;
             }
+            passwordError.style.display = "none";
+            return true;
         }
 
         function validateConfirmPassword() {
-            var password = document.getElementById("password").value;
-            var confirmPassword = document.getElementById("repassword").value;
-            var confirmPasswordError = document.getElementById("confirm-password-error");
-            var submitBtn = document.getElementById("submit-btn");
-            if (password === confirmPassword) {
-                confirmPasswordError.style.display = "none";
-                submitBtn.disabled = false;
-            } else {
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("repassword").value;
+            const confirmPasswordError = document.getElementById("confirm-password-error");
+            
+            if (password !== confirmPassword) {
                 confirmPasswordError.style.display = "block";
-                submitBtn.disabled = true;
+                return false;
             }
+            confirmPasswordError.style.display = "none";
+            return true;
         }
 
         function validateEmail() {
-            var email = document.getElementById("email").value;
-            var emailError = document.getElementById("email-error");
-            var submitBtn = document.getElementById("submit-btn");
-            const pattern = /[a-z0-9._%+-]+@[a-z0-9.-]+\.(com|in)$/;
-            var res = pattern.test(email);
-            if (res) {
-                emailError.style.display = "none";
-                submitBtn.disabled = false;
-            } else {
+            const email = document.getElementById("email").value;
+            const emailError = document.getElementById("email-error");
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!regex.test(email)) {
                 emailError.style.display = "block";
-                submitBtn.disabled = true;
+                return false;
             }
+            emailError.style.display = "none";
+            return true;
         }
 
         document.addEventListener('DOMContentLoaded', function () {

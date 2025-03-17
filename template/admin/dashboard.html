@@ -10,6 +10,19 @@
   <!-- Boxicons CDN Link -->
   <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Bootstrap Core CSS & JS - External CDN to ensure proper modal functionality -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+  
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Animate.css for animations -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
  <!-- plugins:css -->
  <link rel="stylesheet" href="{% static "dash/vendors/mdi/css/materialdesignicons.min.css" %}">
  <link rel="stylesheet" href="{% static "dash/vendors/ti-icons/css/themify-icons.css" %}">
@@ -161,7 +174,7 @@
     width: 100%;
     outline: none;
     background: #F5F6FA;
-    border: 2px solid #EFEEF1;
+    border: 15px solid #EFEEF1;
     border-radius: 6px;
     font-size: 18px;
     padding: 0 15px;
@@ -208,7 +221,7 @@
     font-size: 25px;
     color: #333;
   }
-  .home-section .home-content{
+  .home-content{
     position: relative;
     padding-top: 104px;
   }
@@ -228,7 +241,7 @@
     background: #fff;
     padding: 15px 14px;
     border-radius: 12px;
-    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
   }
   .overview-boxes .box-topic{
     font-size: 20px;
@@ -599,6 +612,160 @@
     margin-bottom: 5px;
     /* Space between heading and description */
   }
+
+  /* Custom styling for Generate Report button */
+  .generate-report-btn {
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 50px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    margin-left: 20px;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .generate-report-btn:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: all 0.5s ease;
+  }
+
+  .generate-report-btn:hover:before {
+    left: 100%;
+  }
+
+  .generate-report-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    background: linear-gradient(135deg, #a777e3, #6e8efb);
+  }
+
+  /* Pulse animation for the button */
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(174, 139, 227, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(174, 139, 227, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(174, 139, 227, 0);
+    }
+  }
+
+  /* Admin dropdown styling */
+  .profile-details .dropdown-toggle::after {
+    display: none;
+  }
+
+  .profile-details .dropdown-toggle:hover {
+    text-decoration: none;
+  }
+
+  .profile-details .dropdown-menu {
+    animation: fadeIn 0.3s ease;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border: none;
+  }
+
+  .profile-details .dropdown-item {
+    padding: 10px 15px;
+    transition: all 0.2s ease;
+  }
+
+  .profile-details .dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #0A2558;
+  }
+
+  /* Enhanced modal styling */
+  #reportModal .modal-content {
+    border-radius: 15px;
+    border: none;
+    overflow: hidden;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+  }
+
+  #reportModal .modal-header {
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    color: white;
+    border: none;
+    padding: 15px 20px;
+  }
+
+  #reportModal .modal-title {
+    font-weight: 600;
+  }
+
+  #reportModal .close {
+    color: white;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+  }
+
+  #reportModal .close:hover {
+    opacity: 1;
+    transform: rotate(90deg);
+  }
+
+  #reportModal .form-control {
+    border-radius: 8px;
+    padding: 2px 15px;
+    border: 1px solid #e1e5eb;
+    box-shadow: none;
+    transition: all 0.3s ease;
+  }
+
+  #reportModal .form-control:focus {
+    border-color: #a777e3;
+    box-shadow: 0 0 0 3px rgba(110, 142, 251, 0.1);
+  }
+
+  #reportModal .btn-primary {
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  #reportModal .btn-primary:hover {
+    background: linear-gradient(135deg, #a777e3, #6e8efb);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+
+  /* Admin name hover effect */
+  .admin_name {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .admin_name:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: #0A2558;
+    transition: width 0.3s ease;
+  }
+
+  .admin_name:hover:after {
+    width: 100%;
+  }
 </style>
 
 <body>
@@ -683,22 +850,32 @@
         <i class='bx bx-menu sidebarBtn'></i>
         <span class="dashboard"> Dashboard</span>
       </div>
-      <form method="GET" action="{% url 'admin_search' %}">
       <div class="search-box">
-        <input type="text" name="query" placeholder="Search...">
-       <button type="submit"><i class='bx bx-search'></i></button> 
+        <form action="{% url 'admin_search' %}" method="GET">
+          <input type="text" placeholder="Search..." name="query">
+          <i class='bx bx-search' ></i>
+        </form>
       </div>
-    </form>
-      <div class="profile-details">
-        <img src="{{adminclick.profile_pic.url}}" alt="">
-        <span class="admin_name" style="font-size: 25px; font-weight: 900; color: #010302;">Hi {{user.username}}</span>
-        <i class='bx bx-chevron-down'></i>
-        <ul class="dropdown-menu">
-          <!-- <li><a href="{% url 'userprofileartist' %}">View Profile</a></li>
-          <li><a href="{% url 'profile_update' %}">Edit Profile</a></li>
-          <li><a href="#">Settings</a></li> -->
-          <li><a href="{% url 'userlogout' %}">Logout</a></li>
-        </ul>
+      <div class="profile-details" style="display: flex; align-items: center;">
+        {% if adminclick.profile_pic %}
+          <img src="{{adminclick.profile_pic.url}}" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+        {% else %}
+          <i class='bx bx-user-circle' style="font-size: 40px; margin-right: 10px;"></i>
+        {% endif %}
+        <div class="dropdown">
+          <a class="dropdown-toggle" href="#" role="button" id="adminDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #010302; text-decoration: none;">
+            <span class="admin_name" style="font-size: 20px; font-weight: 700;">Hi {{adminclick.user.username}}</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="adminDropdown">
+            <a class="dropdown-item" href="{% url 'userlogout' %}">
+              <i class='bx bx-log-out'></i> Logout
+            </a>
+          </div>
+        </div>
+        
+        <button type="button" class="btn btn-primary generate-report-btn" data-toggle="modal" data-target="#reportModal">
+          <i class="fa fa-file-text-o"></i> Generate Report
+        </button>
       </div>
     </nav>
 
@@ -909,6 +1086,48 @@
 <!-- page-body-wrapper ends -->
 </div>
 
+<!-- Report Generation Modal -->
+<div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="reportModalLabel">Generate Report</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'generate_report' %}" method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="reportType">Select Report Type</label>
+            <select class="form-control" id="reportType" name="report_type" required>
+              <option value="" selected disabled>-- Select Report Type --</option>
+              <option value="artist_approved">Approved Artists</option>
+              <option value="artist_pending">Pending Artist Approvals</option>
+              <option value="donation_all">All Donations</option>
+              <option value="donation_accepted">Accepted Donations</option>
+              <option value="donation_rejected">Rejected Donations</option>
+              <option value="donation_pending">Pending Donations</option>
+              <option value="medium_waste">Medium of Waste</option>
+              <option value="delivery_partners">Delivery Partners</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="reportFormat">Report Format</label>
+            <select class="form-control" id="reportFormat" name="report_format" required>
+              <option value="pdf">PDF</option>
+              <option value="csv">CSV</option>
+              <!-- <option value="excel">Excel</option> -->
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Download Report</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
        <div class="sales-boxes" >
         <div class="recent-sales box" style="background-color:rgb(205, 231, 240);">
           <div class="title">More About ReArt Vault </div>
@@ -1035,47 +1254,89 @@
   </section>
 
   <script>
-    let sidebar = document.querySelector(".sidebar");
-    let sidebarBtn = document.querySelector(".sidebarBtn");
-    sidebarBtn.onclick = function () {
-      sidebar.classList.toggle("active");
-      if (sidebar.classList.contains("active")) {
-        sidebarBtn.classList.replace("bx-menu", "bx-menu-alt-right");
-      } else {
-        sidebarBtn.classList.replace("bx-menu-alt-right", "bx-menu");
-      }
-    }
-  </script>
-  <script>
-     document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
       {% for message in messages %}
           Swal.fire({
-              icon: '{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}', 
-              title: '{{ message }}',
+              icon: '{{ message.tags|title }}',
+              title: '{{ message.tags|title }}',
+              text: "{{ message }}",
+              toast: true,
+              position: 'top-end',
               showConfirmButton: false,
               timer: 3000
           });
       {% endfor %}
   });
-      </script>
-      <!-- container-scroller -->
-<!-- plugins:js -->
-<script src="{% static "dash/vendors/js/vendor.bundle.base.js" %}"></script>
-<!-- endinject -->
-<!-- Plugin js for this page -->
-<script src="{% static "dash/vendors/chart.js/chart.umd.js" %}"></script>
-<script src="{% static "dash/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js" %}"></script>
-<!-- End plugin js for this page -->
-<!-- inject:js -->
-<script src="{% static "dash/js/off-canvas.js" %}"></script>
-<script src="{% static "dash/js/misc.js" %}"></script>
-<script src="{% static "dash/js/settings.js" %}"></script>
-<script src="{% static "dash/js/todolist.js" %}"></script>
-<script src="{% static "dash/js/jquery.cookie.js" %}"></script>
-<!-- endinject -->
-<!-- Custom js for this page -->
-<script src="{% static "dash/js/dashboard.js" %}"></script>
-<!-- End custom js for this page -->
+  </script>
+  
+  <!-- plugins:js -->
+  <script src="{% static "dash/vendors/js/vendor.bundle.base.js" %}"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <script src="{% static "dash/vendors/chart.js/chart.umd.js" %}"></script>
+  <script src="{% static "dash/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js" %}"></script>
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="{% static "dash/js/off-canvas.js" %}"></script>
+  <script src="{% static "dash/js/misc.js" %}"></script>
+  <script src="{% static "dash/js/settings.js" %}"></script>
+  <script src="{% static "dash/js/todolist.js" %}"></script>
+  <script src="{% static "dash/js/jquery.cookie.js" %}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page -->
+  <script src="{% static "dash/js/dashboard.js" %}"></script>
+  <!-- End custom js for this page -->
+  
+  <!-- Initialize Bootstrap components -->
+  <script>
+    $(document).ready(function() {
+      // Ensure modals work properly
+      $('#reportModal').modal({
+        show: false,
+        backdrop: true
+      });
+      
+      // Add animation class to generate report button
+      $('.generate-report-btn').addClass('animate__animated animate__pulse');
+      
+      // Make dropdown work on admin name click
+      $('#adminDropdown').on('click', function(e) {
+        e.preventDefault();
+        $(this).parent().toggleClass('show');
+        $(this).parent().find('.dropdown-menu').toggleClass('show');
+      });
+      
+      // Close dropdown when clicking outside
+      $(document).on('click', function(e) {
+        if (!$(e.target).closest('.dropdown').length) {
+          $('.dropdown-menu').removeClass('show');
+          $('.dropdown').removeClass('show');
+        }
+      });
+      
+      // Toggle sidebar
+      $('.sidebarBtn').click(function() {
+        $('.sidebar').toggleClass('active');
+        if ($('.sidebar').hasClass('active')) {
+          $('.sidebarBtn').removeClass('bx-menu').addClass('bx-menu-alt-right');
+        } else {
+          $('.sidebarBtn').removeClass('bx-menu-alt-right').addClass('bx-menu');
+        }
+      });
+      
+      // Add tooltip to generate report button
+      $('.generate-report-btn').tooltip({
+        title: "Generate various reports",
+        placement: "bottom",
+        trigger: "hover"
+      });
+      
+      // Add animation to modal when shown
+      $('#reportModal').on('show.bs.modal', function () {
+        $(this).find('.modal-content').addClass('animate__animated animate__fadeInUp');
+      });
+    });
+  </script>
 </body>
 
 </html>

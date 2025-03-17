@@ -16,13 +16,13 @@ try:
    
     username_field = wait.until(EC.visibility_of_element_located((By.NAME, "username")))
     username_field.clear()
-    username_field.send_keys('Rose')
+    username_field.send_keys('Anju')
     print("Entered username.")
     time.sleep(1) 
 
     password_field = wait.until(EC.visibility_of_element_located((By.NAME, 'password')))
     password_field.clear()
-    password_field.send_keys('Rose@123')
+    password_field.send_keys('Thekkekara@123')
     print("Entered password.")
     time.sleep(1)  
     time.sleep(1)

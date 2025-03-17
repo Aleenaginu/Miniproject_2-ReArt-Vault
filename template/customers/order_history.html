@@ -1,6 +1,6 @@
 {% load static %}
 {% load shop_extras %}
-<!DOCTYPE html>
+<!-- <!DOCTYPE html> -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -16,6 +16,9 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
+    <!-- SweetAlert2 CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         :root {
             --primary: #6366f1;
@@ -185,8 +188,9 @@
 
         .order-footer-right {
             display: flex;
+            gap: 10px;
             align-items: center;
-            gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -288,445 +292,365 @@
 
         /* Modal Styles */
         .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            padding: 20px;
-            overflow-y: auto;
+            z-index: 1050 !important;
+        }
+
+        .modal-backdrop {
+            z-index: 1040 !important;
+        }
+
+        .modal-dialog {
+            z-index: 1051 !important;
+            position: relative;
         }
 
         .modal-content {
-            background-color: white;
-            border-radius: 12px;
-            padding: 2rem;
-            position: relative;
-            width: 90%;
-            max-width: 600px;
-            margin: 40px auto;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
             border: none;
-            font-size: 1.5rem;
-            color: #64748b;
-            cursor: pointer;
-            padding: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: color 0.2s;
-        }
-
-        .modal-close:hover {
-            color: #1e293b;
-        }
-
-        .modal.show {
-            display: block;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1052 !important;
+            background-color: white;
         }
 
         .modal-header {
-            display: flex;
-            align-items: flex-start;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid #dee2e6;
+            padding: 1.5rem;
+            position: relative;
+            z-index: 1053 !important;
         }
 
-        .modal-product-info {
-            flex: 1;
+        .modal-body {
+            padding: 1.5rem;
+            position: relative;
+            z-index: 1053 !important;
         }
 
-        .modal-product-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 0.5rem;
+        .modal-footer {
+            border-top: 1px solid #dee2e6;
+            padding: 1.5rem;
+            position: relative;
+            z-index: 1053 !important;
         }
 
-        .modal-product-price {
-            font-size: 1.125rem;
-            color: #6366f1;
-            font-weight: 500;
+        /* Make form elements explicitly clickable */
+        .review-form {
+            position: relative;
+            z-index: 1054 !important;
         }
 
-        .modal-product-image {
-            width: 100px;
-            height: 100px;
+        .review-form textarea,
+        .review-form select,
+        .review-form input,
+        .star-rating i {
+            position: relative;
+            z-index: 1055 !important;
+        }
+
+        .star-rating {
+            font-size: 24px;
+            color: #ffd700;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .star-rating i {
+            margin-right: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .star-rating i:hover,
+        .star-rating i.active {
+            transform: scale(1.2);
+        }
+
+        .star-rating i.fas {
+            color: #ffd700;
+        }
+
+        /* Review Button Styles */
+        .review-btn {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+        .review-btn:hover {
+            background-color: #218838;
+            border-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        /* Form Styles */
+        .review-form textarea {
+            resize: none;
             border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
         }
 
-        .modal-product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .review-form .form-select {
+            border-radius: 8px;
         }
 
-        .tracking-container {
-            margin-top: 2rem;
-        }
-
-        .tracking-steps {
-            position: relative;
-            padding-left: 2rem;
-        }
-
-        .tracking-line {
-            position: absolute;
-            top: 2.5rem;
-            left: 1.0rem;
-            width: 2px;
-            height: calc(100% - 5rem);
-            background: #e2e8f0;
-            transform: translateX(-50%);
-        }
-
-        .tracking-line-progress {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            background: var(--primary);
-            width: 0;
-            transition: width 0.8s ease-in-out;
-        }
-
-        .tracking-step {
-            position: relative;
-            z-index: 1;
-            transition: all 0.4s ease-in-out;
-        }
-
-        .tracking-icon {
-            transition: all 0.4s ease-in-out;
-        }
-
-        .tracking-step.active .tracking-icon {
-            background: var(--primary);
-            color: white;
-            animation: iconGlow 1.5s infinite;
-        }
-
-        .tracking-step.completed .tracking-icon {
-            background: var(--primary);
-            color: white;
-        }
-
-        @keyframes iconGlow {
-            0% {
-                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
-            }
-        }
-
-        .tracking-step.completed .tracking-line-progress {
-            width: 100%;
-        }
-
-        .tracking-step {
-            position: relative;
-            padding: 1.5rem 0;
-            display: flex;
-            align-items: flex-start;
-            gap: 1.5rem;
-        }
-
-        .tracking-icon {
-            width: 3rem;
-            height: 3rem;
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            color: #94a3b8;
-            position: relative;
-            z-index: 2;
-            flex-shrink: 0;
-            margin-left: -2.5rem;
-        }
-
-        .tracking-step.active .tracking-icon {
-            border-color: #6366f1;
-            color: #6366f1;
-            background: #fff;
-        }
-
-        .tracking-step.completed .tracking-icon {
-            background: #6366f1;
-            border-color: #6366f1;
-            color: white;
-        }
-
-        .tracking-content {
-            padding-top: 0.5rem;
-        }
-
-        .tracking-label {
-            font-size: 1.125rem;
-            font-weight: 500;
-            color: #94a3b8;
-            margin-bottom: 0.25rem;
-        }
-
-        .tracking-step.active .tracking-label {
-            color: #6366f1;
-        }
-
-        .tracking-step.completed .tracking-label {
-            color: #1e293b;
-        }
-
-        .tracking-time {
-            font-size: 0.875rem;
-            color: #94a3b8;
-        }
-
-        @media (max-width: 768px) {
-            .modal-content {
-                width: 95%;
-                padding: 1.5rem;
-            }
-        }
-
+        /* Track Order Modal Styles - Professional Version */
         .tracking-modal .modal-content {
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
 
         .tracking-modal .modal-header {
-            border-bottom: 1px solid #eee;
             padding: 1.5rem;
+            background: #20c997;
+            color: white;
+            border-bottom: none;
+        }
+        
+        .tracking-modal .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .tracking-modal .btn-close {
+            filter: brightness(0) invert(1);
+            opacity: 0.8;
+        }
+        
+        .product-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--bg-color);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
         }
 
-        .tracking-modal .modal-body {
-            padding: 2rem;
+        .product-info .product-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
         }
 
+        .product-info .details {
+            flex: 1;
+        }
+
+        .product-info .name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .product-info .price {
+            color: #20c997;
+            font-weight: 600;
+        }
+
+        /* Modern Vertical Timeline */
         .tracking-progress {
-            margin-top: 2rem;
+            padding: 0.5rem 1rem 1.5rem;
         }
 
         .track {
             position: relative;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            padding: 20px 0;
+            max-width: 450px;
+            margin: 0 auto;
         }
 
-        .track .step {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            position: relative;
-            padding-left: 15px;
-        }
-
-        .track .step:not(:last-child)::after {
-            content: '';
+        /* Main vertical progress bar */
+        .progress-track {
             position: absolute;
-            left: 40px;
-            top: 50px;
-            width: 3px;
-            height: 50px;
+            top: 0;
+            bottom: 0;
+            left: 16px;
+            width: 4px;
             background-color: #e9ecef;
-            transition: background-color 0.3s ease;
+            z-index: 1;
         }
 
-        .track .step.active:not(:last-child)::after {
-            background-color: #28a745;
+        /* Active progress indicator that grows dynamically */
+        .progress-track-fill {
+            position: absolute;
+            top: 0;
+            left: 16px;
+            width: 4px;
+            background-color: #20c997;
+            z-index: 2;
+            transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .track .step .icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #e9ecef;
+        .step {
+            display: flex;
+            position: relative;
+            z-index: 3;
+            margin-bottom: 2rem;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Step circle indicator */
+        .step-icon {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-right: 15px;
+            flex-shrink: 0;
             color: #6c757d;
             position: relative;
-            z-index: 2;
-            transition: all 0.3s ease;
+            z-index: 4;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .track .step.active .icon {
-            background: #28a745;
-            color: white;
-            transform: scale(1.1);
-            box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+        .step-icon i {
+            font-size: 1rem;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .track .step .text {
-            font-weight: 500;
-            color: #6c757d;
-            transition: all 0.3s ease;
+        .step-content {
+            flex: 1;
+            padding-top: 5px;
         }
 
-        .track .step.active .text {
-            color: #28a745;
-            font-weight: 600;
-        }
-
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .track .step {
-            animation: slideInRight 0.5s ease forwards;
-        }
-
-        .track .step.active {
-            animation: fadeInScale 0.5s ease forwards;
-        }
-
-        .status-text {
-            margin-top: 1.5rem;
-            font-size: 1.1rem;
-            color: #28a745;
-            font-weight: 500;
-        }
-
-        .product-info {
-            display: flex;
-            align-items: center;
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-        }
-
-        .product-info img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .product-info .details {
-            margin-left: 1rem;
-        }
-
-        .product-info .name {
+        .step-title {
             font-weight: 600;
             margin-bottom: 0.25rem;
-        }
-
-        .product-info .price {
             color: #6c757d;
-        }
-
-        .modal-backdrop {
-            z-index: 1040;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .tracking-modal {
-            z-index: 1050;
-        }
-
-        .tracking-modal .modal-content {
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            position: relative;
-            z-index: 1051;
-        }
-
-        .tracking-modal .btn-close {
-            position: absolute;
-            right: 1.5rem;
-            top: 1.5rem;
-            z-index: 1052;
-            opacity: 0.7;
-            transition: opacity 0.2s;
-        }
-
-        .tracking-modal .btn-close:hover {
-            opacity: 1;
-        }
-
-        /* Update product info styles */
-        .product-info {
-            display: flex;
-            align-items: center;
-            padding: 1.5rem;
-            background: #f8f9fa;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .product-info .product-image {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .product-info .details {
-            margin-left: 1.5rem;
-            flex: 1;
-        }
-
-        .product-info .name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-info .price {
             font-size: 1rem;
-            font-weight: 500;
-            color: #48bb78;
+            transition: color 0.3s ease;
+        }
+
+        .step-desc {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-bottom: 0;
+        }
+
+        /* Active Step Styles */
+        .step.active .step-icon {
+            background-color: #20c997;
+            color: white;
+            transform: scale(1.2);
+            box-shadow: 0 0 15px rgba(32, 201, 151, 0.4);
+        }
+
+        .step.active .step-icon i {
+            transform: scale(1.2);
+        }
+
+        .step.active .step-title {
+            color: #20c997;
+        }
+
+        /* Completed Step Styles */
+        .step.completed .step-icon {
+            background-color: #20c997;
+            color: white;
+        }
+
+        .step.completed .step-title {
+            color: #20c997;
+        }
+
+        /* Status summary text */
+        .status-text {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            background-color: rgba(32, 201, 151, 0.1);
+            border-radius: 50px;
+            display: inline-block;
+            font-weight: 600;
+            color: #20c997;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 0.5s forwards;
+        }
+
+        .slide-in {
+            animation: slideIn 0.5s forwards;
+        }
+
+        .pulse {
+            animation: pulse 1s infinite;
+        }
+        
+        .checkmark-animation {
+            animation: checkmark 0.8s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(15px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes checkmark {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        /* Green glowing effect for completed steps */
+        .step.completed .step-icon {
+            box-shadow: 0 0 15px rgba(32, 201, 151, 0.6);
+            animation: greenPulse 2s infinite;
+        }
+        
+        @keyframes greenPulse {
+            0% {
+                box-shadow: 0 0 10px rgba(32, 201, 151, 0.6);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(32, 201, 151, 0.8);
+            }
+            100% {
+                box-shadow: 0 0 10px rgba(32, 201, 151, 0.6);
+            }
         }
     </style>
 </head>
 
 <body>
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     <div class="page-header">
         <div class="container">
             <h1 class="page-title">Order History</h1>
@@ -778,10 +702,17 @@
                     {% endfor %}
                 </div>
 
+                <div style="display: none;">
+                    Debug: 
+                    Status: {{ order.status }}
+                    Track Status: {{ order.track_status }}
+                    Is Delivered: {% if order.status == 'DELIVERED' %}Yes{% else %}No{% endif %}
+                </div>
+
                 <div class="order-footer">
                     <div class="order-footer-left">
-                        <span class="status-badge {% if order.status == 'Dispatched' %}status-dispatched{% elif order.status == 'Pending' %}status-pending{% else %}status-cancelled{% endif %}">
-                            <i class="fas {% if order.status == 'Dispatched' %}fa-truck{% elif order.status == 'Pending' %}fa-clock{% else %}fa-times-circle{% endif %}"></i>
+                        <span class="status-badge {% if order.status == 'DELIVERED' %}status-delivered{% elif order.status == 'IN_TRANSIT' %}status-dispatched{% else %}status-pending{% endif %}">
+                            <i class="fas {% if order.status == 'DELIVERED' %}fa-check-circle{% elif order.status == 'IN_TRANSIT' %}fa-truck{% else %}fa-clock{% endif %}"></i>
                             {{ order.status }}
                         </span>
                         <div class="total-amount">Total: ₹{{ order.total_amount }}</div>
@@ -791,12 +722,31 @@
                             <i class="fas fa-eye"></i>
                             View Details
                         </a>
-                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#trackingModal{{ order.id }}" data-order-id="{{ order.id }}" data-current-status="{{ order.status }}">
+                        
+                        <!-- Track Order button - always visible -->
+                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#trackingModal{{ order.id }}" 
+                           data-order-id="{{ order.id }}" data-current-status="{{ order.status }}">
                             <i class="fas fa-map-marker-alt"></i>
                             Track Order
                         </a>
+
+                        <!-- Review button - only visible when delivered -->
+                        {% if order.status == 'DELIVERED' or order.track_status == 'DELIVERED' or order.status == 'Delivered' %}
+                            <button class="btn btn-primary review-btn" data-bs-toggle="modal" data-bs-target="#reviewModal{{ order.id }}">
+                                <i class="fas fa-star"></i>
+                                Write Review
+                            </button>
+                        {% endif %}
                     </div>
                 </div>
+
+                {% if debug %}
+                    <div style="display: none;" class="debug-info">
+                        <p>Order ID: {{ order.id }}</p>
+                        <p>Status: "{{ order.status }}"</p>
+                        <p>Delivery Status: "{{ order.delivery_status }}"</p>
+                    </div>
+                {% endif %}
             </div>
             {% endfor %}
         {% else %}
@@ -811,6 +761,58 @@
             </div>
         {% endif %}
     </div>
+
+    {% for order in user_orders %}
+        <div class="modal fade" id="reviewModal{{ order.id }}" data-bs-backdrop="static" tabindex="-1" aria-labelledby="reviewModalLabel{{ order.id }}">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reviewModalLabel{{ order.id }}">Write a Review</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="reviewForm{{ order.id }}" class="review-form" action="{% url 'submit_review' %}" method="POST">
+                        {% csrf_token %}
+                            <input type="hidden" name="order_id" value="{{ order.id }}">
+                            
+                            {% if order.orderitem_set.count > 1 %}
+                                <div class="mb-3">
+                                    <label for="product{{ order.id }}" class="form-label">Select Product</label>
+                                    <select class="form-select" id="product{{ order.id }}" name="product_id" required>
+                                        {% for item in order.orderitem_set.all %}
+                                            <option value="{{ item.product.id }}">{{ item.product.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            {% else %}
+                                <input type="hidden" name="product_id" value="{{ order.orderitem_set.first.product.id }}">
+                            {% endif %}
+
+                            <div class="mb-3">
+                                <label class="form-label d-block">Rating</label>
+                                <div class="star-rating" role="group" aria-label="Product rating">
+                                    {% for i in '12345' %}
+                                        <i class="far fa-star" data-rating="{{ forloop.counter }}" role="button" tabindex="0" aria-label="Rate {{ forloop.counter }} star{% if forloop.counter != 1 %}s{% endif %}"></i>
+                                    {% endfor %}
+                                </div>
+                                <input type="hidden" name="rating" id="rating{{ order.id }}" value="" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="review{{ order.id }}" class="form-label">Your Review</label>
+                                <textarea class="form-control" id="review{{ order.id }}" name="review_text" rows="4" required></textarea>
+                            </div>
+
+                            <div class="modal-footer border-0 px-0 pb-0">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary submit-review">Submit Review</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
 
     {% for order in user_orders %}
     <!-- Tracking Modal -->
@@ -834,32 +836,46 @@
 
                     <div class="tracking-progress">
                         <div class="track">
+                            <div class="progress-track"></div>
+                            <div class="progress-track-fill" style="height: 0;"></div>
                             <div class="step" data-status="PICKING_UP">
-                                <div class="icon">
+                                <div class="step-icon">
                                     <i class="fas fa-box"></i>
                                 </div>
-                                <div class="text">Picking Up</div>
+                                <div class="step-content">
+                                    <div class="step-title">Preparing Order</div>
+                                    <div class="step-desc">Getting your package ready</div>
+                                </div>
                             </div>
                             
                             <div class="step" data-status="PICKED_UP">
-                                <div class="icon">
+                                <div class="step-icon">
                                     <i class="fas fa-check"></i>
                                 </div>
-                                <div class="text">Picked Up</div>
+                                <div class="step-content">
+                                    <div class="step-title">Picked Up</div>
+                                    <div class="step-desc">Order has been picked up</div>
+                                </div>
                             </div>
                             
                             <div class="step" data-status="IN_TRANSIT">
-                                <div class="icon">
+                                <div class="step-icon">
                                     <i class="fas fa-truck"></i>
                                 </div>
-                                <div class="text">In Transit</div>
+                                <div class="step-content">
+                                    <div class="step-title">In Transit</div>
+                                    <div class="step-desc">Your order is on the way</div>
+                                </div>
                             </div>
                             
                             <div class="step" data-status="DELIVERED">
-                                <div class="icon">
+                                <div class="step-icon">
                                     <i class="fas fa-home"></i>
                                 </div>
-                                <div class="text">Delivered</div>
+                                <div class="step-content">
+                                    <div class="step-title">Delivered</div>
+                                    <div class="step-desc">Package has been delivered</div>
+                                </div>
                             </div>
                         </div>
                         <div class="status-text text-center"></div>
@@ -879,47 +895,157 @@
             const steps = document.querySelectorAll('.track .step');
             const statusOrder = ['PICKING_UP', 'PICKED_UP', 'IN_TRANSIT', 'DELIVERED'];
             const currentIndex = statusOrder.indexOf(status);
+            const isDelivered = status === 'DELIVERED';
             
+            // Update the progress line to 100% when delivered
+            const progressBar = document.querySelector('.progress-track-fill');
+            if (progressBar) {
+                if (isDelivered) {
+                    // Fill the entire track when delivered
+                    if (animate) {
+                        progressBar.style.transition = 'height 1s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                        setTimeout(() => {
+                            progressBar.style.height = '100%';
+                        }, 200);
+                    } else {
+                        progressBar.style.transition = 'none';
+                        progressBar.style.height = '100%';
+                    }
+                } else {
+                    // Calculate positions for steps that aren't delivered
+                    const stepPositions = [];
+                    steps.forEach((step, index) => {
+                        const stepIcon = step.querySelector('.step-icon');
+                        const iconPosition = stepIcon.offsetTop + (stepIcon.offsetHeight / 2);
+                        stepPositions.push(iconPosition);
+                    });
+                    
+                    let targetHeight;
+                    if (currentIndex === 0) {
+                        targetHeight = stepPositions[0];
+                    } else if (currentIndex >= statusOrder.length - 1) {
+                        targetHeight = '100%';
+                    } else {
+                        targetHeight = stepPositions[currentIndex];
+                    }
+                    
+                    if (animate) {
+                        progressBar.style.transition = 'height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                        setTimeout(() => {
+                            progressBar.style.height = typeof targetHeight === 'number' ? `${targetHeight}px` : targetHeight;
+                        }, 200);
+                    } else {
+                        progressBar.style.transition = 'none';
+                        progressBar.style.height = typeof targetHeight === 'number' ? `${targetHeight}px` : targetHeight;
+                    }
+                }
+            }
+            
+            // Apply special case for delivered status - all steps should be green
+            if (isDelivered) {
+                steps.forEach((step, index) => {
+                    // Remove existing classes first
+                    step.classList.remove('active', 'completed', 'fade-in', 'slide-in', 'pulse');
+                    const stepIcon = step.querySelector('.step-icon');
+                    const stepContent = step.querySelector('.step-content');
+                    
+                    if (index === steps.length - 1) {
+                        // The last step (delivered) is active
+                        if (animate) {
+                            setTimeout(() => {
+                                step.classList.add('active');
+                                stepIcon.classList.add('checkmark-animation');
+                                stepContent.classList.add('slide-in');
+                            }, index * 100 + 500);
+                        } else {
+                            step.classList.add('active');
+                        }
+                    } else {
+                        // All previous steps are completed
+                        if (animate) {
+                            setTimeout(() => {
+                                step.classList.add('completed');
+                                stepIcon.classList.add('checkmark-animation');
+                                stepContent.classList.add('fade-in');
+                            }, index * 150);
+                        } else {
+                            step.classList.add('completed');
+                        }
+                    }
+                });
+                
+                // Update status text for delivered
+                const statusText = document.querySelector('.status-text');
+                if (statusText) {
+                    if (animate) {
+                        statusText.style.opacity = '0';
+                        setTimeout(() => {
+                            statusText.textContent = 'Package has been delivered successfully';
+                            statusText.style.opacity = '1';
+                            statusText.classList.add('fade-in');
+                        }, 600);
+                    } else {
+                        statusText.textContent = 'Package has been delivered successfully';
+                        statusText.style.opacity = '1';
+                    }
+                }
+                
+                return; // Exit early as we've handled the delivered case
+            }
+            
+            // Regular handling for non-delivered statuses
             steps.forEach((step, index) => {
                 const stepStatus = step.getAttribute('data-status');
                 const stepIndex = statusOrder.indexOf(stepStatus);
                 
                 // Remove existing classes first
-                step.classList.remove('active', 'completed');
+                step.classList.remove('active', 'completed', 'fade-in', 'slide-in', 'pulse');
+                const stepIcon = step.querySelector('.step-icon');
+                const stepContent = step.querySelector('.step-content');
                 
-                if (stepIndex <= currentIndex) {
+                if (stepIndex < currentIndex) {
+                    // Completed steps
+                    if (animate) {
+                        setTimeout(() => {
+                            step.classList.add('completed');
+                            stepContent.classList.add('fade-in');
+                        }, index * 150);
+                    } else {
+                        step.classList.add('completed');
+                    }
+                } else if (stepIndex === currentIndex) {
+                    // Current active step
                     if (animate) {
                         setTimeout(() => {
                             step.classList.add('active');
-                            if (stepIndex < currentIndex) {
-                                step.classList.add('completed');
-                            }
-                        }, index * 200);
+                            stepIcon.classList.add('pulse');
+                            stepContent.classList.add('slide-in');
+                        }, index * 150 + 300);
                     } else {
                         step.classList.add('active');
-                        if (stepIndex < currentIndex) {
-                            step.classList.add('completed');
-                        }
                     }
                 }
             });
 
-            // Update status text
+            // Update status message
             const statusText = document.querySelector('.status-text');
             if (statusText) {
                 const statusMessages = {
                     'PICKING_UP': 'Preparing your order',
-                    'PICKED_UP': 'Order has been picked up',
+                    'PICKED_UP': 'Your order has been picked up',
                     'IN_TRANSIT': 'Your order is on the way',
-                    'DELIVERED': 'Package has been delivered'
+                    'DELIVERED': 'Package has been delivered successfully'
                 };
+                
+                statusText.classList.remove('fade-in');
                 
                 if (animate) {
                     statusText.style.opacity = '0';
                     setTimeout(() => {
                         statusText.textContent = statusMessages[status] || status;
                         statusText.style.opacity = '1';
-                    }, 300);
+                        statusText.classList.add('fade-in');
+                    }, 400);
                 } else {
                     statusText.textContent = statusMessages[status] || status;
                     statusText.style.opacity = '1';
@@ -988,24 +1114,250 @@
             
             modals.forEach(modal => {
                 // Handle modal close
-                modal.addEventListener('hidden.bs.modal', function() {
-                    closeWebSocket();
+                const closeBtn = modal.querySelector('.close-tracking');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', function() {
+                        closeWebSocket();
+                    });
+                }
+                
+                // Initialize tracking functionality
+                modal.addEventListener('show.bs.modal', function(event) {
+                    const orderId = event.relatedTarget.getAttribute('data-order-id');
+                    if (orderId) {
+                        initializeTracking(orderId);
+                    }
                 });
             });
-
-            // Handle track order button clicks
-            const trackButtons = document.querySelectorAll('[data-bs-toggle="modal"][data-bs-target^="#trackingModal"]');
-            trackButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const orderId = this.getAttribute('data-order-id');
-                    const currentStatus = this.getAttribute('data-current-status');
-                    console.log('Opening modal for order:', orderId, 'with status:', currentStatus);
+            
+            // Initialize all review forms
+            const reviewForms = document.querySelectorAll('.review-form');
+            reviewForms.forEach(form => {
+                // Initialize star rating for each form
+                const stars = form.querySelectorAll('.star-rating i');
+                const ratingInput = form.querySelector('input[name="rating"]');
+                
+                // Add form submission handler
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
                     
-                    if (orderId) {
-                        if (currentStatus) {
-                            updateTrackingUI(currentStatus, false);  // Don't animate initial state
+                    console.log('Form submission attempt');
+                    
+                    // Create FormData object from the form
+                    const formData = new FormData(this);
+                    
+                    // Log form data for debugging
+                    console.log('Form data:');
+                    for (let pair of formData.entries()) {
+                        console.log(pair[0] + ': ' + pair[1]);
+                    }
+                    
+                    // Check if rating was selected
+                    const ratingValue = formData.get('rating');
+                    if (!ratingValue) {
+                        Swal.fire('Error', 'Please select a rating', 'error');
+                        console.log('Form submission prevented: No rating selected');
+                        return false;
+                    }
+                    
+                    // Check if review text is not empty
+                    const reviewText = formData.get('review_text').trim();
+                    if (!reviewText) {
+                        Swal.fire('Error', 'Please write your review', 'error');
+                        console.log('Form submission prevented: No review text');
+                        return false;
+                    }
+
+                    // Disable the submit button to prevent multiple submissions
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+                    }
+
+                    // Get the CSRF token
+                    const csrfToken = formData.get('csrfmiddlewaretoken');
+                    console.log('CSRF Token:', csrfToken);
+
+                    // Submit the form using fetch API
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': csrfToken
+                        },
+                        credentials: 'same-origin'
+                    })
+                    .then(response => {
+                        console.log('Response status:', response.status);
+                        
+                        // Check if the response is a redirect
+                        if (response.redirected) {
+                            console.log('Redirected to:', response.url);
+                            window.location.href = response.url;
+                            return { success: true, message: 'Redirected' }; // Return a valid JSON object
                         }
-                        initializeTracking(orderId);
+                        
+                        // Check content type to handle different response types
+                        const contentType = response.headers.get('content-type');
+                        if (contentType && contentType.includes('application/json')) {
+                            // If it's JSON, parse it
+                            return response.json().catch(error => {
+                                console.error('Error parsing JSON:', error);
+                                return { 
+                                    success: response.ok, 
+                                    message: response.ok ? 'Success' : 'Error occurred'
+                                };
+                            });
+                        } else {
+                            // If it's not JSON (likely HTML), log it for debugging and return a default object
+                            console.log('Non-JSON response received');
+                            return response.text().then(text => {
+                                console.log('Response text (first 100 chars):', text.substring(0, 100));
+                                return { 
+                                    success: response.ok, 
+                                    message: response.ok ? 'Success' : 'Error occurred'
+                                };
+                            });
+                        }
+                    })
+                    .then(data => {
+                        console.log('Response data:', data);
+                        
+                        // Re-enable the submit button
+                        if (submitButton) {
+                            submitButton.disabled = false;
+                            submitButton.innerHTML = 'Submit Review';
+                        }
+                        
+                        // Check if the response indicates success
+                        if (data.success) {
+                            // Close the modal if it exists - IMPORTANT: Remove focus from form elements first
+                            const modalElement = form.closest('.modal');
+                            if (modalElement) {
+                                // Remove focus from all form elements before closing
+                                document.activeElement.blur();
+                                
+                                // Close the modal
+                                const modal = bootstrap.Modal.getInstance(modalElement);
+                                if (modal) {
+                                    // Set aria-hidden to false before closing to prevent accessibility issues
+                                    modalElement.setAttribute('aria-hidden', 'false');
+                                    modal.hide();
+                                }
+                            }
+                            
+                            // Show success message
+                            Swal.fire({
+                                title: 'Success',
+                                text: data.message || 'Your review has been submitted successfully',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                // Reload the page to show the new review
+                                window.location.reload();
+                            });
+                        } else {
+                            // Show error message
+                            Swal.fire({
+                                title: 'Error',
+                                text: data.message || 'There was an error submitting your review. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error submitting review:', error);
+                        
+                        // Re-enable the submit button
+                        if (submitButton) {
+                            submitButton.disabled = false;
+                            submitButton.innerHTML = 'Submit Review';
+                        }
+                        
+                        // Show error message
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'There was an error submitting your review. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    });
+                });
+                
+                // Star rating functionality
+                stars.forEach(star => {
+                    star.addEventListener('click', function() {
+                        const rating = this.dataset.rating;
+                        ratingInput.value = rating;
+                        console.log('Rating set to:', rating);
+                        
+                        // Update star appearance
+                        stars.forEach(s => {
+                            if (s.dataset.rating <= rating) {
+                                s.classList.remove('far');
+                                s.classList.add('fas');
+                            } else {
+                                s.classList.remove('fas');
+                                s.classList.add('far');
+                            }
+                        });
+                    });
+                    
+                    star.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            this.click();
+                        }
+                    });
+                });
+            });
+            
+            // Fix for aria-hidden issue with modals
+            const allModals = document.querySelectorAll('.modal');
+            allModals.forEach(modal => {
+                // Store the element that triggered the modal
+                let lastFocusedElement = null;
+
+                modal.addEventListener('show.bs.modal', function(event) {
+                    lastFocusedElement = event.relatedTarget;
+                    
+                    // Remove aria-hidden from modal
+                    modal.removeAttribute('aria-hidden');
+                });
+
+                modal.addEventListener('hide.bs.modal', function() {
+                    // Remove focus from all form elements before closing
+                    if (document.activeElement && document.activeElement !== document.body) {
+                        document.activeElement.blur();
+                    }
+                });
+
+                modal.addEventListener('hidden.bs.modal', function() {
+                    // Restore focus to the element that opened the modal
+                    if (lastFocusedElement) {
+                        lastFocusedElement.focus();
+                    }
+                    
+                    // Reset form if exists
+                    const form = modal.querySelector('form');
+                    if (form) {
+                        form.reset();
+                        
+                        // Reset star ratings
+                        const stars = form.querySelectorAll('.star-rating i');
+                        stars.forEach(star => {
+                            star.classList.remove('fas');
+                            star.classList.add('far');
+                        });
+                        
+                        // Reset hidden rating input
+                        const ratingInput = form.querySelector('input[name="rating"]');
+                        if (ratingInput) {
+                            ratingInput.value = '';
+                        }
                     }
                 });
             });
@@ -1014,5 +1366,8 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

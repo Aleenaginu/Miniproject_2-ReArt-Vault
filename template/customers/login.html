@@ -5,21 +5,19 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'login.css' %}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Login</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
-            overflow: hidden; /* Hide scrollbars */
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh; /* Ensure it covers the full viewport height */
+            height: 100vh;
             margin: 0;
-            background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            background: rgba(0, 0, 0, 0.5);
         }
         .background-container {
             position: fixed;
@@ -30,29 +28,28 @@
             background-image: url("{% static 'log.jpg' %}");
             background-size: cover;
             background-position: center;
-            filter: blur(12px); /* Apply blur effect */
-            z-index: -1; /* Send to back */
+            filter: blur(12px);
+            z-index: -1;
         }
         .main {
             display: flex;
             justify-content: center;
             align-items: center;
             width: 60%;
-            max-width: 1200px; /* Adjust max-width for better fit */
-            background: rgba(255, 255, 255, 0.9); /* Semi-transparent background */
+            max-width: 1200px;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
-            /* overflow: hidden; */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-            height: 70vh; /* Adjust the height as needed */
-            max-height: 1000px; /* Optionally set a maximum height */
-            overflow: hidden; /* Hide scrollbars for the main container */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            height: 70vh;
+            max-height: 1000px;
+            overflow: hidden;
         }
         .left {
             flex: 1;
             background-image: url("{% static 'log.jpg' %}");
             background-size: cover;
             background-position: center;
-            height: 100%; /* Ensure the height is 100% of the main container */
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -63,24 +60,26 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px; /* Adjust padding to make it smaller */
+            padding: 20px;
         }
         .input-box {
             width: 100%;
-            max-width: 400px; /* Keeps the maximum width constraint */
-            height: 450px; /* Increase the height as needed */
-            background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+            max-width: 400px;
+            height: 450px;
+            background: rgba(255, 255, 255, 0.8);
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-            /* overflow: auto;  */
-            overflow: hidden; /* Hide scrollbars for the input box */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
         header {
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 20px;
             text-align: center;
+        }
+        .input-field {
+            margin-bottom: 20px;
         }
         .form-group label {
             font-size: 14px;
@@ -89,199 +88,77 @@
         .form-control {
             font-size: 14px;
             padding: 10px;
-        }
-        .btn-block {
-            width: 100%;
-        }
-        .signin span {
-            display: block;
-            margin-top: 10px;
-            text-align: center;
-        }
-        .signin a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .btn-google {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 15px;
-            height: 40px;
-            color: rgba(0, 0, 0, 0.54);
-            background-color: #fff;
-            border: 1px solid #dadce0;
             border-radius: 4px;
-            text-decoration: none;
-            font-family: "Google Sans", Roboto, Arial, sans-serif;
-            font-size: 14px;
+        }
+        .btn {
+            padding: 0.6rem 1rem;
             font-weight: 500;
-            width: 48%;
-            transition: background-color 0.2s;
-            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            width: 100%;
+            margin-bottom: 10px;
         }
-
-        .btn-google:hover {
-            background-color: #f8f9fa;
-            border-color: #dadce0;
-        }
-
-        .btn-google img {
-            width: 18px;
-            height: 18px;
-            margin-right: 8px;
-        }
-
         .btn-face {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 15px;
-            height: 40px;
-            color: #fff;
-            background-color: #2ecc71;
-            border: none;
-            border-radius: 4px;
-            text-decoration: none;
-            font-family: "Google Sans", Roboto, Arial, sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            width: 48%;
-            transition: background-color 0.2s;
-            cursor: pointer;
-            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
-        }
-
-        .btn-face:hover {
-            background-color: #27ae60;
-        }
-
-        .btn-face i {
-            margin-right: 8px;
-            font-size: 18px;
-        }
-        .error-message {
-            color: red;
-            display: none;
-        }
-        .input-field {
-            margin-bottom: 20px; /* Add margin-bottom to each input-field */
-        }
-        .forgot-password {
-            display: block;
-            text-align: right;
-            margin-top: 5px; /* Adjusted margin-top */
-            margin-bottom: -10px; /* Adjusted margin-bottom */
-        }
-        .face-guide {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 200px;
-            height: 200px;
-            border: 2px solid #4285F4;
-            border-radius: 50%;
-            pointer-events: none;
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-
-        .face-guide::after {
-            content: attr(data-status);
-            position: absolute;
-            bottom: -40px;
-            left: 50%;
-            transform: translateX(-50%);
-            white-space: nowrap;
+            background-color: #28a745;
             color: white;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
+            border: none;
+            transition: background-color 0.3s ease;
         }
-
-        .face-guide.no-face {
-            border-color: #EA4335;
-            box-shadow: 0 0 15px rgba(234, 67, 53, 0.5);
-        }
-
-        .face-guide.detected {
-            border-color: #34A853;
-            box-shadow: 0 0 15px rgba(52, 168, 83, 0.5);
-        }
-
-        .face-guide.searching {
-            border-color: #FBBC05;
-            box-shadow: 0 0 15px rgba(251, 188, 5, 0.5);
-            animation: pulse 1.5s infinite;
-        }
-
-        .face-guide.success {
-            border-color: #34A853;
-            box-shadow: 0 0 20px rgba(52, 168, 83, 0.7);
-            animation: success-pulse 1s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.05); }
-            100% { transform: translate(-50%, -50%) scale(1); }
-        }
-
-        @keyframes success-pulse {
-            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; }
+        .btn-face:hover {
+            background-color: #218838;
+            color: white;
         }
         .camera-container {
             position: relative;
             width: 100%;
             max-width: 400px;
             margin: 0 auto;
+            display: none;
+            border-radius: 8px;
+            overflow: hidden;
         }
-        #faceVideo {
+        .camera-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .face-guide {
+            width: 200px;
+            height: 200px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+        }
+        #camera {
             transform: scaleX(-1);
             width: 100%;
             border-radius: 8px;
         }
-        #cameraError {
-            margin-bottom: 1rem;
+        .signin {
+            text-align: center;
+            margin-top: 15px;
         }
-        #cameraError .btn-link {
-            padding: 0;
-            margin-left: 5px;
-            vertical-align: baseline;
+        .signin a {
+            color: #007bff;
+            text-decoration: none;
         }
-        .home-btn {
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            font-size: 14px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border: 2px solid #6c757d;
+        .signin a:hover {
+            text-decoration: underline;
         }
-
-        .home-btn:hover {
-            background-color: #6c757d;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        .back-to-home {
+            color: #6c757d;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.9rem;
+            margin-top: 10px;
         }
-
-        .home-btn:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        .back-to-home:hover {
+            color: #5a6268;
         }
     </style>
 </head>
@@ -293,404 +170,55 @@
         <div class="right">
             <div class="input-box">
                 <header>Login</header>
-                <form method="POST" action="{% url 'customerlogin' %}">
+                
+                <!-- Password Login Form -->
+                <form id="passwordLoginForm" method="post">
                     {% csrf_token %}
-                    <div class="form-group">
+                    <div class="input-field">
                         <label for="username">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
+                        <input type="text" class="form-control" name="username" id="username" required autocomplete="off">
                     </div>
-                    <div class="form-group">
+                    <div class="input-field">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                        <input type="password" class="form-control" name="password" id="password" required>
                     </div>
-                    <div class="form-group mt-4">
-                        <button type="submit" class="btn btn-primary w-100">Login</button>
-                    </div>
-                    <div class="form-group mt-3">
-                        <button type="button" class="btn btn-secondary w-100" data-bs-toggle="modal" data-bs-target="#faceLoginModal">
-                            <i class="fas fa-camera"></i> Login with Face
+                    <div class="input-field">
+                        <button type="submit" class="btn btn-primary">Login with Password</button>
+                        <button type="button" id="faceLoginBtn" class="btn btn-face">
+                            <i class="fas fa-camera me-2"></i>Login with Face ID
                         </button>
-                    </div>
-                    <div class="mt-3 text-center">
-                        <small>Don't have an account? <a href="{% url 'customer_register' %}">Register here</a></small>
-                    </div>
-                    <div class="mt-3">
-                        <a href="{% url 'index' %}" class="btn btn-outline-secondary w-100 home-btn" style="transition: all 0.3s ease;">
-                            <i class="fas fa-home me-2"></i>Back to Home
-                        </a>
                     </div>
                 </form>
 
-                <!-- Face Login Modal -->
-                <div class="modal fade" id="faceLoginModal" tabindex="-1" aria-labelledby="faceLoginModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="faceLoginModalLabel">Face Login</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body text-center">
-                                <div id="cameraError" class="alert alert-danger d-none">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    Unable to access camera. Please make sure you have granted camera permissions.
-                                </div>
-                                <div id="verificationStatus" class="alert d-none" role="alert"></div>
-                                <div class="camera-container" style="position: relative; width: 100%; height: 400px; background: #000; border-radius: 8px; overflow: hidden;">
-                                    <video id="faceVideo" autoplay playsinline muted 
-                                           style="width: 100%; height: 100%; object-fit: cover;"></video>
-                                           <div id="faceGuide" class="face-guide" data-status="Position your face in the circle"></div>
-                                </div>
-                            </div>
+                <!-- Face Login Form -->
+                <div id="faceLoginForm" style="display: none;">
+                    <div class="text-center mb-3">
+                        <p class="text-muted small">Please position your face in front of the camera</p>
+                    </div>
+                    <div class="camera-container">
+                        <video id="camera" autoplay playsinline></video>
+                        <div class="camera-overlay">
+                            <div class="face-guide"></div>
                         </div>
+                    </div>
+                    <div class="d-grid gap-2 mt-3">
+                        <button id="captureFaceBtn" class="btn btn-face">
+                            <i class="fas fa-camera me-2"></i>Capture & Login
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="showLoginForm('password')">
+                            Back to Password Login
+                        </button>
                     </div>
                 </div>
 
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const elements = {
-                            modal: document.getElementById('faceLoginModal'),
-                            video: document.getElementById('faceVideo'),
-                            cameraError: document.getElementById('cameraError'),
-                            faceGuide: document.getElementById('faceGuide'),
-                            verificationStatus: document.getElementById('verificationStatus')
-                        };
-
-                        let stream = null;
-                        let isVerifying = false;
-                        let modalInstance = null;
-                        let faceCheckInterval = null;
-                        let lastVerificationTime = 0;
-                        const VERIFICATION_COOLDOWN = 2000; // 2 seconds between verifications
-
-                        // Initialize Bootstrap modal
-                        if (elements.modal) {
-                            modalInstance = new bootstrap.Modal(elements.modal);
-                        }
-
-                        // Function to safely update DOM element
-                        function updateElement(element, updateFn) {
-                            if (element && typeof updateFn === 'function') {
-                                updateFn(element);
-                            }
-                        }
-
-                        // Function to show verification status
-                        function showVerificationStatus(message, type = 'info') {
-                            updateElement(elements.verificationStatus, (el) => {
-                                el.textContent = message;
-                                el.className = `alert alert-${type} d-block`;
-                            });
-                        }
-
-                        // Function to update face guide
-                        function updateFaceGuide(status, message) {
-                            const guide = elements.faceGuide;
-                            if (!guide) return;
-
-                            // Remove all existing classes
-                            guide.className = 'face-guide';
-                            
-                            switch(status) {
-                                case 'no_face':
-                                    guide.classList.add('no-face');
-                                    guide.setAttribute('data-status', message || 'No face detected');
-                                    break;
-                                    
-                                case 'detected':
-                                    guide.classList.add('detected');
-                                    guide.setAttribute('data-status', message || 'Face detected');
-                                    break;
-                                    
-                                case 'searching':
-                                    guide.classList.add('searching');
-                                    guide.setAttribute('data-status', message || 'Checking database...');
-                                    break;
-                                    
-                                case 'not_recognized':
-                                    guide.classList.add('no-face');
-                                    guide.setAttribute('data-status', message || 'Face not recognized');
-                                    break;
-                                    
-                                case 'success':
-                                    guide.classList.add('success');
-                                    guide.setAttribute('data-status', message || 'Access granted!');
-                                    break;
-                                    
-                                default:
-                                    guide.setAttribute('data-status', 'Position your face in the circle');
-                            }
-                        }
-
-                        // Function to capture and verify face
-                        async function captureAndVerifyFace() {
-                            if (isVerifying || !elements.video || !elements.video.srcObject) return;
-                            
-                            const now = Date.now();
-                            if (now - lastVerificationTime < VERIFICATION_COOLDOWN) return;
-                            lastVerificationTime = now;
-
-                            isVerifying = true;
-                            try {
-                                // Make sure video is ready
-                                if (elements.video.readyState !== 4) {
-                                    console.log('Video not ready yet');
-                                    return;
-                                }
-
-                                // Create canvas with video dimensions but scaled down
-                                const canvas = document.createElement('canvas');
-                                // Scale down the image to 640x480 for better performance
-                                canvas.width = 640;
-                                canvas.height = 480;
-                                
-                                // Make sure we have valid dimensions
-                                if (canvas.width === 0 || canvas.height === 0) {
-                                    console.log('Invalid video dimensions:', canvas.width, canvas.height);
-                                    return;
-                                }
-
-                                // Draw video frame to canvas with scaling
-                                const ctx = canvas.getContext('2d');
-                                ctx.drawImage(elements.video, 0, 0, canvas.width, canvas.height);
-
-                                // Get image data with lower quality for smaller file size
-                                const imageData = canvas.toDataURL('image/jpeg', 0.6);
-                                
-                                // Debug logging
-                                console.log('Canvas dimensions:', canvas.width, 'x', canvas.height);
-                                console.log('Image data length:', imageData.length);
-
-                                if (!imageData || imageData === 'data:,') {
-                                    console.error('Failed to capture image data');
-                                    showVerificationStatus('Failed to capture camera image', 'error');
-                                    return;
-                                }
-
-                                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-                                // Prepare request data
-                                const requestData = {
-                                    face_data: imageData
-                                };
-
-                                // Set timeout for the fetch request
-                                const controller = new AbortController();
-                                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
-                                try {
-                                    // Send request with timeout
-                                    const response = await fetch('/face_auth/verify/', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'X-CSRFToken': csrftoken,
-                                            'Accept': 'application/json'
-                                        },
-                                        body: JSON.stringify(requestData),
-                                        signal: controller.signal
-                                    });
-
-                                    clearTimeout(timeoutId);
-
-                                    if (!response.ok) {
-                                        const errorText = await response.text();
-                                        throw new Error(`Server error: ${errorText}`);
-                                    }
-
-                                    const result = await response.json();
-                                    
-                                    // Handle different status responses
-                                    switch(result.status) {
-                                        case 'no_face':
-                                            updateFaceGuide('no_face', 'No face detected');
-                                            break;
-                                            
-                                        case 'multiple_faces':
-                                            updateFaceGuide('no_face', 'Multiple faces detected');
-                                            break;
-                                            
-                                        case 'face_detected':
-                                            updateFaceGuide('detected', 'Face detected!');
-                                            break;
-                                            
-                                        case 'no_registered_users':
-                                            updateFaceGuide('not_recognized', 'No registered users found');
-                                            break;
-                                            
-                                        case 'face_not_recognized':
-                                            updateFaceGuide('not_recognized', 'Face not recognized');
-                                            break;
-                                            
-                                        case 'success':
-                                            updateFaceGuide('success', 'Access granted! Logging you in...');
-                                            setTimeout(() => {
-                                                stopCamera();
-                                                window.location.href = result.redirect_url;
-                                            }, 1000);
-                                            break;
-                                            
-                                        case 'error':
-                                        default:
-                                            updateFaceGuide('no_face', result.error || 'An error occurred');
-                                            break;
-                                    }
-                                } catch (error) {
-                                    if (error.name === 'AbortError') {
-                                        console.error('Request timed out');
-                                        updateFaceGuide('no_face', 'Request timed out. Please try again.');
-                                    } else {
-                                        console.error('Network error:', error);
-                                        updateFaceGuide('no_face', 'Network error. Please try again.');
-                                    }
-                                } finally {
-                                    clearTimeout(timeoutId);
-                                }
-
-                            } catch (error) {
-                                console.error('Face verification error:', error);
-                                updateFaceGuide('no_face', error.message || 'An error occurred');
-                            } finally {
-                                isVerifying = false;
-                            }
-                        }
-
-                        // Function to start camera with error handling
-                        async function startCamera() {
-                            try {
-                                if (stream) {
-                                    stream.getTracks().forEach(track => track.stop());
-                                }
-
-                                // Request lower resolution for better performance
-                                stream = await navigator.mediaDevices.getUserMedia({ 
-                                    video: { 
-                                        width: { ideal: 640 },
-                                        height: { ideal: 480 },
-                                        facingMode: "user"
-                                    } 
-                                });
-
-                                if (elements.video) {
-                                    elements.video.srcObject = stream;
-                                    await new Promise((resolve) => {
-                                        elements.video.onloadedmetadata = () => {
-                                            elements.video.play().then(resolve);
-                                        };
-                                    });
-
-                                    // Start periodic face verification after camera is ready
-                                    if (faceCheckInterval) {
-                                        clearInterval(faceCheckInterval);
-                                    }
-                                    faceCheckInterval = setInterval(captureAndVerifyFace, 1500); // Increased interval to 1.5 seconds
-                                }
-
-                                updateElement(elements.cameraError, (el) => el.classList.add('d-none'));
-                                updateFaceGuide('active', 'Position your face in the circle');
-                            } catch (err) {
-                                console.error('Error accessing camera:', err);
-                                updateElement(elements.cameraError, (el) => el.classList.remove('d-none'));
-                                updateFaceGuide('error', 'Camera access error. Please check permissions.');
-                            }
-                        }
-
-                        // Function to stop camera
-                        function stopCamera() {
-                            if (faceCheckInterval) {
-                                clearInterval(faceCheckInterval);
-                                faceCheckInterval = null;
-                            }
-
-                            if (stream) {
-                                stream.getTracks().forEach(track => track.stop());
-                                stream = null;
-                            }
-
-                            updateElement(elements.video, (el) => {
-                                el.srcObject = null;
-                                el.load(); // Reset video element
-                            });
-                        }
-
-                        // Set up event handlers only if modal exists
-                        if (elements.modal) {
-                            elements.modal.addEventListener('show.bs.modal', () => {
-                                console.log('Modal showing...');
-                                isVerifying = false;
-                                lastVerificationTime = 0;
-                            });
-
-                            elements.modal.addEventListener('shown.bs.modal', () => {
-                                console.log('Modal shown, starting camera...');
-                                startCamera().catch(console.error);
-                            });
-
-                            elements.modal.addEventListener('hide.bs.modal', () => {
-                                console.log('Modal hiding...');
-                                stopCamera();
-                            });
-
-                            elements.modal.addEventListener('hidden.bs.modal', () => {
-                                console.log('Modal hidden');
-                                updateElement(elements.verificationStatus, (el) => {
-                                    el.className = 'alert d-none';
-                                });
-                            });
-                        }
-                    });
-                </script>
-
-                <style>
-                    .camera-container {
-                        position: relative;
-                        width: 100%;
-                        max-width: 400px;
-                        margin: 0 auto;
-                    }
-                    .face-guide {
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-                        width: 200px;
-                        height: 200px;
-                        border: 2px solid #fff;
-                        border-radius: 50%;
-                        pointer-events: none;
-                        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
-                    }
-                    #faceVideo {
-                        transform: scaleX(-1);
-                        width: 100%;
-                        border-radius: 8px;
-                    }
-                    #cameraError {
-                        margin-bottom: 1rem;
-                    }
-                    #cameraError .btn-link {
-                        padding: 0;
-                        margin-left: 5px;
-                        vertical-align: baseline;
-                    }
-                    #verificationStatus {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    padding: 8px 16px;
-    border-radius: 4px;
-    transition: opacity 0.3s ease;
-}
-
-#verificationStatus.show {
-    opacity: 1;
-}
-
-#verificationStatus.d-none {
-    opacity: 0;
-}
-                </style>
+                <div class="signin">
+                    <span>Don't have an account? <a href="{% url 'customer_register' %}">Register here</a></span>
+                    <div class="mt-2">
+                        <a href="{% url 'index' %}" class="back-to-home">
+                            <i class="fas fa-home me-2"></i>Back to Home
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -698,7 +226,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
     <script>
-        // Function to get CSRF token from cookies
+        let stream = null;
+
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -714,397 +243,115 @@
             return cookieValue;
         }
 
-        let stream = null;
-        const video = document.getElementById('faceVideo'); // Changed from 'video' to 'faceVideo'
-        const canvas = document.createElement('canvas');
-        const faceLoginBtn = document.getElementById('faceLoginBtn');
-        const faceLoginModal = document.getElementById('faceLoginModal');
+        function showLoginForm(method) {
+            const passwordForm = document.getElementById('passwordLoginForm');
+            const faceForm = document.getElementById('faceLoginForm');
+            const cameraContainer = document.querySelector('.camera-container');
 
-        // Enrollment elements
-        const enrollVideo = document.getElementById('enrollVideo');
-        const enrollCanvas = document.createElement('canvas');
-        const enrollCaptureBtn = document.getElementById('enrollFaceBtn');
-        const enrollFaceModal = document.getElementById('enrollFaceModal');
-        const enrollUsername = document.getElementById('enroll-username');
-        const enrollPassword = document.getElementById('enroll-password');
-        let enrollStream = null;
-
-        // Face verification variables
-        let verificationAttempts = 0;
-        const MAX_VERIFICATION_ATTEMPTS = 3;
-        const RETRY_DELAY = 2000; // 2 seconds
-        let isVerifying = false;
-
-        // Function to handle face verification errors
-        function handleFaceVerificationError(error, showMessage = true) {
-            // Only show error message if showMessage is true
-            if (showMessage) {
-                if (error.includes('No enrolled faces found')) {
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'Face Not Enrolled',
-                        text: 'You need to enroll your face before using Face ID login.',
-                        showCancelButton: true,
-                        confirmButtonText: 'Enroll Now',
-                        cancelButtonText: 'Cancel'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Close verification modal
-                            bootstrap.Modal.getInstance(faceLoginModal).hide();
-                            // Open enrollment modal
-                            new bootstrap.Modal(enrollFaceModal).show();
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Face Verification Failed',
-                        text: error,
-                        confirmButtonText: 'Try Again'
-                    });
-                }
+            if (method === 'password') {
+                passwordForm.style.display = 'block';
+                faceForm.style.display = 'none';
+                cameraContainer.style.display = 'none';
+                stopCamera();
+            } else {
+                passwordForm.style.display = 'none';
+                faceForm.style.display = 'block';
+                cameraContainer.style.display = 'block';
+                startCamera();
             }
         }
-        function updateFaceGuide(status, message) {
-    const guide = document.getElementById('faceGuide');
-    if (!guide) {
-        console.warn('Face guide element not found');
-        return;
-    }
-    
-    guide.classList.remove('active', 'error');
-    guide.setAttribute('data-status', message || 'Position your face in the circle');
-    
-    switch(status) {
-        case 'active':
-            guide.classList.add('active');
-            break;
-        case 'error':
-            guide.classList.add('error');
-            break;
-    }
-}
 
-function showVerificationStatus(message, isError = false) {
-    const status = document.getElementById('verificationStatus');
-    if (!status) {
-        console.warn('Verification status element not found');
-        return;
-    }
-    
-    status.textContent = message;
-    status.className = `alert ${isError ? 'alert-danger' : 'alert-success'} d-block`;
-    
-    // Hide after 3 seconds
-    setTimeout(() => {
-        if (status) {
-            status.className = 'alert d-none';
-        }
-    }, 3000);
-}
-
-        async function verifyFace() {
-            if (isVerifying) return;
-            isVerifying = true;
-            
+        async function startCamera() {
             try {
-                updateFaceGuide('active', 'Verifying...');
-                
-                // Make sure video is playing
-                if (!video.srcObject || video.paused || video.ended) {
-                    throw new Error('Video stream is not active');
-                }
-
-                // Create canvas with video dimensions
-                const canvas = document.createElement('canvas');
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const ctx = canvas.getContext('2d');
-                
-                // Draw the video frame to canvas
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                // Get the image data as base64
-                const imageData = canvas.toDataURL('image/jpeg', 0.8);
-
-                console.log('Image data length:', imageData.length);
-                console.log('Image data preview:', imageData.substring(0, 50));
-
-                // Verify the image data is not empty
-                if (!imageData || imageData === 'data:,') {
-                    throw new Error('Failed to capture image from camera');
-                }
-
-                // Get CSRF token
-                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-                
-                if (!csrftoken) {
-                    throw new Error('CSRF token not found');
-                }
-
-                // Prepare request data
-                const requestData = {
-    face_data: imageData.split('base64,')[1]  // Send only the base64 data without the prefix
-};
-                
-                console.log('Sending request with data:', {
-                    url: '/face_auth/verify/',
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken
-                    },
-                    body: JSON.stringify(requestData)
-                });
-
-                // Send request
-                const response = await fetch('/face_auth/verify/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken
-                    },
-                    body: JSON.stringify(requestData)
-                });
-
-                console.log('Response status:', response.status);
-                const result = await response.json();
-                console.log('Response data:', result);
-                
-                if (result.success) {
-                    showVerificationStatus('Verification successful!');
-                    updateFaceGuide('active', 'Access granted!');
-                    window.location.href = result.redirect_url;
-                } else {
-                    verificationAttempts++;
-                    updateFaceGuide('error', 'Verification failed. Please try again.');
-                    showVerificationStatus(result.error || 'Verification failed. Please try again.', true);
-                }
-            } catch (error) {
-                console.error('Face verification error:', error);
-                showVerificationStatus(error.message || 'An error occurred. Please try again.', true);
-                updateFaceGuide('error', 'An error occurred. Please try again.');
-            } finally {
-                isVerifying = false;
-            }
-        }
-
-        // Face login modal show handler
-        faceLoginModal.addEventListener('show.bs.modal', async () => {
-    try {
-        verificationAttempts = 0;
-        const loadingMessage = document.createElement('div');
-        loadingMessage.className = 'alert alert-info text-center';
-        loadingMessage.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparing camera...';
-        video.parentElement.insertBefore(loadingMessage, video);
-
-        stream = await navigator.mediaDevices.getUserMedia({ 
-            video: { 
-                width: { ideal: 640 },
-                height: { ideal: 480 }
-            } 
-        });
-        video.srcObject = stream;
-        await video.play();
-        
-        loadingMessage.remove();
-    } catch (error) {
-        console.error('Error accessing camera:', error);
-        const cameraError = document.getElementById('cameraError');
-        if (cameraError) {
-            cameraError.classList.remove('d-none');
-            cameraError.textContent = error.name === 'NotAllowedError' 
-                ? 'Please allow camera access in your browser settings.'
-                : 'Unable to access camera. Please check your device.';
-        }
-    }
-});
-
-        // Clean up when modal is hidden
-        faceLoginModal.addEventListener('hidden.bs.modal', () => {
-            if (window.verificationInterval) {
-                clearInterval(window.verificationInterval);
-            }
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-            }
-            verificationAttempts = 0;
-            isVerifying = false;
-        });
-
-        // Start face verification when video starts playing
-        video.addEventListener('play', () => {
-            const verificationInterval = setInterval(async () => {
-                if (video.paused || video.ended || !document.getElementById('faceLoginModal').classList.contains('show')) {
-                    clearInterval(verificationInterval);
-                    return;
-                }
-                await verifyFace();
-            }, 1000); // Check every second
-        });
-
-        // Face enrollment modal show handler
-        enrollFaceModal.addEventListener('show.bs.modal', async () => {
-            try {
-                enrollStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                enrollVideo.srcObject = enrollStream;
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const video = document.getElementById('camera');
+                video.srcObject = stream;
             } catch (err) {
                 console.error('Error accessing camera:', err);
                 Swal.fire({
                     icon: 'error',
                     title: 'Camera Error',
-                    text: 'Unable to access camera. Please make sure you have granted camera permissions.',
-                    showConfirmButton: true
+                    text: 'Unable to access camera. Please check your camera permissions.',
                 });
+                showLoginForm('password');
             }
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+        }
+
+        document.getElementById('faceLoginBtn').addEventListener('click', function() {
+            showLoginForm('face');
         });
 
-        // Enroll capture button click handler
-        enrollCaptureBtn.addEventListener('click', async () => {
-            const username = enrollUsername.value;
-            const password = enrollPassword.value;
-
-            if (!username || !password) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Please enter both username and password',
-                });
-                return;
-            }
-
+        document.getElementById('captureFaceBtn').addEventListener('click', async function() {
+            const video = document.getElementById('camera');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            const imageData = canvas.toDataURL('image/jpeg');
+            
             try {
-                // Show loading state
-                enrollFaceBtn.disabled = true;
-                enrollFaceBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enrolling...';
-
-                enrollCanvas.width = enrollVideo.videoWidth;
-                enrollCanvas.height = enrollVideo.videoHeight;
-                const context = enrollCanvas.getContext('2d');
-                context.drawImage(enrollVideo, 0, 0);
-                const imageData = enrollCanvas.toDataURL('image/jpeg');
-
-                const response = await fetch('/face_auth/store/', {
+                const response = await fetch('/face-auth/verify/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': getCookie('csrftoken')
                     },
-                    body: JSON.stringify({
-                        username: username,
-                        password: password,
-                        image: imageData
-                    })
+                    body: JSON.stringify({ image: imageData })
                 });
 
                 const data = await response.json();
-
-                if (response.ok) {
+                
+                if (data.success) {
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
-                        text: 'Face ID enrolled successfully',
-                        showConfirmButton: false,
-                        timer: 1500
+                        text: 'Face verification successful',
+                        timer: 1500,
+                        showConfirmButton: false
                     }).then(() => {
-                        const modal = bootstrap.Modal.getInstance(enrollFaceModal);
-                        modal.hide();
-                        if (enrollStream) {
-                            enrollStream.getTracks().forEach(track => track.stop());
-                        }
+                        window.location.href = data.redirect_url;
                     });
                 } else {
-                    throw new Error(data.error || 'Face enrollment failed');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Verification Failed',
+                        text: data.message || 'Face verification failed. Please try again.'
+                    });
                 }
             } catch (error) {
                 console.error('Error:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: error.message || 'An error occurred during face enrollment',
-                    showConfirmButton: true
+                    text: 'An error occurred during face verification. Please try again.'
                 });
-            } finally {
-                // Reset button state
-                enrollFaceBtn.disabled = false;
-                enrollFaceBtn.innerHTML = '<i class="fas fa-user-plus"></i> Enroll Face';
             }
         });
 
-        // Clean up camera streams when modals are closed
-        faceLoginModal.addEventListener('hidden.bs.modal', () => {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-            }
-        });
-
-        enrollFaceModal.addEventListener('hidden.bs.modal', () => {
-            if (enrollStream) {
-                enrollStream.getTracks().forEach(track => track.stop());
-            }
-        });
-
+        // Add animation to form inputs
         document.addEventListener("DOMContentLoaded", function() {
             const formInputs = document.querySelectorAll(".form-control");
 
             formInputs.forEach(input => {
                 input.addEventListener("focus", function() {
-                    input.previousElementSibling.style.transform = "translateY(-20px)";
-                    input.previousElementSibling.style.fontSize = "12px";
-                    input.previousElementSibling.style.color = "#6c757d";
+                    this.style.transform = "scale(1.02)";
+                    this.style.transition = "transform 0.3s ease";
                 });
 
                 input.addEventListener("blur", function() {
-                    if (input.value === "") {
-                        input.previousElementSibling.style.transform = "none";
-                        input.previousElementSibling.style.fontSize = "inherit";
-                        input.previousElementSibling.style.color = "inherit";
-                    }
+                    this.style.transform = "scale(1)";
                 });
-
-                // Check on page load
-                if (input.value !== "") {
-                    input.previousElementSibling.style.transform = "translateY(-20px)";
-                    input.previousElementSibling.style.fontSize = "12px";
-                    input.previousElementSibling.style.color = "#6c757d";
-                }
             });
         });
-        document.addEventListener("DOMContentLoaded", function () {
-    {% for message in messages %}
-        Swal.fire({
-            icon: '{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}', 
-            title: '{{ message }}',
-            showConfirmButton: false,
-            timer: 3000
-        });
-    {% endfor %}
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-
-{% for message in messages %}
-    if (message.tags == 'error' && message == 'Your account is pending approval.') {
-        Swal.fire({
-            icon: 'info',
-            title: 'Pending Approval',
-            html: `
-                <p>{{ message }}</p>
-                <p>Please <a href="{% url 'upload_certificate' %}">upload your certificate</a> for approval.</p>
-            `,
-            showConfirmButton: false,
-            timer: 3000
-        });
-    } else {
-        Swal.fire({
-            icon: '{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}',
-            title: '{{ message }}',
-            showConfirmButton: false,
-            timer: 3000
-        });
-    }
-{% endfor %}
-});
     </script>
 </body>
 </html>

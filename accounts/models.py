@@ -4,9 +4,9 @@ from adminclick.models import *
 from django.core.validators import RegexValidator
 # Create your models here.
 class Donors(models.Model):
-    user = models.OneToOneField(User, on_delete = models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='donors')
     phone = models.IntegerField(default=99999999)
-    profile_pic = models.ImageField(upload_to= 'picture/donor', null=True,default='picture/donor/hi.jpg')
+    profile_pic = models.ImageField(upload_to='picture/donor', null=True, default='picture/donor/hi.jpg')
 
     def __str__(self):
         return self.user.username

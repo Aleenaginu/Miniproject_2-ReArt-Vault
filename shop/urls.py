@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 from . import tracking_ws
+from .views import submit_review
+
 
 urlpatterns = [
     path('', views.shop_index, name='shop_index'),
@@ -43,4 +45,5 @@ urlpatterns = [
     path('<slug:category_slug>/', views.shop_index, name='product_by_category'),
     path('<slug:category_slug>/<slug:product_slug>/', views.product_detail, name='product_detail'),
     path('ws/track/<int:order_id>/', tracking_ws.tracking_handler.handle_request, name='order_tracking_ws'),
+    path('submit_review/', views.submit_review, name='submit_review'),
 ]

@@ -3,8 +3,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 import requests
-from accounts.models import Donors,Artist
-
+from accounts.models import Artist, Donors
+from shop.models import Customers
+import base64
 import os
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -26,10 +27,11 @@ from django.contrib.auth.forms import SetPasswordForm
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
-
+from django.core.files.base import ContentFile
 import logging
 import json
 import cv2
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +41,7 @@ def donorRegister(request):
         username = request.POST.get('username')
         email = request.POST.get('email')
         phone = request.POST.get('phone')
-        face_data = request.POST.get('face_data')  # Get face data from form
+        face_data = request.POST.get('face_data')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
         
@@ -48,64 +50,82 @@ def donorRegister(request):
                 messages.error(request, 'Username Already Taken')
             elif User.objects.filter(email=email).exists():
                 messages.error(request, 'Email Already Taken')
-            elif Donors.objects.filter(phone=phone).exists():
+            elif Customers.objects.filter(phone=phone).exists():
                 messages.error(request, 'Phone already registered')
             else:
-                with transaction.atomic():
-                    try:
-                        # Create user and donor
+                try:
+                    with transaction.atomic():
+                        # Create user
                         user = User.objects.create_user(username=username, email=email, password=password)
-                        Donors.objects.create(user=user, phone=phone)
                         
-                        # Store face encoding if provided
-                        if face_data:
-                            from face_auth.views import base64_to_image, get_face_encoding
-                            
-                            # Convert base64 to image
-                            image = base64_to_image(face_data)
-                            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-                            
-                            # Detect face
-                            cascade_path = cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
-                            face_cascade = cv2.CascadeClassifier(cascade_path)
-                            faces = face_cascade.detectMultiScale(
-                                gray,
-                                scaleFactor=1.1,
-                                minNeighbors=6,
-                                minSize=(100, 100),
-                                maxSize=(500, 500)
-                            )
-                            
-                            if len(faces) == 1:
-                                # Get face encoding
-                                face_encoding = get_face_encoding(image, faces[0])
-                                
-                                # Store in FaceEncoding model
-                                from face_auth.models import FaceEncoding
-                                face_record = FaceEncoding.objects.create(
+                        # Process profile picture from face data
+                        if face_data and face_data.startswith('data:image'):
+                            try:
+                                # Create customer first
+                                customer = Customers.objects.create(
                                     user=user,
-                                    encoding=json.dumps(face_encoding.tolist())
+                                    phone=phone,
+                                    face_registered=True
                                 )
-                                logger.info(f"Face encoding stored for user: {username}")
-                            else:
-                                logger.warning(f"Face detection failed during registration for user: {username}")
                                 
+                                # Convert base64 to file for profile picture
+                                format, imgstr = face_data.split(';base64,')
+                                ext = format.split('/')[-1]
+                                filename = f"profile_{username}_{int(time.time())}.{ext}"
+                                data = ContentFile(base64.b64decode(imgstr))
+                                customer.profile_pic.save(filename, data, save=True)
+                                
+                                # Process face data for face recognition
+                                from face_auth.views import base64_to_image, get_face_encoding
+                                
+                                # Convert base64 to image
+                                image = base64_to_image(imgstr)  # Pass only the base64 string part
+                                gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+                                
+                                # Detect face
+                                cascade_path = cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+                                face_cascade = cv2.CascadeClassifier(cascade_path)
+                                faces = face_cascade.detectMultiScale(
+                                    gray,
+                                    scaleFactor=1.1,
+                                    minNeighbors=6,
+                                    minSize=(100, 100),
+                                    maxSize=(500, 500)
+                                )
+                                
+                                if len(faces) == 1:
+                                    # Get face encoding
+                                    face_encoding = get_face_encoding(image, faces[0])
+                                    
+                                    # Store face encoding directly in Customers model
+                                    customer.face_encoding = json.dumps(face_encoding.tolist())
+                                    customer.save()
+                                    logger.info(f"Face encoding stored for user: {username}")
+                                else:
+                                    logger.warning(f"Face detection failed during registration for user: {username}")
+                                    messages.warning(request, 'Face detection failed. Please try again with a clearer photo.')
+                            except Exception as face_error:
+                                logger.error(f"Error processing face data: {str(face_error)}")
+                                messages.warning(request, 'Error processing face data. Please try again.')
+                        else:
+                            # Create customer without profile picture
+                            Customers.objects.create(user=user, phone=phone)
+                            messages.warning(request, 'No photo provided. You can add one later.')
+                        
                         messages.success(request, 'Registered successfully')
                         return redirect('userlogin')
-                    except Exception as e:
-                        logger.error(f"Error during registration: {str(e)}")
-                        messages.error(request, 'Registration failed. Please try again.')
-                        # Rollback will happen automatically due to transaction.atomic()
+                except Exception as e:
+                    logger.error(f"Registration error for {username}: {str(e)}")
+                    messages.error(request, f'Registration failed: {str(e)}')
         else:
             messages.error(request, 'Passwords do not match')
-        return redirect('donor_register')
     return render(request, 'Donors/Register.html')
 
 
 def Userprofile(request):
-    if request.user.is_authenticated and request.user.donors:
-     donor= request.user.donors
-     return render(request, 'Donors/userprofile.html',{'donor':donor})
+    if request.user.is_authenticated and request.user.customers:
+     customer= request.user.customers
+     return render(request, 'Donors/userprofile.html',{'customer':customer})
      
 
 
@@ -137,10 +157,30 @@ def UserLogin(request):
         if user is not None:
             logger.debug(f"User authenticated: {username}")
             
-            if hasattr(user, 'donors'):
+            # Check if user has a donor profile
+            from accounts.models import Donors
+            has_donor_profile = Donors.objects.filter(user=user).exists()
+            
+            if hasattr(user, 'customers') and has_donor_profile:
                 login(request, user)
                 messages.success(request, 'Login successful')
                 return redirect('donor_dashboard')
+            elif hasattr(user, 'customers') and not has_donor_profile:
+                # User has customer profile but not donor profile
+                login(request, user)
+                messages.warning(request, 'You need to complete your donor profile')
+                # Create donor profile for existing customer
+                try:
+                    phone = user.customers.phone if hasattr(user.customers, 'phone') else 99999999
+                    donor = Donors.objects.create(
+                        user=user,
+                        phone=phone
+                    )
+                    return redirect('donor_dashboard')
+                except Exception as e:
+                    logger.error(f"Error creating donor profile: {str(e)}")
+                    messages.error(request, 'Error creating donor profile')
+                    return redirect('userlogin')
             elif hasattr(user, 'artist'):
                 if user.artist.is_approved:
                     login(request, user)
@@ -149,13 +189,13 @@ def UserLogin(request):
                 elif user.artist.certificate:
                     messages.warning(request, 'You uploaded your certificate, but the verification is still under processing.')
                     return redirect('userlogin')
-
                 else:
                     messages.error(request, 'Your account is pending approval. Please upload your certificate')
                     return redirect('pending_approval')
             else:
                 logger.warning(f"User has no donor or artist profile: {username}")
-                messages.error(request, 'Invalid user type')
+                messages.error(request, 'Invalid user type. Please register as a donor or artist.')
+                return redirect('userlogin')
         else:
             logger.warning(f"Authentication failed for username: {username}")
             messages.error(request, 'Invalid credentials')
@@ -279,42 +319,6 @@ def custom_password_reset_done(request):
     return render(request, 'registration/password_reset_done.html')
 
 
-# def artistRegister(request):
-#     if request.method == 'POST':
-#         username = request.POST.get('username')
-#         email = request.POST.get('email')
-#         phone = request.POST.get('phone')
-#         profile_pic = request.FILES.get('profile_pic')
-#         password = request.POST.get('password')
-#         confirm_password = request.POST.get('confirm_password')
-#         medium_id = request.POST.get('medium')
-        
-#         if password == confirm_password:
-#             if User.objects.filter(username=username).exists():
-#                 messages.error(request, 'Username Already Taken')
-#             elif User.objects.filter(email=email).exists():
-#                 messages.error(request, 'Email Already Taken')
-#             elif Artist.objects.filter(phone=phone).exists():
-#                 messages.error(request, 'Phone already registered')
-#             else:
-                        
-#                 try:
-#                     medium = MediumOfWaste.objects.get(id=medium_id)
-#                 except MediumOfWaste.DoesNotExist:
-#                     messages.error(request, 'Invalid medium selected')
-#                     return render(request, 'artist_register.html', {'mediums': MediumOfWaste.objects.all()})
-                
-#                 with transaction.atomic():
-#                     user = User.objects.create_user(username=username, email=email, password=password)
-#                     Artist.objects.create(user=user, phone=phone, profile_pic=profile_pic,medium=medium)
-#                 messages.success(request, 'Registered successfully')
-#                 return redirect('userlogin')
-#         else:
-#             messages.error(request, 'Passwords do not match')
-#         return redirect('artist_register')
-#     mediums = MediumOfWaste.objects.all()
-#     return render(request, 'artist/Register.html', {'mediums': mediums})
-
 def artistRegister(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -346,21 +350,6 @@ def artistRegister(request):
 
     return render(request, 'artist/Register.html')
                                                     
-# def UserLoginArtist(request):
-#     if request.method == 'POST':
-#         username = request.POST.get('username')
-#         password = request.POST.get('password')
-#         user = authenticate(username=username, password=password)
-        
-#         if user is not None and hasattr(user, 'artist'):
-#             login(request, user)
-#             messages.success(request, 'Login successful')
-#             return redirect('artist_dashboard')
-#         else:
-#             messages.error(request, 'Invalid credentials')
-#             return render(request, 'login.html')
-#     return render(request, 'login.html')
-
 def UserprofileArtist(request):
     if request.user.is_authenticated and request.user.artist:
      artist= request.user.artist
@@ -371,7 +360,7 @@ def UserprofileArtist(request):
 def login_redirect(request):
     user = request.user
     user_role = request.session.pop('user_role', None)
-    if user is not None and hasattr(user, 'donors'):
+    if user is not None and hasattr(user, 'customers'):
         messages.success(request, 'Login successful')
         return redirect('donor_dashboard')
     elif user is not None and hasattr(user, 'artist'):

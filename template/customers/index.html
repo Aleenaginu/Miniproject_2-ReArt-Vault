@@ -148,36 +148,20 @@
         }
 
         .voice-btn {
-            position: absolute;
-            right: 8px;
             background: none;
             border: none;
             cursor: pointer;
-            padding: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 5px;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
         }
-
+        .voice-btn.recording {
+            color: #ff0000;
+        }
         .voice-icon {
-            color: #777;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .voice-btn:hover .voice-icon {
-            color: #ca1515;
-        }
-
-        .voice-btn.recording .voice-icon {
-            color: #ca1515;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
+            font-size: 18px;
         }
 
         .search-form {
@@ -324,6 +308,117 @@
                 font-size: 14px;
             }
         }
+
+        .search-form {
+            width: 100%;
+            padding: 10px 0;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 40px 12px 20px;
+            border: 2px solid #e5e5e5;
+            border-radius: 25px;
+            font-size: 14px;
+        }
+
+        .voice-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .voice-btn.recording {
+            color: #ff0000;
+        }
+
+        .header__right {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .header__right__widget {
+            margin-left: 15px;
+        }
+
+        /* Header layout fixes */
+        .header__menu ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header__menu ul li {
+            margin: 0;
+            padding: 0;
+        }
+
+        .search-form {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 40px;
+            padding: 8px 40px 8px 20px;
+            border: 2px solid #e5e5e5;
+            border-radius: 25px;
+            font-size: 14px;
+        }
+
+        .voice-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .voice-btn.recording {
+            color: #ff0000;
+        }
+
+        .header__right {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .header__right__widget {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
     </style>
 </head>
 
@@ -371,10 +466,10 @@
     <!-- Header Section Begin -->
     <header class="header">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-xl-9 col-lg-9">
+            <div class="row align-items-center">
+                <div class="col-xl-3 col-lg-3">
                     <nav class="header__menu">
-                        <ul>
+                        <ul class="d-flex align-items-center">
                             <li class="active"><a href="{% url 'shop_index' %}">Home</a></li>
                             {% if user.is_authenticated and request.user.customers %}
                             <li><a href="#new-product-section">Shop</a></li>
@@ -390,36 +485,25 @@
                             
                             <!-- <li><a href="./contact.html">Contact</a></li> -->
                           <li> <a href="{% url 'customerlogout' %}">Logout</a></li>
-                          <!-- Adjusted search container -->
-                          <div class="search-container" style="display: inline-flex; align-items: center; margin-left: 20px;">
-                              <form method="GET" action="{% url 'search_products' %}" class="search-form">
-                                <div class="header__search">
-                                    <input type="text" name="q" id="searchInput" class="search-input" placeholder="Search products..." value="{{ query|default:'' }}">
-                                    <!-- <button type="submit" class="search-button"><i class="fa fa-search"></i></button> -->
-                                    <button type="button" id="voiceSearchBtn" class="voice-search-button">
-                                        <i class="fa fa-microphone"></i>
-                                    </button>
-                                </div>
-                              </form>
-                          </div>
-                          <!-- <li><a href="{% url 'wishlist' %}"><span class="icon_heart_alt"></span>
-                              <div class="tip">{{ wishlist_count }}</div>
-                          </a></li> -->
-                          <!-- <div class="profile-details" style="display: inline-block; vertical-align: middle; margin-left: 10px;">
-                            <a href="{% url 'customerprofile' %}">
-                                <span class="admin_name" style="font-size: 16px; font-weight: 700; color: black;">Hi {{ user.username }}</span>
-                            </a>
-                        </div> -->
-                            {% else %}
-                            <li><a href="{% url 'customerlogin' %}">Login</a></li> 
-                            <li><a href="{% url 'customer_register' %}">Register</a></li> 
-                            {% endif %}
                         </ul>
                     </nav>
                 </div>
-
-                <div class="col-lg-3">
+                <div class="col-xl-6 col-lg-6 text-center">
+                    <form id="searchForm" class="search-form" action="{% url 'search_products' %}" method="GET">
+                        <div class="search-container">
+                            <input type="text" name="q" class="search-input" placeholder="Search products...">
+                            <button type="button" class="voice-btn">
+                                <i class="fa fa-microphone voice-icon"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-xl-3 col-lg-3">
                     <div class="header__right">
+                        {% else %}
+                        <li><a href="{% url 'customerlogin' %}">Login</a></li> 
+                        <li><a href="{% url 'customer_register' %}">Register</a></li> 
+                        {% endif %}
                         <!-- <div class="header__right__auth">
                             <a href="#">Login</a>
                             <a href="#">Register</a>
@@ -1078,31 +1162,44 @@
 </script>
 
 <script>
-    // Voice Search Functionality
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize Web Speech API
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.querySelector('.search-input');
+        const voiceBtn = document.querySelector('.voice-btn');
+
+        // Initialize speech recognition
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) {
             console.error('Speech recognition not supported');
+            if (voiceBtn) {
+                voiceBtn.style.display = 'none';
+            }
             return;
         }
-        
+
         const recognition = new SpeechRecognition();
-        const voiceBtn = document.querySelector('.voice-btn');
-        const searchInput = document.querySelector('.search-input');
-        
+
+        if (!voiceBtn || !searchInput || !searchForm) {
+            console.error('Required elements not found');
+            return;
+        }
+
+        // Configure recognition
         recognition.continuous = false;
         recognition.lang = 'en-US';
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
 
+        // Recognition event handlers
         recognition.onstart = function() {
             voiceBtn.classList.add('recording');
+            searchInput.placeholder = 'Listening...';
             console.log('Speech recognition started');
         };
 
         recognition.onend = function() {
             voiceBtn.classList.remove('recording');
+            searchInput.placeholder = 'Search products...';
             console.log('Speech recognition ended');
         };
 
@@ -1110,14 +1207,35 @@
             const text = event.results[0][0].transcript;
             searchInput.value = text;
             console.log('Recognized text:', text);
+            // Automatically submit the form after voice recognition
+            if (text.trim()) {
+                searchForm.submit();
+            }
         };
 
         recognition.onerror = function(event) {
             console.error('Speech recognition error:', event.error);
             voiceBtn.classList.remove('recording');
+            searchInput.placeholder = 'Search products...';
+            
+            let errorMessage = 'An error occurred with voice search. ';
+            switch (event.error) {
+                case 'not-allowed':
+                    errorMessage += 'Please allow microphone access to use voice search.';
+                    break;
+                case 'network':
+                    errorMessage += 'Please check your internet connection.';
+                    break;
+                case 'no-speech':
+                    errorMessage += 'No speech was detected. Please try again.';
+                    break;
+                default:
+                    errorMessage += 'Please try again later.';
+            }
+            alert(errorMessage);
         };
 
-        // Add click handler for voice search button
+        // Voice button click handler
         voiceBtn.addEventListener('click', function() {
             if (voiceBtn.classList.contains('recording')) {
                 recognition.stop();
@@ -1126,85 +1244,27 @@
             }
         });
 
-        // Handle search form submission
-        const searchForm = document.getElementById('searchForm');
-        if (searchForm) {
-            searchForm.addEventListener('submit', function(event) {
+        // Form submission handler
+        searchForm.addEventListener('submit', function(event) {
+            const searchQuery = searchInput.value.trim();
+            if (!searchQuery) {
                 event.preventDefault();
-                const searchQuery = searchInput.value.trim();
-                if (searchQuery) {
-                    this.submit();
-                }
-            });
-        }
-    });
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Get all filter buttons and products
-        const filterButtons = document.querySelectorAll('.filter__controls li');
-        const products = document.querySelectorAll('.mix');  
-
-        // Add click event to each filter button
-        filterButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Remove active class from all buttons
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                // Add active class to clicked button
-                this.classList.add('active');
-
-                const filterValue = this.getAttribute('data-filter');
-
-                // Show/hide products based on category
-                products.forEach(product => {
-                    if (filterValue === 'all') {
-                        product.style.display = '';  
-                    } else {
-                        if (product.classList.contains(filterValue)) {
-                            product.style.display = '';  
-                        } else {
-                            product.style.display = 'none';  
-                        }
-                    }
-                });
-            });
+                return;
+            }
         });
     });
 </script>
 
 <script>
-    function handleSearch(event) {
-        event.preventDefault();
-        const searchInput = document.querySelector('.search-input');
-        const searchQuery = searchInput.value.trim();
-        
-        if (searchQuery) {
-            window.location.href = `/search-products?q=${encodeURIComponent(searchQuery)}`;
-        }
-        return false;
-    }
-
-    // Handle form submission
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchForm = document.getElementById('searchForm');
-        if (searchForm) {
-            searchForm.addEventListener('submit', handleSearch);
-        }
-    });
-</script>
-
-<script>
     document.addEventListener('DOMContentLoaded', function() {
         const searchForm = document.getElementById('searchForm');
         const searchInput = document.querySelector('.search-input');
 
         if (searchForm) {
             searchForm.addEventListener('submit', function(event) {
-                event.preventDefault();
                 const searchQuery = searchInput.value.trim();
-                if (searchQuery) {
-                    window.location.href = `{% url 'search_products' %}?q=${encodeURIComponent(searchQuery)}`;
+                if (!searchQuery) {
+                    event.preventDefault();
                 }
             });
         }

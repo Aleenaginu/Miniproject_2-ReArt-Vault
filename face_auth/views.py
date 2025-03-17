@@ -1,11 +1,11 @@
 import json
+import base64
 import numpy as np
 import cv2
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model, login, authenticate
 from django.views.decorators.csrf import csrf_exempt
 from .models import FaceEncoding
-import base64
 import logging
 
 logger = logging.getLogger(__name__)
@@ -155,98 +155,3 @@ def store_face(request):
             return JsonResponse({'error': 'Internal server error'}, status=500)
     
     return JsonResponse({'error': 'Invalid request method'}, status=405)
-
-@csrf_exempt
-def verify_face(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
-    
-    try:
-        # Add request body logging
-        logger.info("Received face verification request")
-        
-        data = json.loads(request.body)
-        image_data = data.get('image')
-        
-        if not image_data:
-            logger.error("No image data provided in request")
-            return JsonResponse({'error': 'No image data provided'}, status=400)
-        
-        # Process image
-        try:
-            image = base64_to_image(image_data)
-        except Exception as e:
-            logger.error(f"Failed to process image data: {str(e)}")
-            return JsonResponse({'error': 'Invalid image data format'}, status=400)
-            
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        
-        # Detect face
-        cascade_path = cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
-        face_cascade = cv2.CascadeClassifier(cascade_path)
-        faces = face_cascade.detectMultiScale(
-            gray,
-            scaleFactor=1.1,  # Reduced from 1.2 for better detection
-            minNeighbors=4,   # Reduced from 5 for better detection
-            minSize=(80, 80), # Reduced minimum size
-            maxSize=(800, 800) # Increased maximum size
-        )
-        
-        if len(faces) == 0:
-            logger.warning("No face detected in image")
-            return JsonResponse({'error': 'No face detected. Please center your face in the camera and ensure good lighting.'}, status=400)
-        
-        if len(faces) > 1:
-            logger.warning("Multiple faces detected in image")
-            return JsonResponse({'error': 'Multiple faces detected. Please ensure only your face is visible.'}, status=400)
-        
-        # Get face encoding
-        try:
-            face_encoding = get_face_encoding(image, faces[0])
-        except Exception as e:
-            logger.error(f"Failed to get face encoding: {str(e)}")
-            return JsonResponse({'error': 'Failed to process face. Please try again.'}, status=400)
-        
-        # Get stored encodings
-        stored_encodings = FaceEncoding.objects.all()
-        if not stored_encodings.exists():
-            logger.warning("No enrolled faces found in database")
-            return JsonResponse({'error': 'No enrolled faces found. Please enroll your face first.'}, status=401)
-        
-        # Compare with stored encodings
-        max_similarity = 0
-        matched_user = None
-        
-        for stored_encoding in stored_encodings:
-            try:
-                stored_data = np.array(json.loads(stored_encoding.encoding))
-                similarity = np.corrcoef(face_encoding.flatten(), stored_data.flatten())[0,1]
-                logger.info(f"Similarity with {stored_encoding.user.username}: {similarity}")
-                
-                if similarity > max_similarity:
-                    max_similarity = similarity
-                    matched_user = stored_encoding.user
-            except Exception as e:
-                logger.error(f"Error comparing with user {stored_encoding.user.username}: {str(e)}")
-                continue
-        
-        logger.info(f"Best match similarity: {max_similarity}")
-        if max_similarity >= 0.8:
-            # Specify the backend when logging in
-            matched_user.backend = 'django.contrib.auth.backends.ModelBackend'
-            login(request, matched_user)
-            logger.info(f"Successfully logged in user: {matched_user.username}")
-            return JsonResponse({
-                'success': True,
-                'username': matched_user.username
-            })
-        else:
-            logger.warning(f"Face not recognized. Best similarity: {max_similarity}")
-            return JsonResponse({'error': 'Face not recognized. Please try again or enroll your face.'}, status=401)
-            
-    except json.JSONDecodeError:
-        logger.error("Invalid JSON in request body")
-        return JsonResponse({'error': 'Invalid request format'}, status=400)
-    except Exception as e:
-        logger.error(f"Unexpected error in verify_face: {str(e)}")
-        return JsonResponse({'error': 'An unexpected error occurred. Please try again.'}, status=500)

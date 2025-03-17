@@ -5,14 +5,37 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from .forms import DonationForm, UserUpdateForm, ProfileUpdateForm
-from .models import Donation, Donors, DonorNotification,DonationImage
+from accounts.models import Donors
+from .models import Donation, DonorNotification, DonationImage
 from artist.models import MediumOfWaste, InterestRequest
-from .models import Donation
 
 @login_required
 @never_cache
 def donor_dashboard(request):
-    if request.user.is_authenticated and request.user.donors:
+    try:
+        # Check if user has a donor profile
+        if not hasattr(request.user, 'donors'):
+            # Try to create a donor profile if the user has a customer profile
+            if hasattr(request.user, 'customers'):
+                try:
+                    # Get phone from customer profile if available
+                    phone = request.user.customers.phone if hasattr(request.user.customers, 'phone') else 99999999
+                    
+                    # Create donor profile
+                    donor = Donors.objects.create(
+                        user=request.user,
+                        phone=phone
+                    )
+                    messages.success(request, "Donor profile created successfully.")
+                except Exception as e:
+                    print(f"Error creating donor profile: {str(e)}")
+                    messages.error(request, "Could not create donor profile. Please contact support.")
+                    return redirect('userlogin')
+            else:
+                messages.error(request, "You don't have a donor profile. Please register as a donor first.")
+                return redirect('donor_register')
+        
+        # Now the user should have a donor profile
         donor = request.user.donors
         total_donations = Donation.objects.filter(donor=donor).count()
         approved_donations = Donation.objects.filter(donor=donor, status ='accepted').count()
@@ -23,7 +46,11 @@ def donor_dashboard(request):
             'approved_donations':approved_donations
             }
         return render(request, 'Donors/dashboard.html', context)
-    return HttpResponseForbidden("You are not allowed to access this page.")
+    except Exception as e:
+        # Log the error for debugging
+        print(f"Error in donor_dashboard: {str(e)}")
+        messages.error(request, "An error occurred while accessing your donor dashboard. Please try again.")
+        return redirect('userlogin')
 
 @login_required
 @never_cache
