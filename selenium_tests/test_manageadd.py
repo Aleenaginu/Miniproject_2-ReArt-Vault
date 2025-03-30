@@ -27,7 +27,7 @@ try:
     # Navigate to Login Page
     driver.get("http://localhost:8000/shop/customerlogin")
     print("Opened the login page.")
-    time.sleep(2)
+    time.sleep(5)
 
     # Enter Username
     username_field = wait.until(EC.visibility_of_element_located((By.NAME, "username")))
@@ -53,7 +53,7 @@ try:
     # Navigate back to Shop Page
     driver.get("http://localhost:8000/shop/")
     print("Navigated to the shop page.")
-    time.sleep(3)  # Give it extra time to load
+    time.sleep(7)  # Give it extra time to load
     
     # Take a screenshot to see the page state
     driver.save_screenshot("shop_page.png")
@@ -71,7 +71,7 @@ try:
     actions = ActionChains(driver)
     actions.move_to_element(profile_details).click().perform()
     print("Clicked on profile details to show dropdown.")
-    time.sleep(1)  # Wait for dropdown to appear
+    time.sleep(6)  # Wait for dropdown to appear
     
     # Take a screenshot after clicking to see if dropdown appears
     driver.save_screenshot("after_profile_click.png")
@@ -79,7 +79,7 @@ try:
     # Make dropdown visible using JavaScript (in case hover doesn't work)
     driver.execute_script("arguments[0].querySelector('.dropdown-menu').style.display = 'block';", profile_details)
     print("Made dropdown menu visible using JavaScript.")
-    time.sleep(1)
+    time.sleep(5)
     
     # Take a screenshot to verify dropdown is visible
     driver.save_screenshot("dropdown_visible.png")
@@ -114,7 +114,7 @@ try:
     # Click the button
     add_new_address_button.click()
     print("Clicked on 'ADD A NEW ADDRESS' button.")
-    time.sleep(1)  # Wait for form to appear
+    time.sleep(7)  # Wait for form to appear
     
     # Take a screenshot to verify form is visible
     driver.save_screenshot("address_form_visible.png")
@@ -123,43 +123,43 @@ try:
     # Address Type
     address_type_field = wait.until(EC.visibility_of_element_located((By.ID, "address_type")))
     address_type_field.clear()
-    address_type_field.send_keys("Home")
+    address_type_field.send_keys("Office")
     print("Entered Address Type.")
     
     # Full Name
     full_name_field = wait.until(EC.visibility_of_element_located((By.ID, "full_name")))
     full_name_field.clear()
-    full_name_field.send_keys("John Doe")
+    full_name_field.send_keys("Akhila")
     print("Entered Full Name.")
     
     # Phone Number
     phone_field = wait.until(EC.visibility_of_element_located((By.ID, "phone")))
     phone_field.clear()
-    phone_field.send_keys("1234567890")
+    phone_field.send_keys("9234567890")
     print("Entered Phone Number.")
     
     # Address
     address_field = wait.until(EC.visibility_of_element_located((By.ID, "address")))
     address_field.clear()
-    address_field.send_keys("123 Main Street")
+    address_field.send_keys("123 Main Street Office")
     print("Entered Address.")
     
     # City
     city_field = wait.until(EC.visibility_of_element_located((By.ID, "city")))
     city_field.clear()
-    city_field.send_keys("New York")
+    city_field.send_keys("Ernakulam")
     print("Entered City.")
     
     # State
     state_field = wait.until(EC.visibility_of_element_located((By.ID, "state")))
     state_field.clear()
-    state_field.send_keys("NY")
+    state_field.send_keys("Kerala")
     print("Entered State.")
     
     # ZIP Code
     zip_code_field = wait.until(EC.visibility_of_element_located((By.ID, "zip_code")))
     zip_code_field.clear()
-    zip_code_field.send_keys("10001")
+    zip_code_field.send_keys("682017")
     print("Entered ZIP Code.")
     
     # Take a screenshot of the filled form
@@ -176,7 +176,7 @@ try:
     # Click the submit button
     submit_button.click()
     print("Clicked Submit button.")
-    time.sleep(3)  # Wait for form submission to complete
+    time.sleep(4)  # Wait for form submission to complete
     
     # Take a final screenshot after submission
     driver.save_screenshot("after_form_submission.png")

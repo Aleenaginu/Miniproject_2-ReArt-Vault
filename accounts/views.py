@@ -41,16 +41,18 @@ def donorRegister(request):
         username = request.POST.get('username')
         email = request.POST.get('email')
         phone = request.POST.get('phone')
-        face_data = request.POST.get('face_data')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
+        
+        # Debug print
+        logger.debug(f"FILES in request: {request.FILES}")
         
         if password == confirm_password:
             if User.objects.filter(username=username).exists():
                 messages.error(request, 'Username Already Taken')
             elif User.objects.filter(email=email).exists():
                 messages.error(request, 'Email Already Taken')
-            elif Customers.objects.filter(phone=phone).exists():
+            elif Donors.objects.filter(phone=phone).exists():
                 messages.error(request, 'Phone already registered')
             else:
                 try:
@@ -58,59 +60,16 @@ def donorRegister(request):
                         # Create user
                         user = User.objects.create_user(username=username, email=email, password=password)
                         
-                        # Process profile picture from face data
-                        if face_data and face_data.startswith('data:image'):
-                            try:
-                                # Create customer first
-                                customer = Customers.objects.create(
-                                    user=user,
-                                    phone=phone,
-                                    face_registered=True
-                                )
-                                
-                                # Convert base64 to file for profile picture
-                                format, imgstr = face_data.split(';base64,')
-                                ext = format.split('/')[-1]
-                                filename = f"profile_{username}_{int(time.time())}.{ext}"
-                                data = ContentFile(base64.b64decode(imgstr))
-                                customer.profile_pic.save(filename, data, save=True)
-                                
-                                # Process face data for face recognition
-                                from face_auth.views import base64_to_image, get_face_encoding
-                                
-                                # Convert base64 to image
-                                image = base64_to_image(imgstr)  # Pass only the base64 string part
-                                gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-                                
-                                # Detect face
-                                cascade_path = cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
-                                face_cascade = cv2.CascadeClassifier(cascade_path)
-                                faces = face_cascade.detectMultiScale(
-                                    gray,
-                                    scaleFactor=1.1,
-                                    minNeighbors=6,
-                                    minSize=(100, 100),
-                                    maxSize=(500, 500)
-                                )
-                                
-                                if len(faces) == 1:
-                                    # Get face encoding
-                                    face_encoding = get_face_encoding(image, faces[0])
-                                    
-                                    # Store face encoding directly in Customers model
-                                    customer.face_encoding = json.dumps(face_encoding.tolist())
-                                    customer.save()
-                                    logger.info(f"Face encoding stored for user: {username}")
-                                else:
-                                    logger.warning(f"Face detection failed during registration for user: {username}")
-                                    messages.warning(request, 'Face detection failed. Please try again with a clearer photo.')
-                            except Exception as face_error:
-                                logger.error(f"Error processing face data: {str(face_error)}")
-                                messages.warning(request, 'Error processing face data. Please try again.')
-                        else:
-                            # Create customer without profile picture
-                            Customers.objects.create(user=user, phone=phone)
-                            messages.warning(request, 'No photo provided. You can add one later.')
+                        # Get the profile picture from request.FILES
+                        profile_pic = request.FILES.get('profile_pic')
+                        logger.debug(f"Profile pic from request: {profile_pic}")
+                        
+                        # Create donor profile with profile picture
+                        donor = Donors.objects.create(
+                            user=user,
+                            phone=phone,
+                            profile_pic=profile_pic if profile_pic else None
+                        )
                         
                         messages.success(request, 'Registered successfully')
                         return redirect('userlogin')
@@ -123,10 +82,12 @@ def donorRegister(request):
 
 
 def Userprofile(request):
-    if request.user.is_authenticated and request.user.customers:
-     customer= request.user.customers
-     return render(request, 'Donors/userprofile.html',{'customer':customer})
-     
+    if request.user.is_authenticated and hasattr(request.user, 'donors'):
+        donor = request.user.donors
+        return render(request, 'Donors/userprofile.html', {'donor': donor})
+    else:
+        messages.error(request, 'Please login as a donor')
+        return redirect('userlogin')
 
 
 def UserLogout(request):
@@ -158,29 +119,12 @@ def UserLogin(request):
             logger.debug(f"User authenticated: {username}")
             
             # Check if user has a donor profile
-            from accounts.models import Donors
-            has_donor_profile = Donors.objects.filter(user=user).exists()
+            has_donor_profile = hasattr(user, 'donors')
             
-            if hasattr(user, 'customers') and has_donor_profile:
+            if has_donor_profile:
                 login(request, user)
                 messages.success(request, 'Login successful')
                 return redirect('donor_dashboard')
-            elif hasattr(user, 'customers') and not has_donor_profile:
-                # User has customer profile but not donor profile
-                login(request, user)
-                messages.warning(request, 'You need to complete your donor profile')
-                # Create donor profile for existing customer
-                try:
-                    phone = user.customers.phone if hasattr(user.customers, 'phone') else 99999999
-                    donor = Donors.objects.create(
-                        user=user,
-                        phone=phone
-                    )
-                    return redirect('donor_dashboard')
-                except Exception as e:
-                    logger.error(f"Error creating donor profile: {str(e)}")
-                    messages.error(request, 'Error creating donor profile')
-                    return redirect('userlogin')
             elif hasattr(user, 'artist'):
                 if user.artist.is_approved:
                     login(request, user)

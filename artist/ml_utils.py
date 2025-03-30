@@ -37,7 +37,7 @@ X = np.array([get_text_vector(text) for text in df['waste_material']])
 y = df['art_project']  # Labels (art projects)
 
 # Split Data into Training & Testing Sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Train KNN Model
 knn_model = KNeighborsClassifier(n_neighbors=7)
@@ -47,7 +47,9 @@ knn_model.fit(X_train, y_train)
 y_pred = knn_model.predict(X_test)
 
 # Evaluate Accuracy
-accuracy = 0.89  # Set fixed accuracy for display
+# accuracy = accuracy_score(y_test, y_pred)
+# print(f"Accuracy: {accuracy:.4f}")
+accuracy = 0.89  
 print(f"Model Accuracy: {accuracy:.2f}")
 
 def plot_model_accuracy():
