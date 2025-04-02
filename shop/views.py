@@ -397,7 +397,7 @@ from django.conf import settings
 
 #         client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET_KEY))
 #         razorpay_order = client.order.create({
-#             'amount': int(grand_total * 100),  
+#             'amount': int(grand_total * 100),  # Amount in paise
 #             'currency': 'INR',
 #             'payment_capture': '1'
 #         })
@@ -1592,7 +1592,12 @@ def verify_face(request):
         # Convert to grayscale and detect face
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-        faces = face_cascade.detectMultiScale(gray, 1.1, 5, minSize=(30, 30))
+        faces = face_cascade.detectMultiScale(
+            gray,
+            scaleFactor=1.1,
+            minNeighbors=5,
+            minSize=(30, 30)
+        )
         
         if len(faces) == 0:
             logger.warning("No face detected in uploaded image")
@@ -1671,3 +1676,255 @@ def validate_aadhaar(request):
         except Exception as e:
             return JsonResponse({'valid': False, 'message': str(e)})
     return JsonResponse({'valid': False, 'message': 'Invalid request method'})
+
+# Gemini Chatbot API
+import google.generativeai as genai
+from django.conf import settings
+import json
+import logging
+
+logger = logging.getLogger(__name__)
+
+class ReArtChatbot:
+    def __init__(self):
+        try:
+            # Get API key from settings
+            api_key = settings.GEMINI_API_KEY
+            if not api_key or api_key == "AIzaSyCPUS5du3FKvnsEdXcudwOjTQ6g0joteio":
+                logger.error("Invalid or missing Gemini API key in settings")
+                self.use_ai = False
+                self.api_key_status = "Missing or invalid API key in settings.py"
+            else:
+                # Configure Gemini AI directly
+                genai.configure(api_key=api_key)
+                self.model = genai.GenerativeModel('gemini-2.0-flash')
+                
+                # Additional context about ReArt
+                self.context = """You are ReArt Assistant, an AI chatbot for ReArt, an online art marketplace. 
+                You help users find art pieces, answer questions about artworks, artists, 
+                and provide assistance with shopping, orders, and general inquiries. 
+                Keep responses concise, friendly, and helpful.
+                
+                Important information:
+                - ReArt is an online marketplace for buying and selling artwork
+                - We support various artists and art styles
+                - Users can browse, purchase, and review artwork
+                - We offer secure payment processing and shipping
+                
+                When helping users:
+                1. Always be friendly and professional
+                2. For product inquiries: Provide information about available artwork
+                3. For artist inquiries: Share details about our featured artists
+                4. For order help: Guide users through the ordering process
+                5. For account questions: Assist with login, registration, and profile management
+                """
+                
+                # Initialize chat with context
+                self.chat = self.model.start_chat(history=[])
+                response = self.chat.send_message(self.context)
+                if not response:
+                    raise Exception("Failed to initialize chat with context")
+                self.use_ai = True
+                self.api_key_status = "Valid API key"
+                logger.info("Successfully initialized Gemini AI chatbot")
+        except Exception as e:
+            logger.error(f"Failed to initialize Gemini AI: {str(e)}")
+            self.use_ai = False
+            self.api_key_status = f"Error initializing: {str(e)}"
+            
+        # Initialize fallback responses regardless
+        self.responses = {
+            "products": {
+                "keywords": ["product", "artwork", "painting", "art", "piece"],
+                "response": "We have a diverse collection of artwork from various artists. You can browse our collection on the homepage or use the search feature to find specific pieces. Would you like recommendations based on a specific style or artist?"
+            },
+            "orders": {
+                "keywords": ["order", "purchase", "buy", "checkout", "payment"],
+                "response": "To place an order, simply browse our collection, add items to your cart, and proceed to checkout. We accept various payment methods and offer secure transactions. Can I help you with a specific part of the ordering process?"
+            },
+            "shipping": {
+                "keywords": ["shipping", "delivery", "track", "package", "receive"],
+                "response": "We ship artwork worldwide with careful packaging to ensure safe delivery. Shipping times vary by location, but you can track your order through your account. Would you like more information about shipping costs or delivery times?"
+            },
+            "artists": {
+                "keywords": ["artist", "creator", "painter", "designer", "author"],
+                "response": "ReArt features talented artists from around the world. Each artist has a profile page where you can learn about their background, style, and view their complete collection. Is there a particular artist you're interested in?"
+            },
+            "account": {
+                "keywords": ["account", "profile", "login", "register", "password"],
+                "response": "You can manage your ReArt account through the profile section. This allows you to update your information, view order history, and manage your wishlist. Would you like help with account registration or login?"
+            }
+        }
+
+    def get_response(self, message):
+        """Get response using Gemini AI or fallback to keyword matching"""
+        if self.use_ai:
+            try:
+                logger.info(f"Sending message to Gemini AI: {message}")
+                
+                # Set safety settings to be more permissive
+                safety_settings = [
+                    {
+                        "category": "HARM_CATEGORY_HARASSMENT",
+                        "threshold": "BLOCK_ONLY_HIGH"
+                    },
+                    {
+                        "category": "HARM_CATEGORY_HATE_SPEECH",
+                        "threshold": "BLOCK_ONLY_HIGH"
+                    },
+                    {
+                        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                        "threshold": "BLOCK_ONLY_HIGH"
+                    },
+                    {
+                        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                        "threshold": "BLOCK_ONLY_HIGH"
+                    }
+                ]
+                
+                # Try with generation config
+                generation_config = {
+                    "temperature": 0.7,
+                    "top_p": 0.8,
+                    "top_k": 40,
+                    "max_output_tokens": 1024,
+                }
+                
+                try:
+                    # First try with the chat history approach
+                    response = self.chat.send_message(message)
+                    
+                    if hasattr(response, 'text') and response.text:
+                        bot_response = response.text
+                        logger.info(f"Received response from Gemini AI chat: {bot_response[:100]}...")
+                        return {
+                            "status": "success",
+                            "response": bot_response
+                        }
+                    else:
+                        # If chat approach fails, try direct generation
+                        logger.info("Chat approach failed, trying direct generation...")
+                        response = self.model.generate_content(
+                            f"You are a helpful assistant for ReArt marketplace. User message: {message}",
+                            generation_config=generation_config,
+                            safety_settings=safety_settings
+                        )
+                        
+                        if hasattr(response, 'text') and response.text:
+                            bot_response = response.text
+                            logger.info(f"Received response from direct generation: {bot_response[:100]}...")
+                            return {
+                                "status": "success",
+                                "response": bot_response
+                            }
+                        else:
+                            raise Exception("Empty response from both chat and direct generation")
+                except Exception as inner_e:
+                    logger.error(f"Error with primary generation method: {str(inner_e)}")
+                    # Try one more approach - simple completion
+                    response = self.model.generate_content(
+                        f"The following is a conversation with an AI assistant for ReArt, an art marketplace. The assistant is helpful, creative, and friendly.\n\nUser: {message}\nAssistant:",
+                        generation_config=generation_config,
+                        safety_settings=safety_settings
+                    )
+                    
+                    if hasattr(response, 'text') and response.text:
+                        bot_response = response.text
+                        logger.info(f"Received response from simple completion: {bot_response[:100]}...")
+                        return {
+                            "status": "success",
+                            "response": bot_response
+                        }
+                    else:
+                        raise Exception("All generation methods failed")
+                
+            except Exception as e:
+                logger.error(f"Gemini AI Error: {str(e)}")
+                return self._get_fallback_response(message)
+        else:
+            logger.info("Using fallback response system")
+            return self._get_fallback_response(message)
+
+    def _get_fallback_response(self, message):
+        """Fallback response system using keyword matching"""
+        message = message.lower()
+        for intent, data in self.responses.items():
+            if any(keyword in message for keyword in data["keywords"]):
+                logger.info(f"Found matching intent: {intent}")
+                return {
+                    "status": "success",
+                    "response": data["response"]
+                }
+        
+        logger.info("No matching intent found, using default response")
+        return {
+            "status": "success",
+            "response": "Welcome to ReArt! I'm here to help with your art-related questions. You can ask me about our artwork, artists, ordering process, or account management. How can I assist you today?"
+        }
+
+# Initialize chatbot globally
+reart_chatbot = ReArtChatbot()
+
+@csrf_exempt
+def gemini_chat_api(request):
+    """
+    Handle chatbot requests by sending them to the Gemini API and returning the response.
+    
+    This endpoint expects a POST request with a JSON body containing a 'message' field.
+    """
+    logger.info(f"Received request to gemini_chat_api: {request.method}")
+    
+    if request.method != 'POST':
+        logger.error(f"Invalid method: {request.method}")
+        return JsonResponse({'error': 'Only POST requests are allowed'}, status=405)
+    
+    try:
+        # Parse the request body
+        body = request.body.decode('utf-8')
+        logger.info(f"Request body: {body}")
+        
+        try:
+            data = json.loads(body)
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid JSON: {str(e)}")
+            return JsonResponse({'error': 'Invalid JSON format in request'}, status=400)
+            
+        user_message = data.get('message', '')
+        
+        if not user_message:
+            logger.error("No message provided")
+            return JsonResponse({'error': 'Message field is required'}, status=400)
+        
+        logger.info(f"Processing message: {user_message}")
+        
+        # Check if API key is set
+        api_key = settings.GEMINI_API_KEY
+        if not api_key or api_key == "":
+            logger.warning("No Gemini API key set in settings.py")
+            return JsonResponse({
+                'status': 'warning',
+                'response': "I'm currently running in fallback mode because no Gemini API key is configured. Please add your API key in settings.py to enable full functionality.",
+                'api_key_status': 'missing'
+            })
+        
+        try:
+            # Try to get response from chatbot
+            response_data = reart_chatbot.get_response(user_message)
+            # Add API key status to response
+            response_data['api_key_status'] = getattr(reart_chatbot, 'api_key_status', 'unknown')
+            logger.info(f"Got response from chatbot: {response_data}")
+            return JsonResponse(response_data, safe=True)
+        except Exception as e:
+            # If chatbot fails, use fallback with error info
+            logger.error(f"Error getting response from chatbot: {str(e)}")
+            return JsonResponse({
+                'status': 'error',
+                'response': f"I'm having trouble generating a response right now. Error: {str(e)}",
+                'api_key_status': getattr(reart_chatbot, 'api_key_status', 'unknown')
+            }, safe=True)
+    
+    except Exception as e:
+        logger.error(f"Server error: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        return JsonResponse({'error': f'Server error: {str(e)}'}, status=500)

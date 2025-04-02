@@ -20,11 +20,6 @@ urlpatterns = [
     path('order/<int:order_id>/status/', views.get_order_status, name='order_status'),
     path('payment-success/<int:order_id>/', views.payment_success, name='payment_success'),
     path('razorpay-callback/', views.razorpay_callback, name='razorpay_callback'),
-
-
-
-    
-
     path('create-razorpay-order/', views.create_razorpay_order, name='create_razorpay_order'),
     path('view-your-orders/', views.view_your_orders, name='view_your_orders'),
     path('user-profile/', views.user_profile, name='user_profile'),
@@ -42,8 +37,15 @@ urlpatterns = [
     path('face_auth/verify/', views.verify_face, name='verify_face'),
     path('face_auth/register/', views.register_face, name='register_face'),
     path('validate-aadhaar/', views.validate_aadhaar, name='validate_aadhaar'),
-    path('<slug:category_slug>/', views.shop_index, name='product_by_category'),
-    path('<slug:category_slug>/<slug:product_slug>/', views.product_detail, name='product_detail'),
+    
+    # Chatbot API endpoint - must be before slug patterns
+    path('api/reart_gemini_chat_endpoint/', views.gemini_chat_api, name='gemini_chat_api'),
+    
+    # Web socket endpoint
     path('ws/track/<int:order_id>/', tracking_ws.tracking_handler.handle_request, name='order_tracking_ws'),
     path('submit_review/', views.submit_review, name='submit_review'),
+    
+    # Category and product detail pages - keep these last
+    path('<slug:category_slug>/', views.shop_index, name='product_by_category'),
+    path('<slug:category_slug>/<slug:product_slug>/', views.product_detail, name='product_detail'),
 ]

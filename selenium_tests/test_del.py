@@ -19,6 +19,7 @@ try:
     
     # Go to homepage first
     driver.get("http://localhost:8000/")
+    driver.maximize_window()
     print(f"Current URL: {driver.current_url}")
     
     # Try to find the Delivery menu
@@ -102,7 +103,7 @@ try:
     for heading in order_headings:
         if "Order #67" in heading.text:
             order_66_element = heading
-            print("Found Order #66 heading")
+            print("Found Order #67 heading")
             driver.execute_script("arguments[0].style.border='3px solid green'", heading)
             break
     
@@ -113,18 +114,18 @@ try:
         # Get the card containing Order #66
         try:
             order_card = order_66_element.find_element(By.XPATH, "./ancestor::div[contains(@class, 'card')]")
-            print("Found Order #66 card")
+            print("Found Order #67 card")
             driver.execute_script("arguments[0].style.border='3px solid purple'", order_card)
             
             # Try to find the button within this card
             try:
                 update_btn = order_card.find_element(By.CSS_SELECTOR, "button[data-bs-toggle='modal']")
-                print("Found Update Status button within Order #66 card")
+                print("Found Update Status button within Order #67 card")
             except:
                 # If not found directly, try finding by text
                 try:
                     update_btn = order_card.find_element(By.XPATH, ".//button[contains(text(), 'Update Status')]")
-                    print("Found Update Status button by text within Order #66 card")
+                    print("Found Update Status button by text within Order #67 card")
                 except:
                     # If still not found, use proximity
                     print("Button not found directly in card, using proximity")
@@ -149,7 +150,7 @@ try:
                     
                     if closest_button:
                         update_btn = closest_button
-                        print(f"Found closest button to Order #66 (distance: {min_distance}px)")
+                        print(f"Found closest button to Order #67 (distance: {min_distance}px)")
                     else:
                         # Last resort: just use the first button
                         update_btn = modal_buttons[0]

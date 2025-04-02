@@ -1,2106 +1,898 @@
 <html lang="en"><head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReArt Delivery</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
-    <style>
-        :root {
-            --primary-color: #ff6b6b;
-            --secondary-color: #ff8787;
-            --accent-color: #fa5252;
-            --success-color: #51cf66;
-            --light-bg: #f8f9fa;
-            --dark-text: #343a40;
-            --muted-text: #868e96;
-        }
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: var(--light-bg);
-            color: var(--dark-text);
-        }
+  <title>Index</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
 
-        .navbar {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 1rem 0;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-        }
+  <!-- Favicons -->
+  
 
-        .navbar-brand {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: white !important;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
-        .nav-link {
-            font-size: 1.1rem;
-            color: rgba(255,255,255,0.9) !important;
-            margin: 0 0.5rem;
-            transition: all 0.3s ease;
-            position: relative;
-        }
+  <!-- Vendor CSS Files -->
+  <link href="/static/assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="/static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/static/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="/static/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="/static/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="/static/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
-        .nav-link:hover {
-            color: #fff !important;
-            transform: translateY(-2px);
-        }
-
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background-color: #fff;
-            transition: width 0.3s ease;
-        }
-
-        .nav-link:hover::after {
-            width: 100%;
-        }
-
-        .dropdown-menu {
-            border: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .dropdown-item {
-            padding: 0.7rem 1.5rem;
-            transition: all 0.2s ease;
-        }
-
-        .dropdown-item:hover {
-            background-color: var(--primary-color);
-            color: white;
-            transform: translateX(5px);
-        }
-
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-
-        .btn {
-            border-radius: 10px;
-            padding: 0.6rem 1.5rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
-        }
-
-        .btn-success {
-            background: linear-gradient(45deg, #40c057, #51cf66);
-            border: none;
-        }
-
-        .btn-success:hover {
-            background: linear-gradient(45deg, #51cf66, #40c057);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(81, 207, 102, 0.3);
-        }
-
-        .alert {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        /* Modern Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary-color);
-            border-radius: 4px;
-        }
-
-        /* Loading Animation */
-        .page-loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
-
-        .loader {
-            width: 48px;
-            height: 48px;
-            border: 5px solid var(--primary-color);
-            border-bottom-color: transparent;
-            border-radius: 50%;
-            animation: rotation 1s linear infinite;
-        }
-
-        @keyframes rotation {
-            0% { transform: rotate(0deg) }
-            100% { transform: rotate(360deg) }
-        }
-
-        .fade-out {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* Card Colors */
-        .bg-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
-        }
-
-        .text-primary {
-            color: var(--primary-color) !important;
-        }
-
-        .border-primary {
-            border-color: var(--primary-color) !important;
-        }
-
-        .bg-success {
-            background: linear-gradient(135deg, #40c057, #51cf66) !important;
-        }
-
-        .text-success {
-            color: #40c057 !important;
-        }
-
-        .border-success {
-            border-color: #40c057 !important;
-        }
-
-        .bg-info {
-            background: linear-gradient(135deg, #339af0, #4dabf7) !important;
-        }
-
-        .text-info {
-            color: #339af0 !important;
-        }
-
-        .border-info {
-            border-color: #339af0 !important;
-        }
-    </style>
+  <!-- Template Main CSS File -->
+  <link href="/static/assets/css/style.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script><style>.swal2-popup.swal2-toast{flex-direction:column;align-items:stretch;width:auto;padding:1.25em;overflow-y:hidden;background:#fff;box-shadow:0 0 .625em #d9d9d9}.swal2-popup.swal2-toast .swal2-header{flex-direction:row;padding:0}.swal2-popup.swal2-toast .swal2-title{flex-grow:1;justify-content:flex-start;margin:0 .625em;font-size:1em}.swal2-popup.swal2-toast .swal2-loading{justify-content:center}.swal2-popup.swal2-toast .swal2-input{height:2em;margin:.3125em auto;font-size:1em}.swal2-popup.swal2-toast .swal2-validation-message{font-size:1em}.swal2-popup.swal2-toast .swal2-footer{margin:.5em 0 0;padding:.5em 0 0;font-size:.8em}.swal2-popup.swal2-toast .swal2-close{position:static;width:.8em;height:.8em;line-height:.8}.swal2-popup.swal2-toast .swal2-content{justify-content:flex-start;margin:0 .625em;padding:0;font-size:1em;text-align:initial}.swal2-popup.swal2-toast .swal2-html-container{padding:.625em 0 0}.swal2-popup.swal2-toast .swal2-html-container:empty{padding:0}.swal2-popup.swal2-toast .swal2-icon{width:2em;min-width:2em;height:2em;margin:0 .5em 0 0}.swal2-popup.swal2-toast .swal2-icon .swal2-icon-content{display:flex;align-items:center;font-size:1.8em;font-weight:700}@media all and (-ms-high-contrast:none),(-ms-high-contrast:active){.swal2-popup.swal2-toast .swal2-icon .swal2-icon-content{font-size:.25em}}.swal2-popup.swal2-toast .swal2-icon.swal2-success .swal2-success-ring{width:2em;height:2em}.swal2-popup.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line]{top:.875em;width:1.375em}.swal2-popup.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=left]{left:.3125em}.swal2-popup.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=right]{right:.3125em}.swal2-popup.swal2-toast .swal2-actions{flex:1;flex-basis:auto!important;align-self:stretch;width:auto;height:2.2em;height:auto;margin:0 .3125em;margin-top:.3125em;padding:0}.swal2-popup.swal2-toast .swal2-styled{margin:.125em .3125em;padding:.3125em .625em;font-size:1em}.swal2-popup.swal2-toast .swal2-styled:focus{box-shadow:0 0 0 1px #fff,0 0 0 3px rgba(100,150,200,.5)}.swal2-popup.swal2-toast .swal2-success{border-color:#a5dc86}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-circular-line]{position:absolute;width:1.6em;height:3em;transform:rotate(45deg);border-radius:50%}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-circular-line][class$=left]{top:-.8em;left:-.5em;transform:rotate(-45deg);transform-origin:2em 2em;border-radius:4em 0 0 4em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-circular-line][class$=right]{top:-.25em;left:.9375em;transform-origin:0 1.5em;border-radius:0 4em 4em 0}.swal2-popup.swal2-toast .swal2-success .swal2-success-ring{width:2em;height:2em}.swal2-popup.swal2-toast .swal2-success .swal2-success-fix{top:0;left:.4375em;width:.4375em;height:2.6875em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-line]{height:.3125em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-line][class$=tip]{top:1.125em;left:.1875em;width:.75em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-line][class$=long]{top:.9375em;right:.1875em;width:1.375em}.swal2-popup.swal2-toast .swal2-success.swal2-icon-show .swal2-success-line-tip{-webkit-animation:swal2-toast-animate-success-line-tip .75s;animation:swal2-toast-animate-success-line-tip .75s}.swal2-popup.swal2-toast .swal2-success.swal2-icon-show .swal2-success-line-long{-webkit-animation:swal2-toast-animate-success-line-long .75s;animation:swal2-toast-animate-success-line-long .75s}.swal2-popup.swal2-toast.swal2-show{-webkit-animation:swal2-toast-show .5s;animation:swal2-toast-show .5s}.swal2-popup.swal2-toast.swal2-hide{-webkit-animation:swal2-toast-hide .1s forwards;animation:swal2-toast-hide .1s forwards}.swal2-container{display:flex;position:fixed;z-index:1060;top:0;right:0;bottom:0;left:0;flex-direction:row;align-items:center;justify-content:center;padding:.625em;overflow-x:hidden;transition:background-color .1s;-webkit-overflow-scrolling:touch}.swal2-container.swal2-backdrop-show,.swal2-container.swal2-noanimation{background:rgba(0,0,0,.4)}.swal2-container.swal2-backdrop-hide{background:0 0!important}.swal2-container.swal2-top{align-items:flex-start}.swal2-container.swal2-top-left,.swal2-container.swal2-top-start{align-items:flex-start;justify-content:flex-start}.swal2-container.swal2-top-end,.swal2-container.swal2-top-right{align-items:flex-start;justify-content:flex-end}.swal2-container.swal2-center{align-items:center}.swal2-container.swal2-center-left,.swal2-container.swal2-center-start{align-items:center;justify-content:flex-start}.swal2-container.swal2-center-end,.swal2-container.swal2-center-right{align-items:center;justify-content:flex-end}.swal2-container.swal2-bottom{align-items:flex-end}.swal2-container.swal2-bottom-left,.swal2-container.swal2-bottom-start{align-items:flex-end;justify-content:flex-start}.swal2-container.swal2-bottom-end,.swal2-container.swal2-bottom-right{align-items:flex-end;justify-content:flex-end}.swal2-container.swal2-bottom-end>:first-child,.swal2-container.swal2-bottom-left>:first-child,.swal2-container.swal2-bottom-right>:first-child,.swal2-container.swal2-bottom-start>:first-child,.swal2-container.swal2-bottom>:first-child{margin-top:auto}.swal2-container.swal2-grow-fullscreen>.swal2-modal{display:flex!important;flex:1;align-self:stretch;justify-content:center}.swal2-container.swal2-grow-row>.swal2-modal{display:flex!important;flex:1;align-content:center;justify-content:center}.swal2-container.swal2-grow-column{flex:1;flex-direction:column}.swal2-container.swal2-grow-column.swal2-bottom,.swal2-container.swal2-grow-column.swal2-center,.swal2-container.swal2-grow-column.swal2-top{align-items:center}.swal2-container.swal2-grow-column.swal2-bottom-left,.swal2-container.swal2-grow-column.swal2-bottom-start,.swal2-container.swal2-grow-column.swal2-center-left,.swal2-container.swal2-grow-column.swal2-center-start,.swal2-container.swal2-grow-column.swal2-top-left,.swal2-container.swal2-grow-column.swal2-top-start{align-items:flex-start}.swal2-container.swal2-grow-column.swal2-bottom-end,.swal2-container.swal2-grow-column.swal2-bottom-right,.swal2-container.swal2-grow-column.swal2-center-end,.swal2-container.swal2-grow-column.swal2-center-right,.swal2-container.swal2-grow-column.swal2-top-end,.swal2-container.swal2-grow-column.swal2-top-right{align-items:flex-end}.swal2-container.swal2-grow-column>.swal2-modal{display:flex!important;flex:1;align-content:center;justify-content:center}.swal2-container.swal2-no-transition{transition:none!important}.swal2-container:not(.swal2-top):not(.swal2-top-start):not(.swal2-top-end):not(.swal2-top-left):not(.swal2-top-right):not(.swal2-center-start):not(.swal2-center-end):not(.swal2-center-left):not(.swal2-center-right):not(.swal2-bottom):not(.swal2-bottom-start):not(.swal2-bottom-end):not(.swal2-bottom-left):not(.swal2-bottom-right):not(.swal2-grow-fullscreen)>.swal2-modal{margin:auto}@media all and (-ms-high-contrast:none),(-ms-high-contrast:active){.swal2-container .swal2-modal{margin:0!important}}.swal2-popup{display:none;position:relative;box-sizing:border-box;flex-direction:column;justify-content:center;width:32em;max-width:100%;padding:1.25em;border:none;border-radius:5px;background:#fff;font-family:inherit;font-size:1rem}.swal2-popup:focus{outline:0}.swal2-popup.swal2-loading{overflow-y:hidden}.swal2-header{display:flex;flex-direction:column;align-items:center;padding:0 1.8em}.swal2-title{position:relative;max-width:100%;margin:0 0 .4em;padding:0;color:#595959;font-size:1.875em;font-weight:600;text-align:center;text-transform:none;word-wrap:break-word}.swal2-actions{display:flex;z-index:1;box-sizing:border-box;flex-wrap:wrap;align-items:center;justify-content:center;width:100%;margin:1.25em auto 0;padding:0}.swal2-actions:not(.swal2-loading) .swal2-styled[disabled]{opacity:.4}.swal2-actions:not(.swal2-loading) .swal2-styled:hover{background-image:linear-gradient(rgba(0,0,0,.1),rgba(0,0,0,.1))}.swal2-actions:not(.swal2-loading) .swal2-styled:active{background-image:linear-gradient(rgba(0,0,0,.2),rgba(0,0,0,.2))}.swal2-loader{display:none;align-items:center;justify-content:center;width:2.2em;height:2.2em;margin:0 1.875em;-webkit-animation:swal2-rotate-loading 1.5s linear 0s infinite normal;animation:swal2-rotate-loading 1.5s linear 0s infinite normal;border-width:.25em;border-style:solid;border-radius:100%;border-color:#2778c4 transparent #2778c4 transparent}.swal2-styled{margin:.3125em;padding:.625em 1.1em;box-shadow:none;font-weight:500}.swal2-styled:not([disabled]){cursor:pointer}.swal2-styled.swal2-confirm{border:0;border-radius:.25em;background:initial;background-color:#2778c4;color:#fff;font-size:1em}.swal2-styled.swal2-deny{border:0;border-radius:.25em;background:initial;background-color:#d14529;color:#fff;font-size:1em}.swal2-styled.swal2-cancel{border:0;border-radius:.25em;background:initial;background-color:#757575;color:#fff;font-size:1em}.swal2-styled:focus{outline:0;box-shadow:0 0 0 3px rgba(100,150,200,.5)}.swal2-styled::-moz-focus-inner{border:0}.swal2-footer{justify-content:center;margin:1.25em 0 0;padding:1em 0 0;border-top:1px solid #eee;color:#545454;font-size:1em}.swal2-timer-progress-bar-container{position:absolute;right:0;bottom:0;left:0;height:.25em;overflow:hidden;border-bottom-right-radius:5px;border-bottom-left-radius:5px}.swal2-timer-progress-bar{width:100%;height:.25em;background:rgba(0,0,0,.2)}.swal2-image{max-width:100%;margin:1.25em auto}.swal2-close{position:absolute;z-index:2;top:0;right:0;align-items:center;justify-content:center;width:1.2em;height:1.2em;padding:0;overflow:hidden;transition:color .1s ease-out;border:none;border-radius:5px;background:0 0;color:#ccc;font-family:serif;font-size:2.5em;line-height:1.2;cursor:pointer}.swal2-close:hover{transform:none;background:0 0;color:#f27474}.swal2-close:focus{outline:0;box-shadow:inset 0 0 0 3px rgba(100,150,200,.5)}.swal2-close::-moz-focus-inner{border:0}.swal2-content{z-index:1;justify-content:center;margin:0;padding:0 1.6em;color:#545454;font-size:1.125em;font-weight:400;line-height:normal;text-align:center;word-wrap:break-word}.swal2-checkbox,.swal2-file,.swal2-input,.swal2-radio,.swal2-select,.swal2-textarea{margin:1em auto}.swal2-file,.swal2-input,.swal2-textarea{box-sizing:border-box;width:100%;transition:border-color .3s,box-shadow .3s;border:1px solid #d9d9d9;border-radius:.1875em;background:inherit;box-shadow:inset 0 1px 1px rgba(0,0,0,.06);color:inherit;font-size:1.125em}.swal2-file.swal2-inputerror,.swal2-input.swal2-inputerror,.swal2-textarea.swal2-inputerror{border-color:#f27474!important;box-shadow:0 0 2px #f27474!important}.swal2-file:focus,.swal2-input:focus,.swal2-textarea:focus{border:1px solid #b4dbed;outline:0;box-shadow:0 0 0 3px rgba(100,150,200,.5)}.swal2-file::-moz-placeholder,.swal2-input::-moz-placeholder,.swal2-textarea::-moz-placeholder{color:#ccc}.swal2-file:-ms-input-placeholder,.swal2-input:-ms-input-placeholder,.swal2-textarea:-ms-input-placeholder{color:#ccc}.swal2-file::placeholder,.swal2-input::placeholder,.swal2-textarea::placeholder{color:#ccc}.swal2-range{margin:1em auto;background:#fff}.swal2-range input{width:80%}.swal2-range output{width:20%;color:inherit;font-weight:600;text-align:center}.swal2-range input,.swal2-range output{height:2.625em;padding:0;font-size:1.125em;line-height:2.625em}.swal2-input{height:2.625em;padding:0 .75em}.swal2-input[type=number]{max-width:10em}.swal2-file{background:inherit;font-size:1.125em}.swal2-textarea{height:6.75em;padding:.75em}.swal2-select{min-width:50%;max-width:100%;padding:.375em .625em;background:inherit;color:inherit;font-size:1.125em}.swal2-checkbox,.swal2-radio{align-items:center;justify-content:center;background:#fff;color:inherit}.swal2-checkbox label,.swal2-radio label{margin:0 .6em;font-size:1.125em}.swal2-checkbox input,.swal2-radio input{flex-shrink:0;margin:0 .4em}.swal2-input-label{display:flex;justify-content:center;margin:1em auto}.swal2-validation-message{align-items:center;justify-content:center;margin:0 -2.7em;padding:.625em;overflow:hidden;background:#f0f0f0;color:#666;font-size:1em;font-weight:300}.swal2-validation-message::before{content:"!";display:inline-block;width:1.5em;min-width:1.5em;height:1.5em;margin:0 .625em;border-radius:50%;background-color:#f27474;color:#fff;font-weight:600;line-height:1.5em;text-align:center}.swal2-icon{position:relative;box-sizing:content-box;justify-content:center;width:5em;height:5em;margin:1.25em auto 1.875em;border:.25em solid transparent;border-radius:50%;border-color:#000;font-family:inherit;line-height:5em;cursor:default;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.swal2-icon .swal2-icon-content{display:flex;align-items:center;font-size:3.75em}.swal2-icon.swal2-error{border-color:#f27474;color:#f27474}.swal2-icon.swal2-error .swal2-x-mark{position:relative;flex-grow:1}.swal2-icon.swal2-error [class^=swal2-x-mark-line]{display:block;position:absolute;top:2.3125em;width:2.9375em;height:.3125em;border-radius:.125em;background-color:#f27474}.swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=left]{left:1.0625em;transform:rotate(45deg)}.swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=right]{right:1em;transform:rotate(-45deg)}.swal2-icon.swal2-error.swal2-icon-show{-webkit-animation:swal2-animate-error-icon .5s;animation:swal2-animate-error-icon .5s}.swal2-icon.swal2-error.swal2-icon-show .swal2-x-mark{-webkit-animation:swal2-animate-error-x-mark .5s;animation:swal2-animate-error-x-mark .5s}.swal2-icon.swal2-warning{border-color:#facea8;color:#f8bb86}.swal2-icon.swal2-info{border-color:#9de0f6;color:#3fc3ee}.swal2-icon.swal2-question{border-color:#c9dae1;color:#87adbd}.swal2-icon.swal2-success{border-color:#a5dc86;color:#a5dc86}.swal2-icon.swal2-success [class^=swal2-success-circular-line]{position:absolute;width:3.75em;height:7.5em;transform:rotate(45deg);border-radius:50%}.swal2-icon.swal2-success [class^=swal2-success-circular-line][class$=left]{top:-.4375em;left:-2.0635em;transform:rotate(-45deg);transform-origin:3.75em 3.75em;border-radius:7.5em 0 0 7.5em}.swal2-icon.swal2-success [class^=swal2-success-circular-line][class$=right]{top:-.6875em;left:1.875em;transform:rotate(-45deg);transform-origin:0 3.75em;border-radius:0 7.5em 7.5em 0}.swal2-icon.swal2-success .swal2-success-ring{position:absolute;z-index:2;top:-.25em;left:-.25em;box-sizing:content-box;width:100%;height:100%;border:.25em solid rgba(165,220,134,.3);border-radius:50%}.swal2-icon.swal2-success .swal2-success-fix{position:absolute;z-index:1;top:.5em;left:1.625em;width:.4375em;height:5.625em;transform:rotate(-45deg)}.swal2-icon.swal2-success [class^=swal2-success-line]{display:block;position:absolute;z-index:2;height:.3125em;border-radius:.125em;background-color:#a5dc86}.swal2-icon.swal2-success [class^=swal2-success-line][class$=tip]{top:2.875em;left:.8125em;width:1.5625em;transform:rotate(45deg)}.swal2-icon.swal2-success [class^=swal2-success-line][class$=long]{top:2.375em;right:.5em;width:2.9375em;transform:rotate(-45deg)}.swal2-icon.swal2-success.swal2-icon-show .swal2-success-line-tip{-webkit-animation:swal2-animate-success-line-tip .75s;animation:swal2-animate-success-line-tip .75s}.swal2-icon.swal2-success.swal2-icon-show .swal2-success-line-long{-webkit-animation:swal2-animate-success-line-long .75s;animation:swal2-animate-success-line-long .75s}.swal2-icon.swal2-success.swal2-icon-show .swal2-success-circular-line-right{-webkit-animation:swal2-rotate-success-circular-line 4.25s ease-in;animation:swal2-rotate-success-circular-line 4.25s ease-in}.swal2-progress-steps{flex-wrap:wrap;align-items:center;max-width:100%;margin:0 0 1.25em;padding:0;background:inherit;font-weight:600}.swal2-progress-steps li{display:inline-block;position:relative}.swal2-progress-steps .swal2-progress-step{z-index:20;flex-shrink:0;width:2em;height:2em;border-radius:2em;background:#2778c4;color:#fff;line-height:2em;text-align:center}.swal2-progress-steps .swal2-progress-step.swal2-active-progress-step{background:#2778c4}.swal2-progress-steps .swal2-progress-step.swal2-active-progress-step~.swal2-progress-step{background:#add8e6;color:#fff}.swal2-progress-steps .swal2-progress-step.swal2-active-progress-step~.swal2-progress-step-line{background:#add8e6}.swal2-progress-steps .swal2-progress-step-line{z-index:10;flex-shrink:0;width:2.5em;height:.4em;margin:0 -1px;background:#2778c4}[class^=swal2]{-webkit-tap-highlight-color:transparent}.swal2-show{-webkit-animation:swal2-show .3s;animation:swal2-show .3s}.swal2-hide{-webkit-animation:swal2-hide .15s forwards;animation:swal2-hide .15s forwards}.swal2-noanimation{transition:none}.swal2-scrollbar-measure{position:absolute;top:-9999px;width:50px;height:50px;overflow:scroll}.swal2-rtl .swal2-close{right:auto;left:0}.swal2-rtl .swal2-timer-progress-bar{right:0;left:auto}@supports (-ms-accelerator:true){.swal2-range input{width:100%!important}.swal2-range output{display:none}}@media all and (-ms-high-contrast:none),(-ms-high-contrast:active){.swal2-range input{width:100%!important}.swal2-range output{display:none}}@-webkit-keyframes swal2-toast-show{0%{transform:translateY(-.625em) rotateZ(2deg)}33%{transform:translateY(0) rotateZ(-2deg)}66%{transform:translateY(.3125em) rotateZ(2deg)}100%{transform:translateY(0) rotateZ(0)}}@keyframes swal2-toast-show{0%{transform:translateY(-.625em) rotateZ(2deg)}33%{transform:translateY(0) rotateZ(-2deg)}66%{transform:translateY(.3125em) rotateZ(2deg)}100%{transform:translateY(0) rotateZ(0)}}@-webkit-keyframes swal2-toast-hide{100%{transform:rotateZ(1deg);opacity:0}}@keyframes swal2-toast-hide{100%{transform:rotateZ(1deg);opacity:0}}@-webkit-keyframes swal2-toast-animate-success-line-tip{0%{top:.5625em;left:.0625em;width:0}54%{top:.125em;left:.125em;width:0}70%{top:.625em;left:-.25em;width:1.625em}84%{top:1.0625em;left:.75em;width:.5em}100%{top:1.125em;left:.1875em;width:.75em}}@keyframes swal2-toast-animate-success-line-tip{0%{top:.5625em;left:.0625em;width:0}54%{top:.125em;left:.125em;width:0}70%{top:.625em;left:-.25em;width:1.625em}84%{top:1.0625em;left:.75em;width:.5em}100%{top:1.125em;left:.1875em;width:.75em}}@-webkit-keyframes swal2-toast-animate-success-line-long{0%{top:1.625em;right:1.375em;width:0}65%{top:1.25em;right:.9375em;width:0}84%{top:.9375em;right:0;width:1.125em}100%{top:.9375em;right:.1875em;width:1.375em}}@keyframes swal2-toast-animate-success-line-long{0%{top:1.625em;right:1.375em;width:0}65%{top:1.25em;right:.9375em;width:0}84%{top:.9375em;right:0;width:1.125em}100%{top:.9375em;right:.1875em;width:1.375em}}@-webkit-keyframes swal2-show{0%{transform:scale(.7)}45%{transform:scale(1.05)}80%{transform:scale(.95)}100%{transform:scale(1)}}@keyframes swal2-show{0%{transform:scale(.7)}45%{transform:scale(1.05)}80%{transform:scale(.95)}100%{transform:scale(1)}}@-webkit-keyframes swal2-hide{0%{transform:scale(1);opacity:1}100%{transform:scale(.5);opacity:0}}@keyframes swal2-hide{0%{transform:scale(1);opacity:1}100%{transform:scale(.5);opacity:0}}@-webkit-keyframes swal2-animate-success-line-tip{0%{top:1.1875em;left:.0625em;width:0}54%{top:1.0625em;left:.125em;width:0}70%{top:2.1875em;left:-.375em;width:3.125em}84%{top:3em;left:1.3125em;width:1.0625em}100%{top:2.8125em;left:.8125em;width:1.5625em}}@keyframes swal2-animate-success-line-tip{0%{top:1.1875em;left:.0625em;width:0}54%{top:1.0625em;left:.125em;width:0}70%{top:2.1875em;left:-.375em;width:3.125em}84%{top:3em;left:1.3125em;width:1.0625em}100%{top:2.8125em;left:.8125em;width:1.5625em}}@-webkit-keyframes swal2-animate-success-line-long{0%{top:3.375em;right:2.875em;width:0}65%{top:3.375em;right:2.875em;width:0}84%{top:2.1875em;right:0;width:3.4375em}100%{top:2.375em;right:.5em;width:2.9375em}}@keyframes swal2-animate-success-line-long{0%{top:3.375em;right:2.875em;width:0}65%{top:3.375em;right:2.875em;width:0}84%{top:2.1875em;right:0;width:3.4375em}100%{top:2.375em;right:.5em;width:2.9375em}}@-webkit-keyframes swal2-rotate-success-circular-line{0%{transform:rotate(-45deg)}5%{transform:rotate(-45deg)}12%{transform:rotate(-405deg)}100%{transform:rotate(-405deg)}}@keyframes swal2-rotate-success-circular-line{0%{transform:rotate(-45deg)}5%{transform:rotate(-45deg)}12%{transform:rotate(-405deg)}100%{transform:rotate(-405deg)}}@-webkit-keyframes swal2-animate-error-x-mark{0%{margin-top:1.625em;transform:scale(.4);opacity:0}50%{margin-top:1.625em;transform:scale(.4);opacity:0}80%{margin-top:-.375em;transform:scale(1.15)}100%{margin-top:0;transform:scale(1);opacity:1}}@keyframes swal2-animate-error-x-mark{0%{margin-top:1.625em;transform:scale(.4);opacity:0}50%{margin-top:1.625em;transform:scale(.4);opacity:0}80%{margin-top:-.375em;transform:scale(1.15)}100%{margin-top:0;transform:scale(1);opacity:1}}@-webkit-keyframes swal2-animate-error-icon{0%{transform:rotateX(100deg);opacity:0}100%{transform:rotateX(0);opacity:1}}@keyframes swal2-animate-error-icon{0%{transform:rotateX(100deg);opacity:0}100%{transform:rotateX(0);opacity:1}}@-webkit-keyframes swal2-rotate-loading{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}@keyframes swal2-rotate-loading{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown){overflow:hidden}body.swal2-height-auto{height:auto!important}body.swal2-no-backdrop .swal2-container{top:auto;right:auto;bottom:auto;left:auto;max-width:calc(100% - .625em * 2);background-color:transparent!important}body.swal2-no-backdrop .swal2-container>.swal2-modal{box-shadow:0 0 10px rgba(0,0,0,.4)}body.swal2-no-backdrop .swal2-container.swal2-top{top:0;left:50%;transform:translateX(-50%)}body.swal2-no-backdrop .swal2-container.swal2-top-left,body.swal2-no-backdrop .swal2-container.swal2-top-start{top:0;left:0}body.swal2-no-backdrop .swal2-container.swal2-top-end,body.swal2-no-backdrop .swal2-container.swal2-top-right{top:0;right:0}body.swal2-no-backdrop .swal2-container.swal2-center{top:50%;left:50%;transform:translate(-50%,-50%)}body.swal2-no-backdrop .swal2-container.swal2-center-left,body.swal2-no-backdrop .swal2-container.swal2-center-start{top:50%;left:0;transform:translateY(-50%)}body.swal2-no-backdrop .swal2-container.swal2-center-end,body.swal2-no-backdrop .swal2-container.swal2-center-right{top:50%;right:0;transform:translateY(-50%)}body.swal2-no-backdrop .swal2-container.swal2-bottom{bottom:0;left:50%;transform:translateX(-50%)}body.swal2-no-backdrop .swal2-container.swal2-bottom-left,body.swal2-no-backdrop .swal2-container.swal2-bottom-start{bottom:0;left:0}body.swal2-no-backdrop .swal2-container.swal2-bottom-end,body.swal2-no-backdrop .swal2-container.swal2-bottom-right{right:0;bottom:0}@media print{body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown){overflow-y:scroll!important}body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown)>[aria-hidden=true]{display:none}body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) .swal2-container{position:static!important}}body.swal2-toast-shown .swal2-container{background-color:transparent}body.swal2-toast-shown .swal2-container.swal2-top{top:0;right:auto;bottom:auto;left:50%;transform:translateX(-50%)}body.swal2-toast-shown .swal2-container.swal2-top-end,body.swal2-toast-shown .swal2-container.swal2-top-right{top:0;right:0;bottom:auto;left:auto}body.swal2-toast-shown .swal2-container.swal2-top-left,body.swal2-toast-shown .swal2-container.swal2-top-start{top:0;right:auto;bottom:auto;left:0}body.swal2-toast-shown .swal2-container.swal2-center-left,body.swal2-toast-shown .swal2-container.swal2-center-start{top:50%;right:auto;bottom:auto;left:0;transform:translateY(-50%)}body.swal2-toast-shown .swal2-container.swal2-center{top:50%;right:auto;bottom:auto;left:50%;transform:translate(-50%,-50%)}body.swal2-toast-shown .swal2-container.swal2-center-end,body.swal2-toast-shown .swal2-container.swal2-center-right{top:50%;right:0;bottom:auto;left:auto;transform:translateY(-50%)}body.swal2-toast-shown .swal2-container.swal2-bottom-left,body.swal2-toast-shown .swal2-container.swal2-bottom-start{top:auto;right:auto;bottom:0;left:0}body.swal2-toast-shown .swal2-container.swal2-bottom{top:auto;right:auto;bottom:0;left:50%;transform:translateX(-50%)}body.swal2-toast-shown .swal2-container.swal2-bottom-end,body.swal2-toast-shown .swal2-container.swal2-bottom-right{top:auto;right:0;bottom:0;left:auto}</style>
+  <!-- =======================================================
+  * Template Name: Dewi
+  * Template URL: https://bootstrapmade.com/dewi-free-multi-purpose-html-template/
+  * Updated: Mar 17 2024 with Bootstrap v5.3.3
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
 </head>
-<body class="modal-open" style="overflow: hidden; padding-right: 8px;">
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="/delivery/homed/">ReArt Delivery</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/delivery/available-orders/">
-                            <i class="fas fa-list-ul"></i> Available Orders
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/delivery/my-deliveries/">
-                            <i class="fas fa-truck"></i> My Deliveries
-                        </a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i> Jagan
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="/delivery/homed/">Dashboard</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/delivery/logoutd/">Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+
+<body data-aos-easing="ease-in-out" data-aos-duration="1000" data-aos-delay="0">
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="fixed-top">
+    <div class="container d-flex align-items-center justify-content-between">
+      <a href="index.html" class="logo"><img src="/static/logo.png" alt="" class="img-fluid"></a>
+
+      <h1 class="logo">
+        <a href="index.html" style="
+          font-family: 'Poppins', sans-serif;
+          font-weight: 700;
+          font-size: 50px;
+          color: #96c4a2;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          text-decoration: none;
+          transition: all 0.3s ease;
+        ">
+          Reart  Vault
+        </a>
+      </h1>
+      <!-- Uncomment below if you prefer to use an image logo -->
+     
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="nav-link scrollto active" href="#hero" style="font-size: 0.9rem;">Home</a></li>
+          <li><a class="nav-link scrollto" href="/adminclick/userloginadmin/" style="font-size:0.9rem;">Admin Click</a></li>
+          <li><a class="nav-link scrollto" href="/accounts/login/" style="font-size: 0.9rem;">Login</a></li>
+          <li class="dropdown"><a href="#" style="font-size:0.9rem;"><span>Register</span> <i class="bi bi-chevron-down"></i></a>
+            <ul>
+              <li><a href="/accounts/donor_register/" style="font-size: 0.9rem;">Donor Registration</a></li>
+              <li><a href="/accounts/artist_register/" style="font-size: 0.9rem;">Artist Registration</a></li>
+              
+            </ul>
+          </li>
+          <li class="dropdown"><a href="#" style="font-size:0.9rem;"><span>Delivery</span> <i class="bi bi-chevron-down"></i></a>
+            <ul>
+              
+              
+              <li><a href="/delivery/registerd/" style="font-size: 0.9rem;">Delivery Partner Registration</a></li>
+              <li><a href="/delivery/logind/" style="font-size: 0.9rem;">Delivery Partner Login</a></li>
+            </ul>
+          </li>
+        
+          <li><a class="nav-link scrollto" href="/shop/" style="font-size: 0.9rem;">Shop</a></li>
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+        <div class="widget-header">
+          <small class="nav-link scrollto active" style="font-size: 1rem;">WELCOME </small>
+				
+          <!-- <small class="title text-white">Welcome </small> 
+           
+          <a href="#"> Guest </a>
+           -->
+           
         </div>
-    </nav>
+      </nav><!-- .navbar -->
 
-    <!-- Messages -->
-    
+    </div>
+  </header><!-- End Header -->
 
-    <!-- Main Content -->
+  <!-- ======= Hero Section ======= -->
+  <section id="hero">
+    <div class="hero-container aos-init aos-animate" data-aos="fade-up" data-aos-delay="150">
+      <h1 class="logo">
+        <a href="index.html" style="
+          font-family: 'Poppins', sans-serif;
+          font-weight: 700;
+          font-size: 70px;
+          color: #96c4a2;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          text-decoration: none;
+          transition: all 0.3s ease;
+        ">
+          Reduce. ReUse. ReCycle.
+        </a>
+      </h1>
     
-<div class="container py-4">
-    <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card bg-primary text-white">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h2 class="mb-1">My Deliveries</h2>
-                            <p class="mb-0 opacity-75">Manage your assigned deliveries</p>
-                        </div>
-                        <div class="stats-icon">
-                            <div class="icon-circle bg-white bg-opacity-10">
-                                <i class="fas fa-truck fa-2x text-white"></i>
-                            </div>
-                        </div>
-                    </div>
+      <h2>We are team for Recycle your Trash</h2>
+      <div class="d-flex">
+        <a href="" class="btn-get-started scrollto">Get Started</a>
+        <a href="" class="glightbox btn-watch-video"><i class="bi bi-play-circle"></i><span>Watch Video</span></a>
+      </div>
+    </div>
+  </section><!-- End Hero -->
+
+  <main id="main">
+
+    <!-- ======= About Section ======= -->
+    <section id="about" class="about">
+      <div class="container aos-init" data-aos="fade-up">
+
+        <div class="row justify-content-end">
+          <div class="col-lg-11">
+            <div class="row justify-content-end">
+
+              <div class="col-lg-3 col-md-5 col-6 d-md-flex align-items-md-stretch">
+                <div class="count-box">
+                  <i class="bi bi-emoji-smile"></i>
+                  <span data-purecounter-start="0" data-purecounter-end="125" data-purecounter-duration="1" class="purecounter">0</span>
+                  <p>Happy Clients</p>
                 </div>
+              </div>
+
+              <div class="col-lg-3 col-md-5 col-6 d-md-flex align-items-md-stretch">
+                <div class="count-box">
+                  <i class="bi bi-journal-richtext"></i>
+                  <span data-purecounter-start="0" data-purecounter-end="85" data-purecounter-duration="1" class="purecounter">0</span>
+                  <p>Projects</p>
+                </div>
+              </div>
+
+              <div class="col-lg-3 col-md-5 col-6 d-md-flex align-items-md-stretch">
+                <div class="count-box">
+                  <i class="bi bi-clock"></i>
+                  <span data-purecounter-start="0" data-purecounter-end="35" data-purecounter-duration="1" class="purecounter">0</span>
+                  <p>Years of experience</p>
+                </div>
+              </div>
+
+              <div class="col-lg-3 col-md-5 col-6 d-md-flex align-items-md-stretch">
+                <div class="count-box">
+                  <i class="bi bi-award"></i>
+                  <span data-purecounter-start="0" data-purecounter-end="48" data-purecounter-duration="1" class="purecounter">0</span>
+                  <p>Awards</p>
+                </div>
+              </div>
+
             </div>
+          </div>
         </div>
+
+        <div class="row">
+
+          <div class="col-lg-6 video-box align-self-baseline aos-init" data-aos="zoom-in" data-aos-delay="100">
+            <img src="assets/img/about.jpg" class="img-fluid" alt="">
+            <a href="https://www.youtube.com/watch?v=jDDaplaOz7Q" class="glightbox play-btn mb-4"></a>
+          </div>
+
+          <div class="col-lg-6 pt-3 pt-lg-0 content">
+            <h3>Voluptatem dignissimos provident quasi corporis voluptates sit assumenda.</h3>
+            <p class="fst-italic">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+              magna aliqua.
+            </p>
+            <ul>
+              <li><i class="bx bx-check-double"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
+              <li><i class="bx bx-check-double"></i> Duis aute irure dolor in reprehenderit in voluptate velit.</li>
+              <li><i class="bx bx-check-double"></i> Voluptate repellendus pariatur reprehenderit corporis sint.</li>
+              <li><i class="bx bx-check-double"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</li>
+            </ul>
+            <p>
+              Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+              velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+              culpa qui officia deserunt mollit anim id est laborum
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End About Section -->
+
+    <!-- ======= About Boxes Section ======= -->
+    <section id="about-boxes" class="about-boxes">
+      <div class="container aos-init" data-aos="fade-up">
+
+        <div class="row">
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch aos-init" data-aos="fade-up" data-aos-delay="100">
+            <div class="card">
+              <img src="assets/img/about-boxes-1.jpg" class="card-img-top" alt="...">
+              <div class="card-icon">
+                <i class="ri-brush-4-line"></i>
+              </div>
+              <div class="card-body">
+                <h5 class="card-title"><a href="">Our Mission</a></h5>
+                <p class="card-text">Lorem ipsum dolor sit amet, consectetur elit, sed do eiusmod tempor ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch aos-init" data-aos="fade-up" data-aos-delay="200">
+            <div class="card">
+              <img src="assets/img/about-boxes-2.jpg" class="card-img-top" alt="...">
+              <div class="card-icon">
+                <i class="ri-calendar-check-line"></i>
+              </div>
+              <div class="card-body">
+                <h5 class="card-title"><a href="">Our Plan</a></h5>
+                <p class="card-text">Sed ut perspiciatis unde omnis iste natus error sit voluptatem doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch aos-init" data-aos="fade-up" data-aos-delay="300">
+            <div class="card">
+              <img src="assets/img/about-boxes-3.jpg" class="card-img-top" alt="...">
+              <div class="card-icon">
+                <i class="ri-movie-2-line"></i>
+              </div>
+              <div class="card-body">
+                <h5 class="card-title"><a href="">Our Vision</a></h5>
+                <p class="card-text">Nemo enim ipsam voluptatem quia voluptas sit aut odit aut fugit, sed quia magni dolores eos qui ratione voluptatem sequi nesciunt Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet. </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End About Boxes Section -->
+
+    <!-- ======= Clients Section ======= -->
+    <section id="clients" class="clients">
+      <div class="container aos-init" data-aos="zoom-in">
+
+        <div class="row">
+
+          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+            <img src="assets/img/clients/client-1.png" class="img-fluid" alt="">
+          </div>
+
+          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+            <img src="assets/img/clients/client-2.png" class="img-fluid" alt="">
+          </div>
+
+          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+            <img src="assets/img/clients/client-3.png" class="img-fluid" alt="">
+          </div>
+
+          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+            <img src="assets/img/clients/client-4.png" class="img-fluid" alt="">
+          </div>
+
+          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+            <img src="assets/img/clients/client-5.png" class="img-fluid" alt="">
+          </div>
+
+          <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+            <img src="assets/img/clients/client-6.png" class="img-fluid" alt="">
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Clients Section -->
+
+    <!-- ======= Features Section ======= -->
+    <section id="features" class="features">
+      <div class="container aos-init" data-aos="fade-up">
+
+        <ul class="nav nav-tabs row d-flex" role="tablist">
+          <li class="nav-item col-3" role="presentation">
+            <a class="nav-link active show" data-bs-toggle="tab" href="#tab-1" aria-selected="true" role="tab">
+              <i class="ri-gps-line"></i>
+              <h4 class="d-none d-lg-block">Modi sit est dela pireda nest</h4>
+            </a>
+          </li>
+          <li class="nav-item col-3" role="presentation">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab-2" aria-selected="false" tabindex="-1" role="tab">
+              <i class="ri-body-scan-line"></i>
+              <h4 class="d-none d-lg-block">Unde praesenti mara setra le</h4>
+            </a>
+          </li>
+          <li class="nav-item col-3" role="presentation">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab-3" aria-selected="false" tabindex="-1" role="tab">
+              <i class="ri-sun-line"></i>
+              <h4 class="d-none d-lg-block">Pariatur explica nitro dela</h4>
+            </a>
+          </li>
+          <li class="nav-item col-3" role="presentation">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab-4" aria-selected="false" tabindex="-1" role="tab">
+              <i class="ri-store-line"></i>
+              <h4 class="d-none d-lg-block">Nostrum qui dile node</h4>
+            </a>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane active show" id="tab-1" role="tabpanel">
+            <div class="row">
+              <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
+                <h3>Voluptatem dignissimos provident quasi corporis voluptates sit assumenda.</h3>
+                <p class="fst-italic">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                  magna aliqua.
+                </p>
+                <ul>
+                  <li><i class="ri-check-double-line"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
+                  <li><i class="ri-check-double-line"></i> Duis aute irure dolor in reprehenderit in voluptate velit.</li>
+                  <li><i class="ri-check-double-line"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</li>
+                </ul>
+                <p>
+                  Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+                  velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                  culpa qui officia deserunt mollit anim id est laborum
+                </p>
+              </div>
+              <div class="col-lg-6 order-1 order-lg-2 text-center">
+                <img src="assets/img/features-1.png" alt="" class="img-fluid">
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" id="tab-2" role="tabpanel">
+            <div class="row">
+              <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
+                <h3>Neque exercitationem debitis soluta quos debitis quo mollitia officia est</h3>
+                <p>
+                  Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+                  velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                  culpa qui officia deserunt mollit anim id est laborum
+                </p>
+                <p class="fst-italic">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                  magna aliqua.
+                </p>
+                <ul>
+                  <li><i class="ri-check-double-line"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
+                  <li><i class="ri-check-double-line"></i> Duis aute irure dolor in reprehenderit in voluptate velit.</li>
+                  <li><i class="ri-check-double-line"></i> Provident mollitia neque rerum asperiores dolores quos qui a. Ipsum neque dolor voluptate nisi sed.</li>
+                  <li><i class="ri-check-double-line"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</li>
+                </ul>
+              </div>
+              <div class="col-lg-6 order-1 order-lg-2 text-center">
+                <img src="assets/img/features-2.png" alt="" class="img-fluid">
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" id="tab-3" role="tabpanel">
+            <div class="row">
+              <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
+                <h3>Voluptatibus commodi ut accusamus ea repudiandae ut autem dolor ut assumenda</h3>
+                <p>
+                  Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+                  velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                  culpa qui officia deserunt mollit anim id est laborum
+                </p>
+                <ul>
+                  <li><i class="ri-check-double-line"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
+                  <li><i class="ri-check-double-line"></i> Duis aute irure dolor in reprehenderit in voluptate velit.</li>
+                  <li><i class="ri-check-double-line"></i> Provident mollitia neque rerum asperiores dolores quos qui a. Ipsum neque dolor voluptate nisi sed.</li>
+                </ul>
+                <p class="fst-italic">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                  magna aliqua.
+                </p>
+              </div>
+              <div class="col-lg-6 order-1 order-lg-2 text-center">
+                <img src="assets/img/features-3.png" alt="" class="img-fluid">
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" id="tab-4" role="tabpanel">
+            <div class="row">
+              <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
+                <h3>Omnis fugiat ea explicabo sunt dolorum asperiores sequi inventore rerum</h3>
+                <p>
+                  Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+                  velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                  culpa qui officia deserunt mollit anim id est laborum
+                </p>
+                <p class="fst-italic">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                  magna aliqua.
+                </p>
+                <ul>
+                  <li><i class="ri-check-double-line"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
+                  <li><i class="ri-check-double-line"></i> Duis aute irure dolor in reprehenderit in voluptate velit.</li>
+                  <li><i class="ri-check-double-line"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</li>
+                </ul>
+              </div>
+              <div class="col-lg-6 order-1 order-lg-2 text-center">
+                <img src="assets/img/features-4.png" alt="" class="img-fluid">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End Features Section -->
+
+    <!-- ======= Services Section ======= -->
+    <section id="services" class="services section-bg">
+      <div class="container aos-init" data-aos="fade-up">
+
+        <div class="section-title">
+          <h2>Services</h2>
+          <p>Check our Services</p>
+        </div>
+
+        <div class="row aos-init" data-aos="fade-up" data-aos-delay="200">
+          <div class="col-md-6">
+            <div class="icon-box">
+              <i class="bi bi-laptop"></i>
+              <h4><a href="#">Lorem Ipsum</a></h4>
+              <p>Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4 mt-md-0">
+            <div class="icon-box">
+              <i class="bi bi-bar-chart"></i>
+              <h4><a href="#">Dolor Sitema</a></h4>
+              <p>Minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat tarad limino ata</p>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4 mt-md-0">
+            <div class="icon-box">
+              <i class="bi bi-brightness-high"></i>
+              <h4><a href="#">Sed ut perspiciatis</a></h4>
+              <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur</p>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4 mt-md-0">
+            <div class="icon-box">
+              <i class="bi bi-briefcase"></i>
+              <h4><a href="#">Nemo Enim</a></h4>
+              <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4 mt-md-0">
+            <div class="icon-box">
+              <i class="bi bi-card-checklist"></i>
+              <h4><a href="#">Magni Dolore</a></h4>
+              <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque</p>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4 mt-md-0">
+            <div class="icon-box">
+              <i class="bi bi-clock"></i>
+              <h4><a href="#">Eiusmod Tempor</a></h4>
+              <p>Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End Services Section -->
+
+    <!-- ======= Testimonials Section ======= -->
+    <section id="testimonials" class="testimonials">
+      <div class="container aos-init" data-aos="zoom-in">
+
+        <div class="testimonials-slider swiper swiper-initialized swiper-horizontal swiper-backface-hidden aos-init" data-aos="fade-up" data-aos-delay="100">
+          <div class="swiper-wrapper" id="swiper-wrapper-9550f434f35e0ab8" aria-live="off" style="transition-duration: 0ms; transform: translate3d(-1296px, 0px, 0px); transition-delay: 0ms;">
+
+            <div class="swiper-slide swiper-slide-prev" role="group" aria-label="1 / 5" data-swiper-slide-index="0">
+              <div class="testimonial-item">
+                <img src="assets/img/testimonials/testimonials-1.jpg" class="testimonial-img" alt="">
+                <h3>Saul Goodman</h3>
+                <h4>Ceo &amp; Founder</h4>
+                <p>
+                  <i class="bx bxs-quote-alt-left quote-icon-left"></i>
+                  Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper.
+                  <i class="bx bxs-quote-alt-right quote-icon-right"></i>
+                </p>
+              </div>
+            </div><!-- End testimonial item -->
+
+            <div class="swiper-slide swiper-slide-active" role="group" aria-label="2 / 5" data-swiper-slide-index="1">
+              <div class="testimonial-item">
+                <img src="assets/img/testimonials/testimonials-2.jpg" class="testimonial-img" alt="">
+                <h3>Sara Wilsson</h3>
+                <h4>Designer</h4>
+                <p>
+                  <i class="bx bxs-quote-alt-left quote-icon-left"></i>
+                  Export tempor illum tamen malis malis eram quae irure esse labore quem cillum quid cillum eram malis quorum velit fore eram velit sunt aliqua noster fugiat irure amet legam anim culpa.
+                  <i class="bx bxs-quote-alt-right quote-icon-right"></i>
+                </p>
+              </div>
+            </div><!-- End testimonial item -->
+
+            <div class="swiper-slide swiper-slide-next" role="group" aria-label="3 / 5" data-swiper-slide-index="2">
+              <div class="testimonial-item">
+                <img src="assets/img/testimonials/testimonials-3.jpg" class="testimonial-img" alt="">
+                <h3>Jena Karlis</h3>
+                <h4>Store Owner</h4>
+                <p>
+                  <i class="bx bxs-quote-alt-left quote-icon-left"></i>
+                  Enim nisi quem export duis labore cillum quae magna enim sint quorum nulla quem veniam duis minim tempor labore quem eram duis noster aute amet eram fore quis sint minim.
+                  <i class="bx bxs-quote-alt-right quote-icon-right"></i>
+                </p>
+              </div>
+            </div><!-- End testimonial item -->
+
+            <div class="swiper-slide" role="group" aria-label="4 / 5" data-swiper-slide-index="3">
+              <div class="testimonial-item">
+                <img src="assets/img/testimonials/testimonials-4.jpg" class="testimonial-img" alt="">
+                <h3>Matt Brandon</h3>
+                <h4>Freelancer</h4>
+                <p>
+                  <i class="bx bxs-quote-alt-left quote-icon-left"></i>
+                  Fugiat enim eram quae cillum dolore dolor amet nulla culpa multos export minim fugiat minim velit minim dolor enim duis veniam ipsum anim magna sunt elit fore quem dolore labore illum veniam.
+                  <i class="bx bxs-quote-alt-right quote-icon-right"></i>
+                </p>
+              </div>
+            </div><!-- End testimonial item -->
+
+            <div class="swiper-slide" role="group" aria-label="5 / 5" data-swiper-slide-index="4">
+              <div class="testimonial-item">
+                <img src="assets/img/testimonials/testimonials-5.jpg" class="testimonial-img" alt="">
+                <h3>John Larson</h3>
+                <h4>Entrepreneur</h4>
+                <p>
+                  <i class="bx bxs-quote-alt-left quote-icon-left"></i>
+                  Quis quorum aliqua sint quem legam fore sunt eram irure aliqua veniam tempor noster veniam enim culpa labore duis sunt culpa nulla illum cillum fugiat legam esse veniam culpa fore nisi cillum quid.
+                  <i class="bx bxs-quote-alt-right quote-icon-right"></i>
+                </p>
+              </div>
+            </div><!-- End testimonial item -->
+
+          </div>
+          <div class="swiper-pagination swiper-pagination-clickable swiper-pagination-bullets swiper-pagination-horizontal"><span class="swiper-pagination-bullet" tabindex="0" role="button" aria-label="Go to slide 1"></span><span class="swiper-pagination-bullet swiper-pagination-bullet-active" tabindex="0" role="button" aria-label="Go to slide 2" aria-current="true"></span><span class="swiper-pagination-bullet" tabindex="0" role="button" aria-label="Go to slide 3"></span><span class="swiper-pagination-bullet" tabindex="0" role="button" aria-label="Go to slide 4"></span><span class="swiper-pagination-bullet" tabindex="0" role="button" aria-label="Go to slide 5"></span></div>
+        <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
+
+      </div>
+    </section><!-- End Testimonials Section -->
+
+    <!-- ======= Portfolio Section ======= -->
+    <section id="portfolio" class="portfolio">
+      <div class="container aos-init" data-aos="fade-up">
+
+        <div class="section-title">
+          <h2>Portfolio</h2>
+          <p>Check our Portfolio</p>
+        </div>
+
+        <div class="row aos-init" data-aos="fade-up" data-aos-delay="100">
+          <div class="col-lg-12 d-flex justify-content-center">
+            <ul id="portfolio-flters">
+              <li data-filter="*" class="filter-active">All</li>
+              <li data-filter=".filter-app">App</li>
+              <li data-filter=".filter-card">Card</li>
+              <li data-filter=".filter-web">Web</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="row portfolio-container aos-init" data-aos="fade-up" data-aos-delay="200" style="position: relative; height: 162px;">
+
+          <div class="col-lg-4 col-md-6 portfolio-item filter-app" style="position: absolute; left: 0px; top: 0px;">
+            <img src="assets/img/portfolio/portfolio-1.jpg" class="img-fluid" alt="">
+            <div class="portfolio-info">
+              <h4>App 1</h4>
+              <p>App</p>
+              <a href="assets/img/portfolio/portfolio-1.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox preview-link" title="App 1"><i class="bx bx-plus"></i></a>
+              <a href="portfolio-details.html" class="details-link" title="More Details"><i class="bx bx-link"></i></a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 portfolio-item filter-web" style="position: absolute; left: 439.987px; top: 0px;">
+            <img src="assets/img/portfolio/portfolio-2.jpg" class="img-fluid" alt="">
+            <div class="portfolio-info">
+              <h4>Web 3</h4>
+              <p>Web</p>
+              <a href="assets/img/portfolio/portfolio-2.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox preview-link" title="Web 3"><i class="bx bx-plus"></i></a>
+              <a href="portfolio-details.html" class="details-link" title="More Details"><i class="bx bx-link"></i></a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 portfolio-item filter-app" style="position: absolute; left: 879.974px; top: 0px;">
+            <img src="assets/img/portfolio/portfolio-3.jpg" class="img-fluid" alt="">
+            <div class="portfolio-info">
+              <h4>App 2</h4>
+              <p>App</p>
+              <a href="assets/img/portfolio/portfolio-3.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox preview-link" title="App 2"><i class="bx bx-plus"></i></a>
+              <a href="portfolio-details.html" class="details-link" title="More Details"><i class="bx bx-link"></i></a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 portfolio-item filter-card" style="position: absolute; left: 0px; top: 54px;">
+            <img src="assets/img/portfolio/portfolio-4.jpg" class="img-fluid" alt="">
+            <div class="portfolio-info">
+              <h4>Card 2</h4>
+              <p>Card</p>
+              <a href="assets/img/portfolio/portfolio-4.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox preview-link" title="Card 2"><i class="bx bx-plus"></i></a>
+              <a href="portfolio-details.html" class="details-link" title="More Details"><i class="bx bx-link"></i></a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 portfolio-item filter-web" style="position: absolute; left: 439.987px; top: 54px;">
+            <img src="assets/img/portfolio/portfolio-5.jpg" class="img-fluid" alt="">
+            <div class="portfolio-info">
+              <h4>Web 2</h4>
+              <p>Web</p>
+              <a href="assets/img/portfolio/portfolio-5.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox preview-link" title="Web 2"><i class="bx bx-plus"></i></a>
+              <a href="portfolio-details.html" class="details-link" title="More Details"><i class="bx bx-link"></i></a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 portfolio-item filter-app" style="position: absolute; left: 879.974px; top: 54px;">
+            <img src="assets/img/portfolio/portfolio-6.jpg" class="img-fluid" alt="">
+            <div class="portfolio-info">
+              <h4>App 3</h4>
+              <p>App</p>
+              <a href="assets/img/portfolio/portfolio-6.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox preview-link" title="App 3"><i class="bx bx-plus"></i></a>
+              <a href="portfolio-details.html" class="details-link" title="More Details"><i class="bx bx-link"></i></a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 portfolio-item filter-card" style="position: absolute; left: 0px; top: 108px;">
+            <img src="assets/img/portfolio/portfolio-7.jpg" class="img-fluid" alt="">
+            <div class="portfolio-info">
+              <h4>Card 1</h4>
+              <p>Card</p>
+              <a href="assets/img/portfolio/portfolio-7.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox preview-link" title="Card 1"><i class="bx bx-plus"></i></a>
+              <a href="portfolio-details.html" class="details-link" title="More Details"><i class="bx bx-link"></i></a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 portfolio-item filter-card" style="position: absolute; left: 439.987px; top: 108px;">
+            <img src="assets/img/portfolio/portfolio-8.jpg" class="img-fluid" alt="">
+            <div class="portfolio-info">
+              <h4>Card 3</h4>
+              <p>Card</p>
+              <a href="assets/img/portfolio/portfolio-8.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox preview-link" title="Card 3"><i class="bx bx-plus"></i></a>
+              <a href="portfolio-details.html" class="details-link" title="More Details"><i class="bx bx-link"></i></a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 portfolio-item filter-web" style="position: absolute; left: 879.974px; top: 108px;">
+            <img src="assets/img/portfolio/portfolio-9.jpg" class="img-fluid" alt="">
+            <div class="portfolio-info">
+              <h4>Web 3</h4>
+              <p>Web</p>
+              <a href="assets/img/portfolio/portfolio-9.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox preview-link" title="Web 3"><i class="bx bx-plus"></i></a>
+              <a href="portfolio-details.html" class="details-link" title="More Details"><i class="bx bx-link"></i></a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Portfolio Section -->
+
+    <!-- ======= Team Section ======= -->
+    <section id="team" class="team section-bg">
+      <div class="container aos-init" data-aos="fade-up">
+
+        <div class="section-title">
+          <h2>Team</h2>
+          <p>Check our Team</p>
+        </div>
+
+        <div class="row">
+
+          <div class="col-lg-4 col-md-6">
+            <div class="member aos-init" data-aos="fade-up" data-aos-delay="100">
+              <div class="pic"><img src="assets/img/team/team-1.jpg" class="img-fluid" alt=""></div>
+              <div class="member-info">
+                <h4>Walter White</h4>
+                <span>Chief Executive Officer</span>
+                <div class="social">
+                  <a href=""><i class="bi bi-twitter"></i></a>
+                  <a href=""><i class="bi bi-facebook"></i></a>
+                  <a href=""><i class="bi bi-instagram"></i></a>
+                  <a href=""><i class="bi bi-linkedin"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 aos-init" data-aos="fade-up" data-aos-delay="200">
+            <div class="member">
+              <div class="pic"><img src="assets/img/team/team-2.jpg" class="img-fluid" alt=""></div>
+              <div class="member-info">
+                <h4>Sarah Jhonson</h4>
+                <span>Product Manager</span>
+                <div class="social">
+                  <a href=""><i class="bi bi-twitter"></i></a>
+                  <a href=""><i class="bi bi-facebook"></i></a>
+                  <a href=""><i class="bi bi-instagram"></i></a>
+                  <a href=""><i class="bi bi-linkedin"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 aos-init" data-aos="fade-up" data-aos-delay="300">
+            <div class="member">
+              <div class="pic"><img src="assets/img/team/team-3.jpg" class="img-fluid" alt=""></div>
+              <div class="member-info">
+                <h4>William Anderson</h4>
+                <span>CTO</span>
+                <div class="social">
+                  <a href=""><i class="bi bi-twitter"></i></a>
+                  <a href=""><i class="bi bi-facebook"></i></a>
+                  <a href=""><i class="bi bi-instagram"></i></a>
+                  <a href=""><i class="bi bi-linkedin"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Team Section -->
+
+    <!-- ======= Contact Section ======= -->
+    <section id="contact" class="contact">
+      <div class="container aos-init" data-aos="fade-up">
+
+    <div class=" section-title">
+        <h2>Contact</h2>
+        <p>Contact Us</p>
+      </div>
+
+      <div class="row">
+
+        <div class="col-lg-6">
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="info-box">
+                <i class="bx bx-map"></i>
+                <h3>Our Address</h3>
+                <p>A108 Adam Street, New York, NY 535022</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="info-box mt-4">
+                <i class="bx bx-envelope"></i>
+                <h3>Email Us</h3>
+                <p>info@example.com<br>contact@example.com</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="info-box mt-4">
+                <i class="bx bx-phone-call"></i>
+                <h3>Call Us</h3>
+                <p>+1 5589 55488 55<br>+1 6678 254445 41</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-lg-6 mt-4 mt-lg-0">
+          <form action="forms/contact.php" method="post" role="form" class="php-email-form">
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required="">
+              </div>
+              <div class="col-md-6 form-group mt-3 mt-md-0">
+                <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required="">
+              </div>
+            </div>
+            <div class="form-group mt-3">
+              <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" required="">
+            </div>
+            <div class="form-group mt-3">
+              <textarea class="form-control" name="message" rows="5" placeholder="Message" required=""></textarea>
+            </div>
+            <div class="my-3">
+              <div class="loading">Loading</div>
+              <div class="error-message"></div>
+              <div class="sent-message">Your message has been sent. Thank you!</div>
+            </div>
+            <div class="text-center"><button type="submit">Send Message</button></div>
+          </form>
+        </div>
+
+      </div>
+
+      </div>
+    </section><!-- End Contact Section -->
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-info">
+              <h3>ReartVault</h3>
+              <p>
+                A108 Adam Street <br>
+                NY 535022, USA<br><br>
+                <strong>Phone:</strong> +1 5589 55488 55<br>
+                <strong>Email:</strong> info@example.com<br>
+              </p>
+              <div class="social-links mt-3">
+                <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
+                <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
+                <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
+                <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
+                <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-2 col-md-6 footer-links">
+            <h4>Useful Links</h4>
+            <ul>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Home</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">About us</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Services</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Terms of service</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Privacy policy</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-3 col-md-6 footer-links">
+            <h4>Our Services</h4>
+            <ul>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Web Design</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Web Development</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Product Management</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Marketing</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Graphic Design</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-4 col-md-6 footer-newsletter">
+            <h4>Our Newsletter</h4>
+            <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna</p>
+            <form action="" method="post">
+              <input type="email" name="email"><input type="submit" value="Subscribe">
+            </form>
+
+          </div>
+
+        </div>
+      </div>
     </div>
 
-    <!-- Deliveries List -->
-    <div class="row">
-        <div class="col-12">
-            
-                <h4 class="mb-4">Active Deliveries</h4>
-                
-                    <div class="card mb-3 delivery-card" data-aos="fade-up" data-aos-delay="100" style="border: 3px solid purple;">
-                        <div class="card-body p-4">
-                            <div class="row align-items-center">
-                                <!-- Order Info -->
-                                <div class="col-md-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="order-icon me-3">
-                                            <div class="icon-circle bg-primary-light">
-                                                <i class="fas fa-box text-primary"></i>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h5 class="mb-1" style="border: 3px solid green;">Order #66</h5>
-                                            <p class="text-muted mb-0">
-                                                <i class="fas fa-clock me-1"></i>
-                                                Feb 14, 2025 04:03 AM
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Status -->
-                                <div class="col-md-3">
-                                    <div class="mb-2">
-                                        <small class="text-muted">Current Status</small>
-                                        <p class="mb-0">
-                                            <span class="badge bg-info">
-                                                Picking Up
-                                            </span>
-                                            <small class="d-block text-muted mt-1">
-                                                <i class="fas fa-clock me-1"></i>
-                                                Updated 3&nbsp;weeks, 6&nbsp;days ago
-                                            </small>
-                                            
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <!-- Customer Info -->
-                                <div class="col-md-3">
-                                    <div class="mb-2">
-                                        <small class="text-muted">Customer</small>
-                                        <p class="mb-1">
-                                            <i class="fas fa-user me-1"></i>
-                                            Adarsh@2025
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <small class="text-muted">Delivery Location</small>
-                                        <p class="mb-0">
-                                            <i class="fas fa-map-marker-alt me-1"></i>
-                                            THEKKEKARA HOUSE,MTRA-94, EDAPPALLY, Kerala
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <!-- Actions -->
-                                <div class="col-md-3 text-md-end mt-3 mt-md-0">
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateStatusModal15" style="border: 5px solid red;">
-                                        <i class="fas fa-sync-alt me-1"></i>Update Status
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Order Details (Collapsible) -->
-                            <div class="mt-3">
-                                <button class="btn btn-link text-decoration-none p-0" type="button" data-bs-toggle="collapse" data-bs-target="#deliveryDetails15">
-                                    <i class="fas fa-chevron-down me-1"></i>View Order Details
-                                </button>
-                                <div class="collapse mt-3" id="deliveryDetails15">
-                                    <div class="card card-body bg-light">
-                                        <h6 class="mb-3">Order Items</h6>
-                                        <div class="table-responsive">
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Item</th>
-                                                        <th>Quantity</th>
-                                                        <th>Price</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    
-                                                    <tr>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <img src="/media/picture/artist/products/umb.jpeg" alt="Umbrella" class="product-thumbnail me-2">
-                                                                <div>
-                                                                    <strong>Umbrella</strong>
-                                                                    <small class="d-block text-muted">By </small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td>3</td>
-                                                        <td>₹350.00</td>
-                                                        <td>₹1050.00</td>
-                                                    </tr>
-                                                    
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                                        <td><strong>₹1071.00</strong></td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Update Status Modal -->
-                    <div class="modal fade show" id="updateStatusModal15" tabindex="-1" aria-modal="true" role="dialog" style="display: block;">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Update Delivery Status</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <form id="updateStatusForm15" onsubmit="updateDeliveryStatus(event, 15)">
-                                    <input type="hidden" name="csrfmiddlewaretoken" value="FCtFS2ePAs75DZWKPnL6eFJoQzCxH83Vyy9DFez1iNeZkR3YXV6DZrNnCFMuTbVo">
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label for="status15" class="form-label">New Status</label>
-                                            <select class="form-select" id="status15" name="status" required="" data-current-status="PICKING_UP">
-                                                <option value="">Select Status</option>
-                                                <option value="PICKING_UP" disabled="">Picking Up</option>
-                                                <option value="PICKED_UP">Picked Up</option>
-                                                <option value="IN_TRANSIT" disabled="">In Transit</option>
-                                                <option value="DELIVERED" disabled="">Delivered</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="notes15" class="form-label">Notes</label>
-                                            <textarea class="form-control" id="notes15" name="notes" rows="3"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                        <button type="submit" class="btn btn-primary">Update Status</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                
-                    <div class="card mb-3 delivery-card" data-aos="fade-up" data-aos-delay="100">
-                        <div class="card-body p-4">
-                            <div class="row align-items-center">
-                                <!-- Order Info -->
-                                <div class="col-md-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="order-icon me-3">
-                                            <div class="icon-circle bg-primary-light">
-                                                <i class="fas fa-box text-primary"></i>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h5 class="mb-1" style="border: 2px solid blue;">Order #67</h5>
-                                            <p class="text-muted mb-0">
-                                                <i class="fas fa-clock me-1"></i>
-                                                Feb 14, 2025 04:26 AM
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Status -->
-                                <div class="col-md-3">
-                                    <div class="mb-2">
-                                        <small class="text-muted">Current Status</small>
-                                        <p class="mb-0">
-                                            <span class="badge bg-info">
-                                                Picking Up
-                                            </span>
-                                            <small class="d-block text-muted mt-1">
-                                                <i class="fas fa-clock me-1"></i>
-                                                Updated 3&nbsp;weeks, 6&nbsp;days ago
-                                            </small>
-                                            
-                                            <small class="d-block text-muted mt-1">
-                                                <i class="fas fa-comment me-1"></i>
-                                                going
-                                            </small>
-                                            
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <!-- Customer Info -->
-                                <div class="col-md-3">
-                                    <div class="mb-2">
-                                        <small class="text-muted">Customer</small>
-                                        <p class="mb-1">
-                                            <i class="fas fa-user me-1"></i>
-                                            Adarsh@2025
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <small class="text-muted">Delivery Location</small>
-                                        <p class="mb-0">
-                                            <i class="fas fa-map-marker-alt me-1"></i>
-                                            THEKKEKARA HOUSE,MTRA-94, EDAPPALLY, Kerala
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <!-- Actions -->
-                                <div class="col-md-3 text-md-end mt-3 mt-md-0">
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateStatusModal16" style="border: 2px solid red;">
-                                        <i class="fas fa-sync-alt me-1"></i>Update Status
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Order Details (Collapsible) -->
-                            <div class="mt-3">
-                                <button class="btn btn-link text-decoration-none p-0" type="button" data-bs-toggle="collapse" data-bs-target="#deliveryDetails16">
-                                    <i class="fas fa-chevron-down me-1"></i>View Order Details
-                                </button>
-                                <div class="collapse mt-3" id="deliveryDetails16">
-                                    <div class="card card-body bg-light">
-                                        <h6 class="mb-3">Order Items</h6>
-                                        <div class="table-responsive">
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Item</th>
-                                                        <th>Quantity</th>
-                                                        <th>Price</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    
-                                                    <tr>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <img src="/media/picture/artist/products/umb.jpeg" alt="Umbrella" class="product-thumbnail me-2">
-                                                                <div>
-                                                                    <strong>Umbrella</strong>
-                                                                    <small class="d-block text-muted">By </small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td>1</td>
-                                                        <td>₹350.00</td>
-                                                        <td>₹350.00</td>
-                                                    </tr>
-                                                    
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                                        <td><strong>₹357.00</strong></td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Update Status Modal -->
-                    <div class="modal fade" id="updateStatusModal16" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Update Delivery Status</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <form id="updateStatusForm16" onsubmit="updateDeliveryStatus(event, 16)">
-                                    <input type="hidden" name="csrfmiddlewaretoken" value="FCtFS2ePAs75DZWKPnL6eFJoQzCxH83Vyy9DFez1iNeZkR3YXV6DZrNnCFMuTbVo">
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label for="status16" class="form-label">New Status</label>
-                                            <select class="form-select" id="status16" name="status" required="" data-current-status="PICKING_UP">
-                                                <option value="">Select Status</option>
-                                                <option value="PICKING_UP" disabled="">Picking Up</option>
-                                                <option value="PICKED_UP">Picked Up</option>
-                                                <option value="IN_TRANSIT" disabled="">In Transit</option>
-                                                <option value="DELIVERED" disabled="">Delivered</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="notes16" class="form-label">Notes</label>
-                                            <textarea class="form-control" id="notes16" name="notes" rows="3"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                        <button type="submit" class="btn btn-primary">Update Status</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                
-                    <div class="card mb-3 delivery-card" data-aos="fade-up" data-aos-delay="100">
-                        <div class="card-body p-4">
-                            <div class="row align-items-center">
-                                <!-- Order Info -->
-                                <div class="col-md-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="order-icon me-3">
-                                            <div class="icon-circle bg-primary-light">
-                                                <i class="fas fa-box text-primary"></i>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h5 class="mb-1" style="border: 2px solid blue;">Order #69</h5>
-                                            <p class="text-muted mb-0">
-                                                <i class="fas fa-clock me-1"></i>
-                                                Feb 20, 2025 05:41 AM
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Status -->
-                                <div class="col-md-3">
-                                    <div class="mb-2">
-                                        <small class="text-muted">Current Status</small>
-                                        <p class="mb-0">
-                                            <span class="badge bg-primary">
-                                                Picked Up
-                                            </span>
-                                            <small class="d-block text-muted mt-1">
-                                                <i class="fas fa-clock me-1"></i>
-                                                Updated 3&nbsp;weeks ago
-                                            </small>
-                                            
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <!-- Customer Info -->
-                                <div class="col-md-3">
-                                    <div class="mb-2">
-                                        <small class="text-muted">Customer</small>
-                                        <p class="mb-1">
-                                            <i class="fas fa-user me-1"></i>
-                                            Albin@2025
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <small class="text-muted">Delivery Location</small>
-                                        <p class="mb-0">
-                                            <i class="fas fa-map-marker-alt me-1"></i>
-                                            Albins house, kottayam, kerala
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <!-- Actions -->
-                                <div class="col-md-3 text-md-end mt-3 mt-md-0">
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateStatusModal18" style="border: 2px solid red;">
-                                        <i class="fas fa-sync-alt me-1"></i>Update Status
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Order Details (Collapsible) -->
-                            <div class="mt-3">
-                                <button class="btn btn-link text-decoration-none p-0" type="button" data-bs-toggle="collapse" data-bs-target="#deliveryDetails18">
-                                    <i class="fas fa-chevron-down me-1"></i>View Order Details
-                                </button>
-                                <div class="collapse mt-3" id="deliveryDetails18">
-                                    <div class="card card-body bg-light">
-                                        <h6 class="mb-3">Order Items</h6>
-                                        <div class="table-responsive">
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Item</th>
-                                                        <th>Quantity</th>
-                                                        <th>Price</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    
-                                                    <tr>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <img src="/media/picture/artist/products/crochet_table_runner.jpg" alt="Crocher Table runner" class="product-thumbnail me-2">
-                                                                <div>
-                                                                    <strong>Crocher Table runner</strong>
-                                                                    <small class="d-block text-muted">By </small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td>1</td>
-                                                        <td>₹80.00</td>
-                                                        <td>₹80.00</td>
-                                                    </tr>
-                                                    
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                                        <td><strong>₹81.60</strong></td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Update Status Modal -->
-                    <div class="modal fade" id="updateStatusModal18" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Update Delivery Status</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <form id="updateStatusForm18" onsubmit="updateDeliveryStatus(event, 18)">
-                                    <input type="hidden" name="csrfmiddlewaretoken" value="FCtFS2ePAs75DZWKPnL6eFJoQzCxH83Vyy9DFez1iNeZkR3YXV6DZrNnCFMuTbVo">
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label for="status18" class="form-label">New Status</label>
-                                            <select class="form-select" id="status18" name="status" required="" data-current-status="PICKED_UP">
-                                                <option value="">Select Status</option>
-                                                <option value="PICKING_UP" disabled="">Picking Up</option>
-                                                <option value="PICKED_UP" disabled="">Picked Up</option>
-                                                <option value="IN_TRANSIT">In Transit</option>
-                                                <option value="DELIVERED" disabled="">Delivered</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="notes18" class="form-label">Notes</label>
-                                            <textarea class="form-control" id="notes18" name="notes" rows="3"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                        <button type="submit" class="btn btn-primary">Update Status</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                
-                    <div class="card mb-3 delivery-card" data-aos="fade-up" data-aos-delay="100">
-                        <div class="card-body p-4">
-                            <div class="row align-items-center">
-                                <!-- Order Info -->
-                                <div class="col-md-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="order-icon me-3">
-                                            <div class="icon-circle bg-primary-light">
-                                                <i class="fas fa-box text-primary"></i>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h5 class="mb-1" style="border: 2px solid blue;">Order #70</h5>
-                                            <p class="text-muted mb-0">
-                                                <i class="fas fa-clock me-1"></i>
-                                                Feb 20, 2025 10:19 AM
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Status -->
-                                <div class="col-md-3">
-                                    <div class="mb-2">
-                                        <small class="text-muted">Current Status</small>
-                                        <p class="mb-0">
-                                            <span class="badge bg-primary">
-                                                Picked Up
-                                            </span>
-                                            <small class="d-block text-muted mt-1">
-                                                <i class="fas fa-clock me-1"></i>
-                                                Updated 3&nbsp;weeks ago
-                                            </small>
-                                            
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <!-- Customer Info -->
-                                <div class="col-md-3">
-                                    <div class="mb-2">
-                                        <small class="text-muted">Customer</small>
-                                        <p class="mb-1">
-                                            <i class="fas fa-user me-1"></i>
-                                            Albin@2025
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <small class="text-muted">Delivery Location</small>
-                                        <p class="mb-0">
-                                            <i class="fas fa-map-marker-alt me-1"></i>
-                                            Albins house, kottayam, kerala
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <!-- Actions -->
-                                <div class="col-md-3 text-md-end mt-3 mt-md-0">
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateStatusModal19" style="border: 2px solid red;">
-                                        <i class="fas fa-sync-alt me-1"></i>Update Status
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Order Details (Collapsible) -->
-                            <div class="mt-3">
-                                <button class="btn btn-link text-decoration-none p-0" type="button" data-bs-toggle="collapse" data-bs-target="#deliveryDetails19">
-                                    <i class="fas fa-chevron-down me-1"></i>View Order Details
-                                </button>
-                                <div class="collapse mt-3" id="deliveryDetails19">
-                                    <div class="card card-body bg-light">
-                                        <h6 class="mb-3">Order Items</h6>
-                                        <div class="table-responsive">
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Item</th>
-                                                        <th>Quantity</th>
-                                                        <th>Price</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    
-                                                    <tr>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <img src="/media/picture/artist/products/fashion_acc.jpg" alt="Fancy Crunchies" class="product-thumbnail me-2">
-                                                                <div>
-                                                                    <strong>Fancy Crunchies</strong>
-                                                                    <small class="d-block text-muted">By </small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td>1</td>
-                                                        <td>₹69.00</td>
-                                                        <td>₹69.00</td>
-                                                    </tr>
-                                                    
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                                        <td><strong>₹70.38</strong></td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Update Status Modal -->
-                    <div class="modal fade" id="updateStatusModal19" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Update Delivery Status</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <form id="updateStatusForm19" onsubmit="updateDeliveryStatus(event, 19)">
-                                    <input type="hidden" name="csrfmiddlewaretoken" value="FCtFS2ePAs75DZWKPnL6eFJoQzCxH83Vyy9DFez1iNeZkR3YXV6DZrNnCFMuTbVo">
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label for="status19" class="form-label">New Status</label>
-                                            <select class="form-select" id="status19" name="status" required="" data-current-status="PICKED_UP">
-                                                <option value="">Select Status</option>
-                                                <option value="PICKING_UP" disabled="">Picking Up</option>
-                                                <option value="PICKED_UP" disabled="">Picked Up</option>
-                                                <option value="IN_TRANSIT">In Transit</option>
-                                                <option value="DELIVERED" disabled="">Delivered</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="notes19" class="form-label">Notes</label>
-                                            <textarea class="form-control" id="notes19" name="notes" rows="3"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                        <button type="submit" class="btn btn-primary">Update Status</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                
-
-                
-                    <h4 class="mt-5 mb-4">Recently Completed Deliveries</h4>
-                    
-                        <div class="card mb-3 delivery-card completed" data-aos="fade-up" data-aos-delay="100">
-                            <div class="card-body p-4">
-                                <div class="row align-items-center">
-                                    <!-- Order Info -->
-                                    <div class="col-md-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="order-icon me-3">
-                                                <div class="icon-circle bg-success-light">
-                                                    <i class="fas fa-check text-success"></i>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <h5 class="mb-1" style="border: 2px solid blue;">Order #62</h5>
-                                                <p class="text-muted mb-0">
-                                                    <i class="fas fa-clock me-1"></i>
-                                                    Completed 2&nbsp;hours, 46&nbsp;minutes ago
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Customer Info -->
-                                    <div class="col-md-4">
-                                        <div class="mb-2">
-                                            <small class="text-muted">Customer</small>
-                                            <p class="mb-1">
-                                                <i class="fas fa-user me-1"></i>
-                                                Adarsh@2025
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <small class="text-muted">Delivery Location</small>
-                                            <p class="mb-0">
-                                                <i class="fas fa-map-marker-alt me-1"></i>
-                                                THEKKEKARA HOUSE,MTRA-94, EDAPPALLY, Kerala
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <!-- View Details -->
-                                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                                        <button class="btn btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#completedDetails11">
-                                            <i class="fas fa-chevron-down me-1"></i>View Details
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Completed Order Details -->
-                                <div class="collapse mt-3" id="completedDetails11">
-                                    <div class="card card-body bg-light">
-                                        <div class="table-responsive">
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Item</th>
-                                                        <th>Quantity</th>
-                                                        <th>Price</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    
-                                                    <tr>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <img src="/media/picture/artist/products/umb.jpeg" alt="Umbrella" class="product-thumbnail me-2">
-                                                                <div>
-                                                                    <strong>Umbrella</strong>
-                                                                    <small class="d-block text-muted">By </small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td>1</td>
-                                                        <td>₹350.00</td>
-                                                        <td>₹350.00</td>
-                                                    </tr>
-                                                    
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                                        <td><strong>₹357.00</strong></td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    
-                        <div class="card mb-3 delivery-card completed" data-aos="fade-up" data-aos-delay="100">
-                            <div class="card-body p-4">
-                                <div class="row align-items-center">
-                                    <!-- Order Info -->
-                                    <div class="col-md-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="order-icon me-3">
-                                                <div class="icon-circle bg-success-light">
-                                                    <i class="fas fa-check text-success"></i>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <h5 class="mb-1" style="border: 2px solid blue;">Order #61</h5>
-                                                <p class="text-muted mb-0">
-                                                    <i class="fas fa-clock me-1"></i>
-                                                    Completed 3&nbsp;hours ago
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Customer Info -->
-                                    <div class="col-md-4">
-                                        <div class="mb-2">
-                                            <small class="text-muted">Customer</small>
-                                            <p class="mb-1">
-                                                <i class="fas fa-user me-1"></i>
-                                                Adarsh@2025
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <small class="text-muted">Delivery Location</small>
-                                            <p class="mb-0">
-                                                <i class="fas fa-map-marker-alt me-1"></i>
-                                                THEKKEKARA HOUSE,MTRA-94, EDAPPALLY, Kerala
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <!-- View Details -->
-                                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                                        <button class="btn btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#completedDetails8">
-                                            <i class="fas fa-chevron-down me-1"></i>View Details
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Completed Order Details -->
-                                <div class="collapse mt-3" id="completedDetails8">
-                                    <div class="card card-body bg-light">
-                                        <div class="table-responsive">
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Item</th>
-                                                        <th>Quantity</th>
-                                                        <th>Price</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    
-                                                    <tr>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <img src="/media/picture/artist/products/umb.jpeg" alt="Umbrella" class="product-thumbnail me-2">
-                                                                <div>
-                                                                    <strong>Umbrella</strong>
-                                                                    <small class="d-block text-muted">By </small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td>1</td>
-                                                        <td>₹350.00</td>
-                                                        <td>₹350.00</td>
-                                                    </tr>
-                                                    
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                                        <td><strong>₹357.00</strong></td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    
-                        <div class="card mb-3 delivery-card completed" data-aos="fade-up" data-aos-delay="100">
-                            <div class="card-body p-4">
-                                <div class="row align-items-center">
-                                    <!-- Order Info -->
-                                    <div class="col-md-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="order-icon me-3">
-                                                <div class="icon-circle bg-success-light">
-                                                    <i class="fas fa-check text-success"></i>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <h5 class="mb-1" style="border: 2px solid blue;">Order #61</h5>
-                                                <p class="text-muted mb-0">
-                                                    <i class="fas fa-clock me-1"></i>
-                                                    Completed 3&nbsp;hours ago
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Customer Info -->
-                                    <div class="col-md-4">
-                                        <div class="mb-2">
-                                            <small class="text-muted">Customer</small>
-                                            <p class="mb-1">
-                                                <i class="fas fa-user me-1"></i>
-                                                Adarsh@2025
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <small class="text-muted">Delivery Location</small>
-                                            <p class="mb-0">
-                                                <i class="fas fa-map-marker-alt me-1"></i>
-                                                THEKKEKARA HOUSE,MTRA-94, EDAPPALLY, Kerala
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <!-- View Details -->
-                                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                                        <button class="btn btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#completedDetails7">
-                                            <i class="fas fa-chevron-down me-1"></i>View Details
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Completed Order Details -->
-                                <div class="collapse mt-3" id="completedDetails7">
-                                    <div class="card card-body bg-light">
-                                        <div class="table-responsive">
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Item</th>
-                                                        <th>Quantity</th>
-                                                        <th>Price</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    
-                                                    <tr>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <img src="/media/picture/artist/products/umb.jpeg" alt="Umbrella" class="product-thumbnail me-2">
-                                                                <div>
-                                                                    <strong>Umbrella</strong>
-                                                                    <small class="d-block text-muted">By </small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td>1</td>
-                                                        <td>₹350.00</td>
-                                                        <td>₹350.00</td>
-                                                    </tr>
-                                                    
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                                        <td><strong>₹357.00</strong></td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    
-                        <div class="card mb-3 delivery-card completed" data-aos="fade-up" data-aos-delay="100">
-                            <div class="card-body p-4">
-                                <div class="row align-items-center">
-                                    <!-- Order Info -->
-                                    <div class="col-md-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="order-icon me-3">
-                                                <div class="icon-circle bg-success-light">
-                                                    <i class="fas fa-check text-success"></i>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <h5 class="mb-1" style="border: 2px solid blue;">Order #60</h5>
-                                                <p class="text-muted mb-0">
-                                                    <i class="fas fa-clock me-1"></i>
-                                                    Completed 3&nbsp;hours, 1&nbsp;minute ago
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Customer Info -->
-                                    <div class="col-md-4">
-                                        <div class="mb-2">
-                                            <small class="text-muted">Customer</small>
-                                            <p class="mb-1">
-                                                <i class="fas fa-user me-1"></i>
-                                                Adarsh@2025
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <small class="text-muted">Delivery Location</small>
-                                            <p class="mb-0">
-                                                <i class="fas fa-map-marker-alt me-1"></i>
-                                                THEKKEKARA HOUSE,MTRA-94, EDAPPALLY, Kerala
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <!-- View Details -->
-                                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                                        <button class="btn btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#completedDetails6">
-                                            <i class="fas fa-chevron-down me-1"></i>View Details
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Completed Order Details -->
-                                <div class="collapse mt-3" id="completedDetails6">
-                                    <div class="card card-body bg-light">
-                                        <div class="table-responsive">
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Item</th>
-                                                        <th>Quantity</th>
-                                                        <th>Price</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                                        <td><strong>₹714.00</strong></td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    
-                        <div class="card mb-3 delivery-card completed" data-aos="fade-up" data-aos-delay="100">
-                            <div class="card-body p-4">
-                                <div class="row align-items-center">
-                                    <!-- Order Info -->
-                                    <div class="col-md-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="order-icon me-3">
-                                                <div class="icon-circle bg-success-light">
-                                                    <i class="fas fa-check text-success"></i>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <h5 class="mb-1" style="border: 2px solid blue;">Order #60</h5>
-                                                <p class="text-muted mb-0">
-                                                    <i class="fas fa-clock me-1"></i>
-                                                    Completed 3&nbsp;hours, 3&nbsp;minutes ago
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Customer Info -->
-                                    <div class="col-md-4">
-                                        <div class="mb-2">
-                                            <small class="text-muted">Customer</small>
-                                            <p class="mb-1">
-                                                <i class="fas fa-user me-1"></i>
-                                                Adarsh@2025
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <small class="text-muted">Delivery Location</small>
-                                            <p class="mb-0">
-                                                <i class="fas fa-map-marker-alt me-1"></i>
-                                                THEKKEKARA HOUSE,MTRA-94, EDAPPALLY, Kerala
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <!-- View Details -->
-                                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                                        <button class="btn btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#completedDetails5">
-                                            <i class="fas fa-chevron-down me-1"></i>View Details
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Completed Order Details -->
-                                <div class="collapse mt-3" id="completedDetails5">
-                                    <div class="card card-body bg-light">
-                                        <div class="table-responsive">
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Item</th>
-                                                        <th>Quantity</th>
-                                                        <th>Price</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                                        <td><strong>₹714.00</strong></td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    
-                        <div class="card mb-3 delivery-card completed" data-aos="fade-up" data-aos-delay="100">
-                            <div class="card-body p-4">
-                                <div class="row align-items-center">
-                                    <!-- Order Info -->
-                                    <div class="col-md-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="order-icon me-3">
-                                                <div class="icon-circle bg-success-light">
-                                                    <i class="fas fa-check text-success"></i>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <h5 class="mb-1" style="border: 2px solid blue;">Order #68</h5>
-                                                <p class="text-muted mb-0">
-                                                    <i class="fas fa-clock me-1"></i>
-                                                    Completed 1&nbsp;day, 6&nbsp;hours ago
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Customer Info -->
-                                    <div class="col-md-4">
-                                        <div class="mb-2">
-                                            <small class="text-muted">Customer</small>
-                                            <p class="mb-1">
-                                                <i class="fas fa-user me-1"></i>
-                                                Adarsh@2025
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <small class="text-muted">Delivery Location</small>
-                                            <p class="mb-0">
-                                                <i class="fas fa-map-marker-alt me-1"></i>
-                                                THEKKEKARA HOUSE,MTRA-94, EDAPPALLY, Kerala
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <!-- View Details -->
-                                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                                        <button class="btn btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#completedDetails17">
-                                            <i class="fas fa-chevron-down me-1"></i>View Details
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Completed Order Details -->
-                                <div class="collapse mt-3" id="completedDetails17">
-                                    <div class="card card-body bg-light">
-                                        <div class="table-responsive">
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Item</th>
-                                                        <th>Quantity</th>
-                                                        <th>Price</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    
-                                                    <tr>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <img src="/media/picture/artist/products/vase-plastic_MsmZLuv.jpg" alt="Crystal Vase" class="product-thumbnail me-2">
-                                                                <div>
-                                                                    <strong>Crystal Vase</strong>
-                                                                    <small class="d-block text-muted">By </small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td>1</td>
-                                                        <td>₹150.00</td>
-                                                        <td>₹150.00</td>
-                                                    </tr>
-                                                    
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                                        <td><strong>₹153.00</strong></td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    
-                        <div class="card mb-3 delivery-card completed" data-aos="fade-up" data-aos-delay="100">
-                            <div class="card-body p-4">
-                                <div class="row align-items-center">
-                                    <!-- Order Info -->
-                                    <div class="col-md-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="order-icon me-3">
-                                                <div class="icon-circle bg-success-light">
-                                                    <i class="fas fa-check text-success"></i>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <h5 class="mb-1" style="border: 2px solid blue;">Order #63</h5>
-                                                <p class="text-muted mb-0">
-                                                    <i class="fas fa-clock me-1"></i>
-                                                    Completed 1&nbsp;month ago
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Customer Info -->
-                                    <div class="col-md-4">
-                                        <div class="mb-2">
-                                            <small class="text-muted">Customer</small>
-                                            <p class="mb-1">
-                                                <i class="fas fa-user me-1"></i>
-                                                Adarsh@2025
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <small class="text-muted">Delivery Location</small>
-                                            <p class="mb-0">
-                                                <i class="fas fa-map-marker-alt me-1"></i>
-                                                THEKKEKARA HOUSE,MTRA-94, EDAPPALLY, Kerala
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <!-- View Details -->
-                                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                                        <button class="btn btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#completedDetails12">
-                                            <i class="fas fa-chevron-down me-1"></i>View Details
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Completed Order Details -->
-                                <div class="collapse mt-3" id="completedDetails12">
-                                    <div class="card card-body bg-light">
-                                        <div class="table-responsive">
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Item</th>
-                                                        <th>Quantity</th>
-                                                        <th>Price</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    
-                                                    <tr>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <img src="/media/picture/artist/products/umb.jpeg" alt="Umbrella" class="product-thumbnail me-2">
-                                                                <div>
-                                                                    <strong>Umbrella</strong>
-                                                                    <small class="d-block text-muted">By </small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td>1</td>
-                                                        <td>₹350.00</td>
-                                                        <td>₹350.00</td>
-                                                    </tr>
-                                                    
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                                        <td><strong>₹357.00</strong></td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    
-                        <div class="card mb-3 delivery-card completed" data-aos="fade-up" data-aos-delay="100">
-                            <div class="card-body p-4">
-                                <div class="row align-items-center">
-                                    <!-- Order Info -->
-                                    <div class="col-md-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="order-icon me-3">
-                                                <div class="icon-circle bg-success-light">
-                                                    <i class="fas fa-check text-success"></i>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <h5 class="mb-1" style="border: 2px solid blue;">Order #61</h5>
-                                                <p class="text-muted mb-0">
-                                                    <i class="fas fa-clock me-1"></i>
-                                                    Completed 1&nbsp;month ago
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Customer Info -->
-                                    <div class="col-md-4">
-                                        <div class="mb-2">
-                                            <small class="text-muted">Customer</small>
-                                            <p class="mb-1">
-                                                <i class="fas fa-user me-1"></i>
-                                                Adarsh@2025
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <small class="text-muted">Delivery Location</small>
-                                            <p class="mb-0">
-                                                <i class="fas fa-map-marker-alt me-1"></i>
-                                                THEKKEKARA HOUSE,MTRA-94, EDAPPALLY, Kerala
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <!-- View Details -->
-                                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                                        <button class="btn btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#completedDetails10">
-                                            <i class="fas fa-chevron-down me-1"></i>View Details
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Completed Order Details -->
-                                <div class="collapse mt-3" id="completedDetails10">
-                                    <div class="card card-body bg-light">
-                                        <div class="table-responsive">
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Item</th>
-                                                        <th>Quantity</th>
-                                                        <th>Price</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    
-                                                    <tr>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <img src="/media/picture/artist/products/umb.jpeg" alt="Umbrella" class="product-thumbnail me-2">
-                                                                <div>
-                                                                    <strong>Umbrella</strong>
-                                                                    <small class="d-block text-muted">By </small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td>1</td>
-                                                        <td>₹350.00</td>
-                                                        <td>₹350.00</td>
-                                                    </tr>
-                                                    
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                                        <td><strong>₹357.00</strong></td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    
-                        <div class="card mb-3 delivery-card completed" data-aos="fade-up" data-aos-delay="100">
-                            <div class="card-body p-4">
-                                <div class="row align-items-center">
-                                    <!-- Order Info -->
-                                    <div class="col-md-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="order-icon me-3">
-                                                <div class="icon-circle bg-success-light">
-                                                    <i class="fas fa-check text-success"></i>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <h5 class="mb-1" style="border: 2px solid blue;">Order #61</h5>
-                                                <p class="text-muted mb-0">
-                                                    <i class="fas fa-clock me-1"></i>
-                                                    Completed 1&nbsp;month ago
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Customer Info -->
-                                    <div class="col-md-4">
-                                        <div class="mb-2">
-                                            <small class="text-muted">Customer</small>
-                                            <p class="mb-1">
-                                                <i class="fas fa-user me-1"></i>
-                                                Adarsh@2025
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <small class="text-muted">Delivery Location</small>
-                                            <p class="mb-0">
-                                                <i class="fas fa-map-marker-alt me-1"></i>
-                                                THEKKEKARA HOUSE,MTRA-94, EDAPPALLY, Kerala
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <!-- View Details -->
-                                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                                        <button class="btn btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#completedDetails9">
-                                            <i class="fas fa-chevron-down me-1"></i>View Details
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Completed Order Details -->
-                                <div class="collapse mt-3" id="completedDetails9">
-                                    <div class="card card-body bg-light">
-                                        <div class="table-responsive">
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Item</th>
-                                                        <th>Quantity</th>
-                                                        <th>Price</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    
-                                                    <tr>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <img src="/media/picture/artist/products/umb.jpeg" alt="Umbrella" class="product-thumbnail me-2">
-                                                                <div>
-                                                                    <strong>Umbrella</strong>
-                                                                    <small class="d-block text-muted">By </small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td>1</td>
-                                                        <td>₹350.00</td>
-                                                        <td>₹350.00</td>
-                                                    </tr>
-                                                    
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                                        <td><strong>₹357.00</strong></td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    
-                
-            
-        </div>
+    <div class="container">
+      <div class="copyright">
+        © Copyright <strong><span>Dewi</span></strong>. All Rights Reserved
+      </div>
+      <div class="credits">
+        <!-- All the links in the footer should remain intact. -->
+        <!-- You can delete the links only if you purchased the pro version. -->
+        <!-- Licensing information: https://bootstrapmade.com/license/ -->
+        <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/dewi-free-multi-purpose-html-template/ -->
+        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+      </div>
     </div>
-</div>
+  </footer><!-- End Footer -->
 
-<style>
-    .icon-circle {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-    .order-icon .icon-circle {
-        width: 40px;
-        height: 40px;
-    }
+  <!-- Vendor JS Files -->
+  <script src="/static/assets/vendor/purecounter/purecounter_vanilla.js"></script>
+  <script src="/static/assets/vendor/aos/aos.js"></script>
+  <script src="/static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="/static/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="/static/assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="/static/assets/vendor/php-email-form/validate.js"></script>
 
-    .delivery-card {
-        transition: transform 0.2s;
-    }
-
-    .delivery-card:hover {
-        transform: translateY(-2px);
-    }
-
-    .delivery-card.completed {
-        opacity: 0.8;
-    }
-
-    .delivery-card.completed:hover {
-        opacity: 1;
-    }
-
-    .table {
-        margin-bottom: 0;
-    }
-
-    .table th {
-        font-weight: 600;
-        color: var(--dark-text);
-    }
-
-    .product-thumbnail {
-        width: 40px;
-        height: 40px;
-        object-fit: cover;
-        border-radius: 4px;
-    }
-
-    /* Modal Styles */
-    .modal {
-        backdrop-filter: blur(5px);
-    }
-
-    .modal-content {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .modal-header {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        background-color: #f8f9fa;
-        border-radius: 12px 12px 0 0;
-    }
-
-    .modal-footer {
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
-        background-color: #f8f9fa;
-        border-radius: 0 0 12px 12px;
-    }
-
-    .bg-success-light {
-        background-color: rgba(40, 167, 69, 0.1);
-    }
-</style>
-
-
-<script>
-    function updateDeliveryStatus(event, deliveryId) {
-        event.preventDefault();
-        
-        const form = event.target;
-        const formData = new FormData(form);
-        const status = formData.get('status');
-        const notes = formData.get('notes');
-        
-        // Get CSRF token
-        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        
-        // Show loading state on the button
-        const submitButton = form.querySelector('button[type="submit"]');
-        const originalButtonText = submitButton.innerHTML;
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
-        
-        // Update the status badge to loading state
-        const statusBadge = document.querySelector(`#delivery-${deliveryId} .status-badge`);
-        const originalBadgeContent = statusBadge ? statusBadge.innerHTML : '';
-        if (statusBadge) {
-            statusBadge.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
-        }
-        
-        fetch(`/delivery/order/${deliveryId}/update-status/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken
-            },
-            body: JSON.stringify({
-                status: status,
-                notes: notes
-            })
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(data => {
-                    throw new Error(data.message || 'Failed to update status');
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                // Update status badge
-                if (statusBadge) {
-                    statusBadge.innerHTML = `
-                        <span class="badge bg-${data.status_color}">
-                            ${data.status_display}
-                        </span>
-                    `;
-                }
-                
-                // Show success message
-                showToast('Success', 'Status updated successfully', 'success');
-                
-                // Update tracking steps
-                updateTrackingSteps(status);
-                
-                // Close the modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById(`updateStatusModal${deliveryId}`));
-                modal.hide();
-                
-                // Refresh the page after a short delay to show updated status
-                setTimeout(() => {
-                    location.reload();
-                }, 1000);
-            } else {
-                throw new Error(data.message || 'Failed to update status');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            // Restore original status badge
-            if (statusBadge) {
-                statusBadge.innerHTML = originalBadgeContent;
-            }
-            showToast('Error', error.message || 'Failed to update status', 'error');
-        })
-        .finally(() => {
-            // Restore button state
-            submitButton.disabled = false;
-            submitButton.innerHTML = originalButtonText;
-        });
-        
-        return false; // Prevent form submission
-    }
-
-    function updateTrackingSteps(status) {
-        const steps = ['PICKING_UP', 'PICKED_UP', 'IN_TRANSIT', 'DELIVERED'];
-        const currentStepIndex = steps.indexOf(status);
-        
-        // Update each step's status
-        steps.forEach((step, index) => {
-            const stepElement = document.querySelector(`.track .step[data-status="${step}"]`);
-            if (stepElement) {
-                if (index <= currentStepIndex) {
-                    stepElement.classList.add('active');
-                    const icon = stepElement.querySelector('.icon');
-                    if (icon) {
-                        icon.style.background = '#28a745';
-                        icon.style.color = '#fff';
-                    }
-                } else {
-                    stepElement.classList.remove('active');
-                    const icon = stepElement.querySelector('.icon');
-                    if (icon) {
-                        icon.style.background = '#e9ecef';
-                        icon.style.color = '#6c757d';
-                    }
-                }
-            }
-        });
-    }
-
-    function updateCustomerTrackingModal(orderId, status) {
-        // Broadcast the status update to the customer's page
-        if (typeof EventSource !== 'undefined') {
-            const event = new CustomEvent('orderStatusUpdate', {
-                detail: {
-                    orderId: orderId,
-                    status: status
-                }
-            });
-            window.dispatchEvent(event);
-        }
-    }
-
-    function showToast(title, message, type) {
-        // Implementation of showing toast messages
-        const toast = document.createElement('div');
-        toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0 position-fixed bottom-0 end-0 m-3`;
-        toast.setAttribute('role', 'alert');
-        toast.setAttribute('aria-live', 'assertive');
-        toast.setAttribute('aria-atomic', 'true');
-        
-        toast.innerHTML = `
-            <div class="d-flex">
-                <div class="toast-body">
-                    <strong>${title}:</strong> ${message}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        `;
-        
-        document.body.appendChild(toast);
-        const bsToast = new bootstrap.Toast(toast);
-        bsToast.show();
-        
-        toast.addEventListener('hidden.bs.toast', () => {
-            toast.remove();
-        });
-    }
-
-    function getCSRFToken() {
-        const cookieValue = document.cookie
-            .split('; ')
-            .find(row => row.startsWith('csrftoken='))
-            ?.split('=')[1];
-        return cookieValue;
-    }
-</script>
-
-
-
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+  <!-- Template Main JS File -->
+  <script src="/static/assets/js/main.js"></script>
+  <script>      
+    document.addEventListener("DOMContentLoaded", function () {
     
-    
-<script>
-    function updateDeliveryStatus(event, deliveryId) {
-        event.preventDefault();
-        
-        const form = event.target;
-        const formData = new FormData(form);
-        const status = formData.get('status');
-        const notes = formData.get('notes');
-        
-        // Get CSRF token
-        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        
-        // Show loading state on the button
-        const submitButton = form.querySelector('button[type="submit"]');
-        const originalButtonText = submitButton.innerHTML;
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
-        
-        // Update the status badge to loading state
-        const statusBadge = document.querySelector(`#delivery-${deliveryId} .status-badge`);
-        const originalBadgeContent = statusBadge ? statusBadge.innerHTML : '';
-        if (statusBadge) {
-            statusBadge.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
-        }
-        
-        fetch(`/delivery/order/${deliveryId}/update-status/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken
-            },
-            body: JSON.stringify({
-                status: status,
-                notes: notes
-            })
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(data => {
-                    throw new Error(data.message || 'Failed to update status');
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                // Update status badge
-                if (statusBadge) {
-                    statusBadge.innerHTML = `
-                        <span class="badge bg-${data.status_color}">
-                            ${data.status_display}
-                        </span>
-                    `;
-                }
-                
-                // Show success message
-                showToast('Success', 'Status updated successfully', 'success');
-                
-                // Update tracking steps
-                updateTrackingSteps(status);
-                
-                // Close the modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById(`updateStatusModal${deliveryId}`));
-                modal.hide();
-                
-                // Refresh the page after a short delay to show updated status
-                setTimeout(() => {
-                    location.reload();
-                }, 1000);
-            } else {
-                throw new Error(data.message || 'Failed to update status');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            // Restore original status badge
-            if (statusBadge) {
-                statusBadge.innerHTML = originalBadgeContent;
-            }
-            showToast('Error', error.message || 'Failed to update status', 'error');
-        })
-        .finally(() => {
-            // Restore button state
-            submitButton.disabled = false;
-            submitButton.innerHTML = originalButtonText;
-        });
-        
-        return false; // Prevent form submission
-    }
-
-    function updateTrackingSteps(status) {
-        const steps = ['PICKING_UP', 'PICKED_UP', 'IN_TRANSIT', 'DELIVERED'];
-        const currentStepIndex = steps.indexOf(status);
-        
-        // Update each step's status
-        steps.forEach((step, index) => {
-            const stepElement = document.querySelector(`.track .step[data-status="${step}"]`);
-            if (stepElement) {
-                if (index <= currentStepIndex) {
-                    stepElement.classList.add('active');
-                    const icon = stepElement.querySelector('.icon');
-                    if (icon) {
-                        icon.style.background = '#28a745';
-                        icon.style.color = '#fff';
-                    }
-                } else {
-                    stepElement.classList.remove('active');
-                    const icon = stepElement.querySelector('.icon');
-                    if (icon) {
-                        icon.style.background = '#e9ecef';
-                        icon.style.color = '#6c757d';
-                    }
-                }
-            }
-        });
-    }
-
-    function updateCustomerTrackingModal(orderId, status) {
-        // Broadcast the status update to the customer's page
-        if (typeof EventSource !== 'undefined') {
-            const event = new CustomEvent('orderStatusUpdate', {
-                detail: {
-                    orderId: orderId,
-                    status: status
-                }
-            });
-            window.dispatchEvent(event);
-        }
-    }
-
-    function showToast(title, message, type) {
-        // Implementation of showing toast messages
-        const toast = document.createElement('div');
-        toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0 position-fixed bottom-0 end-0 m-3`;
-        toast.setAttribute('role', 'alert');
-        toast.setAttribute('aria-live', 'assertive');
-        toast.setAttribute('aria-atomic', 'true');
-        
-        toast.innerHTML = `
-            <div class="d-flex">
-                <div class="toast-body">
-                    <strong>${title}:</strong> ${message}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        `;
-        
-        document.body.appendChild(toast);
-        const bsToast = new bootstrap.Toast(toast);
-        bsToast.show();
-        
-        toast.addEventListener('hidden.bs.toast', () => {
-            toast.remove();
-        });
-    }
-
-    function getCSRFToken() {
-        const cookieValue = document.cookie
-            .split('; ')
-            .find(row => row.startsWith('csrftoken='))
-            ?.split('=')[1];
-        return cookieValue;
-    }
-</script>
+});
+    </script>
 
 
 
-<div class="modal-backdrop fade show"></div></body></html>
+</body></html>

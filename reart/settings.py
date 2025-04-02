@@ -190,6 +190,9 @@ AUTHENTICATION_BACKENDS = (
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '467600298779-s09okfeii93d33mbkuf0vm87oepafvq8.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
+# Gemini API Configuration
+GEMINI_API_KEY = 'AIzaSyAX0vpRqWM-YXaDyXv2K_ZLYhiPX5lxKXI'  # Replace with your actual Gemini API key
+
 LOGIN_URL = 'userlogin'
 LOGOUT_URL = 'userlogout'
 LOGIN_REDIRECT_URL = 'shop_index'
